@@ -513,6 +513,36 @@ describe('getSaveableVisualization', () => {
         expect(s0.direction).toBe('DESC')
     })
 
+    it('reduces the cell value to a plain id, keeping the aggregation type', () => {
+        const vis = {
+            value: {
+                id: 'A03MvHHogjR.UXz7xuGCEhU',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+                valueType: 'NUMBER',
+                dimensionItemType: 'DATA_ELEMENT',
+            },
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toEqual({
+            id: 'UXz7xuGCEhU',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
+    it('leaves the cell value out when the visualization has none', () => {
+        const vis = {
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toBeUndefined()
+    })
+
     it('sets sorting to undefined when sorting is not provided or empty', () => {
         const vis1 = {
             columns: [],

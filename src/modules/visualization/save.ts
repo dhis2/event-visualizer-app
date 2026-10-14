@@ -1,4 +1,5 @@
 import { getHeadersMap } from '@modules/analytics-request'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
 import { removeNonPersistedDimensionProperties } from '@modules/dimension/translation'
 import type {
     CurrentVisualization,
@@ -48,11 +49,13 @@ export const getSaveableVisualization = (
     const result: Partial<SavedVisualization> = {
         ...visualization,
         sorting,
-        /* The cell value is a reference the backend resolves itself, so the
-         * dimension properties it returns alongside the id are dropped; they
-         * belong to the data element or attribute, not to the visualization. */
+        /* The backend looks the cell value up as a data element or attribute
+         * uid, so a compound id matches nothing and the value is dropped. */
         value: vis.value
-            ? { id: vis.value.id, aggregationType: vis.value.aggregationType }
+            ? {
+                  id: extractPlainDimensionId(vis.value.id),
+                  aggregationType: vis.value.aggregationType,
+              }
             : undefined,
     }
     // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
