@@ -1,19 +1,19 @@
 # Translators:
-# Saurabh Leekha <saurabh.leekha@hispindia.org>, 2026
 # Andres Miguel Rubio, 2026
 # Wanda <wanda@frontlineaids.org>, 2026
 # Ulanbek Abakirov <ulans@mail.ru>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
+# Yury Rogachev <yury@dhis2.org>, 2026
+# Saurabh Leekha <saurabh.leekha@hispindia.org>, 2026
 # Nadiia <semchuk@aph.org.ua>, 2026
 # Philip Larsen Donnelly, 2026
-# Yury Rogachev <yury@dhis2.org>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Yury Rogachev <yury@dhis2.org>, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Russian (https://app.transifex.com/hisp-uio/teams/100509/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -33,6 +33,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -239,12 +242,6 @@ msgstr ""
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr ""
-
-msgid "Groups"
-msgstr "Группы"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -345,6 +342,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -593,6 +593,12 @@ msgstr "Пропустить округление данных"
 
 msgid "Add a subtitle"
 msgstr ""
+
+msgid "Auto generated"
+msgstr "Автогенерируемая"
+
+msgid "Custom"
+msgstr "Пользователь"
 
 msgid "Add a title"
 msgstr ""
@@ -909,9 +915,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Пользователь"
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -969,6 +972,9 @@ msgstr "Нет"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr "Нет значения"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1022,6 +1028,12 @@ msgstr "Статус регистрации"
 msgid "Registration org. unit"
 msgstr ""
 
+msgid "Levels"
+msgstr ""
+
+msgid "Groups"
+msgstr "Группы"
+
 msgid "Enrollment date"
 msgstr "Дата регистрации "
 
@@ -1033,6 +1045,19 @@ msgid ""
 "administrator."
 msgstr ""
 
+msgid "Visualization not found"
+msgstr ""
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
 
@@ -1040,18 +1065,73 @@ msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
-msgid "Something went wrong"
-msgstr "Что-то пошло не так"
+msgid "Invalid indicator"
+msgstr ""
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
 
+msgid "Program stage not available"
+msgstr ""
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
 
-msgid "There's a syntax problem with the analytics request."
+msgid "Analytics request failed"
+msgstr ""
+
+msgid "The server could not run this request. Contact a system administrator."
 msgstr ""
 
 msgid "No data available"
@@ -1061,6 +1141,12 @@ msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
 msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Что-то пошло не так"
 
 msgid "There was a problem getting the data from the server."
 msgstr ""
@@ -1199,6 +1285,18 @@ msgstr "Завершен/а/о"
 
 msgid "Scheduled"
 msgstr "Запланирован"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Регистрации"
+
+msgid "Events"
+msgstr "События"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Danish (https://app.transifex.com/hisp-uio/teams/100509/da/)\n"
@@ -29,6 +29,12 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Changes not applied"
+msgstr ""
+
+msgid "Retry"
+msgstr ""
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -41,13 +47,13 @@ msgstr ""
 msgid "Delete filter"
 msgstr ""
 
-msgid "Repeated events"
-msgstr ""
-
 msgid "Data"
 msgstr ""
 
-msgid "Only available for repeatable stages"
+msgid "Repeated events"
+msgstr ""
+
+msgid "and"
 msgstr ""
 
 msgid "{{valueType}} type dimensions cannot be filtered."
@@ -56,31 +62,34 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr ""
 
-msgid "and"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "is one of preset options"
+msgid "Grouping"
 msgstr ""
 
-msgid "Choose a legend set"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Show each value individually"
 msgstr ""
 
-msgid "No preset option sets for this data item"
+msgid "Available groups"
 msgstr ""
 
-msgid "Choose legends"
+msgid "Filter groups"
 msgstr ""
 
-msgid "Loading legends"
+msgid "Selected groups"
 msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
@@ -200,9 +209,6 @@ msgstr "Code"
 msgid "Name"
 msgstr "Name"
 
-msgid "An error occurred"
-msgstr ""
-
 msgid "Resize axes panel"
 msgstr ""
 
@@ -227,10 +233,7 @@ msgstr ""
 msgid "Program stage: {{- stageName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr ""
-
-msgid "Groups"
+msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
@@ -335,6 +338,9 @@ msgstr ""
 msgid "Not valid with multiple tracked entity types"
 msgstr ""
 
+msgid "Not valid without a tracked entity type"
+msgstr ""
+
 msgid "Not valid with program indicators"
 msgstr ""
 
@@ -416,6 +422,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -540,6 +549,9 @@ msgstr ""
 msgid "Select from legends"
 msgstr ""
 
+msgid "Loading legends"
+msgstr ""
+
 msgid "Limit"
 msgstr ""
 
@@ -553,6 +565,9 @@ msgid "High to low"
 msgstr ""
 
 msgid "Top limit"
+msgstr ""
+
+msgid "Must be a whole number of 1 or more"
 msgstr ""
 
 msgid "Row sub-totals"
@@ -572,6 +587,12 @@ msgstr ""
 
 msgid "Add a subtitle"
 msgstr ""
+
+msgid "Auto generated"
+msgstr ""
+
+msgid "Custom"
+msgstr "Custom"
 
 msgid "Add a title"
 msgstr ""
@@ -604,6 +625,12 @@ msgid "Table subtitle"
 msgstr ""
 
 msgid "Labels"
+msgstr ""
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
 msgstr ""
 
 msgid "Create a {{- visType}} before updating"
@@ -880,9 +907,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Custom"
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -940,6 +964,9 @@ msgstr "No"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr ""
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -993,8 +1020,128 @@ msgstr ""
 msgid "Registration org. unit"
 msgstr ""
 
+msgid "Levels"
+msgstr ""
+
+msgid "Groups"
+msgstr ""
+
 msgid "Enrollment date"
 msgstr "Enrollment date"
+
+msgid "Restricted access"
+msgstr ""
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "Visualization not found"
+msgstr ""
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr ""
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Invalid indicator"
+msgstr ""
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid "Program stage not available"
+msgstr ""
+
+msgid ""
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "Analytics request failed"
+msgstr ""
+
+msgid "The server could not run this request. Contact a system administrator."
+msgstr ""
+
+msgid "No data available"
+msgstr ""
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr ""
 
 msgid "Columns"
 msgstr ""
@@ -1130,6 +1277,18 @@ msgstr ""
 
 msgid "Scheduled"
 msgstr ""
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr ""
+
+msgid "Events"
+msgstr "Events"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
