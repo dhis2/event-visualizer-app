@@ -60,7 +60,7 @@ type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsSelected: boolean
     hasMultipleProgramStagesSelected: boolean
-    isRegistrationOuInLayout: boolean
+    isRegistrationOuInLineList: boolean
     visualizationType: string
 }
 
@@ -68,7 +68,7 @@ const getEventTooltipConfig = ({
     hasNoProgramInLayout,
     hasMultipleProgramsSelected,
     hasMultipleProgramStagesSelected,
-    isRegistrationOuInLayout,
+    isRegistrationOuInLineList,
     visualizationType,
 }: EventTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
@@ -83,7 +83,7 @@ const getEventTooltipConfig = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isRegistrationOuInLayout) {
+    if (isRegistrationOuInLineList) {
         return getRegistrationOuTooltipConfig()
     }
 
@@ -100,7 +100,7 @@ type EnrollmentTooltipConfigParams = {
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsSelected: boolean
     hasNoProgramInLayout: boolean
-    isRegistrationOuInLayout: boolean
+    isRegistrationOuInLineList: boolean
     visualizationType: string
 }
 
@@ -110,7 +110,7 @@ const getEnrollmentTooltipConfig = ({
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
     hasMultipleProgramsSelected,
-    isRegistrationOuInLayout,
+    isRegistrationOuInLineList,
     visualizationType,
 }: EnrollmentTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
@@ -129,7 +129,7 @@ const getEnrollmentTooltipConfig = ({
         return { content: i18n.t('Not valid with event programs') }
     }
 
-    if (isRegistrationOuInLayout) {
+    if (isRegistrationOuInLineList) {
         return getRegistrationOuTooltipConfig()
     }
 
@@ -269,9 +269,12 @@ export const getOutputTypeTooltipConfig = ({
     const hasNoProgramInLayout = programIds.length === 0
     const hasMultipleProgramsSelected =
         new Set([...programIds, ...cellValueContext.programIds]).size > 1
-    const isRegistrationOuInLayout = tetId
-        ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
-        : false
+    /* A line list shows the registration org unit only with tracked entity
+     * output. */
+    const isRegistrationOuInLineList =
+        visualizationType === 'LINE_LIST' && tetId
+            ? isDimensionInLayout(layout, `${tetId}.ou`)
+            : false
 
     switch (outputType) {
         case 'EVENT':
@@ -283,7 +286,7 @@ export const getOutputTypeTooltipConfig = ({
                         ...programStageIds,
                         ...cellValueContext.programStageIds,
                     ]).size > 1,
-                isRegistrationOuInLayout,
+                isRegistrationOuInLineList,
                 visualizationType,
             })
         case 'ENROLLMENT':
@@ -293,7 +296,7 @@ export const getOutputTypeTooltipConfig = ({
                 hasCategoryOptionGroupSetInLayout,
                 hasNoProgramInLayout,
                 hasMultipleProgramsSelected,
-                isRegistrationOuInLayout,
+                isRegistrationOuInLineList,
                 visualizationType,
             })
         case 'TRACKED_ENTITY_INSTANCE':

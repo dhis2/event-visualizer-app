@@ -18,7 +18,6 @@ const formatVisualizationForPivotTableEngine = (
                 dimensionId: dim.dimension,
                 programId: dim.program?.id,
                 programStageId: dim.programStage?.id,
-                trackedEntityTypeId: visualization.trackedEntityType?.id,
                 visualization,
             }),
         }))

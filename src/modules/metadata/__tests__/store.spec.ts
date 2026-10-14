@@ -1211,8 +1211,8 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
 
         store.setVisualizationMetadata(vis)
 
-        expect(store.getMetadataItem('tetA.enrollmentOu')).toMatchObject({
-            dimensionId: 'enrollmentOu',
+        expect(store.getMetadataItem('tetA.ou')).toMatchObject({
+            dimensionId: 'ou',
             trackedEntityTypeId: 'tetA',
         })
         expect(store.getMetadataItem('progA.enrollmentOu')).toMatchObject({

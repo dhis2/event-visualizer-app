@@ -35,6 +35,17 @@ export const isDimensionInLayout = (
         axisDimensionIds.includes(dimensionId)
     )
 
+/* The registration org unit belongs to no program, but an EVENT or ENROLLMENT
+ * visualization stores it qualified with the one program it shows. */
+const getLayoutProgramId = (
+    visUiConfig: VisUiConfigState,
+    metadataStore: MetadataStore
+): string | undefined =>
+    resolveLayoutContext(
+        selectLayoutAllDimensionIds(visUiConfig),
+        metadataStore
+    ).programIds[0]
+
 export const buildAxis = (
     dimensionIds: string[],
     visUiConfig: VisUiConfigState,
@@ -45,14 +56,17 @@ export const buildAxis = (
         const itemIds = visUiConfig.itemsByDimension[id]
         const conditions = visUiConfig.conditionsByDimension[id]
         const repetitions = visUiConfig.repetitionsByDimension[id]
-        const dimensionRecord: DimensionRecord = {
-            dimension: toEventVisualizationDimensionId({
-                dimensionId: dim.dimensionId ?? id,
-                programId: dim.programId,
-                outputType: visUiConfig.outputType,
-                visualizationType: visUiConfig.visualizationType,
-            }),
-        }
+        const dimension = toEventVisualizationDimensionId({
+            dimensionId: dim.dimensionId ?? id,
+            programId: dim.programId,
+            outputType: visUiConfig.outputType,
+            visualizationType: visUiConfig.visualizationType,
+        })
+        const programId =
+            dimension === 'registrationOu'
+                ? getLayoutProgramId(visUiConfig, metadataStore)
+                : dim.programId
+        const dimensionRecord: DimensionRecord = { dimension }
         if (itemIds?.length) {
             dimensionRecord.items = itemIds.map((itemId) => ({ id: itemId }))
         }
@@ -67,8 +81,8 @@ export const buildAxis = (
                 indexes: parseUiRepetitions(repetitions),
             }
         }
-        if (dim.programId) {
-            dimensionRecord.program = { id: dim.programId }
+        if (programId) {
+            dimensionRecord.program = { id: programId }
         }
         if (dim.programStageId) {
             dimensionRecord.programStage = { id: dim.programStageId }
