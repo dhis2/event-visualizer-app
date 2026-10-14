@@ -36,7 +36,7 @@ export const getVisualizationQueryFields = (
     `columns[${dimensionFields}]`,
     `rows[${dimensionFields}]`,
     `filters[${dimensionFields}]`,
-    `value[id,${displayNameProp}~rename(name),aggregationType]`,
+    `value[id,${displayNameProp}~rename(name),aggregationType,valueType,dimensionItemType]`,
     `program[${getProgramFields(displayNameProp)}]`,
     `programStage[${programStageFields}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,

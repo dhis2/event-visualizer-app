@@ -105,14 +105,23 @@ export const extractDimensionMetadata = (
     return dimensionMetadata
 }
 
+/* The API names the cell value's dimension type `dimensionItemType`; the store
+ * knows it as `dimensionType`. Renaming it here is what makes the value
+ * register as a dimension rather than a bare named item. */
 export const extractValueMetadata = (
     visualization: SavedVisualization
-): MetadataInputMap =>
-    visualization.value
-        ? {
-              [visualization.value.id]: visualization.value,
-          }
-        : {}
+): MetadataInputMap => {
+    if (!visualization.value) {
+        return {}
+    }
+    const { dimensionItemType, ...value } = visualization.value
+    return {
+        [value.id]: {
+            ...value,
+            ...(dimensionItemType && { dimensionType: dimensionItemType }),
+        },
+    }
+}
 
 const addPathToOrganisationUnitMetadataItems = (
     metadataInput: MetadataInput,

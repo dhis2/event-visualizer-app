@@ -5,6 +5,7 @@ import {
     extractTrackedEntityTypeMetadata,
     extractProgramDimensionsMetadata,
     extractDimensionMetadata,
+    extractValueMetadata,
 } from '../visualization'
 
 describe('supplementDimensionMetadata', () => {
@@ -405,5 +406,33 @@ describe('extractDimensionMetadata', () => {
         const result = extractDimensionMetadata(visualization)
 
         expect(result).toEqual({})
+    })
+})
+
+describe('extractValueMetadata', () => {
+    it('registers the cell value as a dimension of the type the API reports', () => {
+        const visualization = {
+            value: {
+                id: 'UXz7xuGCEhU',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+                valueType: 'NUMBER',
+                dimensionItemType: 'DATA_ELEMENT',
+            },
+        } as unknown as SavedVisualization
+
+        expect(extractValueMetadata(visualization)).toEqual({
+            UXz7xuGCEhU: {
+                id: 'UXz7xuGCEhU',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+                valueType: 'NUMBER',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+    })
+
+    it('returns nothing when the visualization has no cell value', () => {
+        expect(extractValueMetadata({} as SavedVisualization)).toEqual({})
     })
 })

@@ -48,6 +48,12 @@ export const getSaveableVisualization = (
     const result: Partial<SavedVisualization> = {
         ...visualization,
         sorting,
+        /* The cell value is a reference the backend resolves itself, so the
+         * dimension properties it returns alongside the id are dropped; they
+         * belong to the data element or attribute, not to the visualization. */
+        value: vis.value
+            ? { id: vis.value.id, aggregationType: vis.value.aggregationType }
+            : undefined,
     }
     // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
     delete result.legacy

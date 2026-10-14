@@ -70,9 +70,13 @@ const metadata = {
     },
     /* A loaded visualization registers its value straight from the saved
      * payload, so the item carries no dimensionType and is not a dimension. */
+    /* How a loaded visualization registers its cell value: a plain id, with no
+     * program or stage context, since the saved payload carries none. */
     loadedValue: {
         id: 'loadedValue',
         name: 'MCH Weight (g)',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
         aggregationType: 'AVERAGE',
     },
 }
@@ -134,7 +138,7 @@ describe('CellValueAxis', () => {
         expect(getTrigger()).not.toHaveTextContent('Count')
     })
 
-    it('shows a cell value whose metadata is not a dimension', async () => {
+    it('shows a cell value loaded from a saved visualization', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({

@@ -91,13 +91,15 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    /* The API returns the cell value's name and aggregation type alongside
-     * its id; the app only ever writes the id (the aggregation type it applies
-     * is the top-level one). The name does not need to be propagated to
-     * currentVis on update. */
+    /* The API resolves the cell value against the data element or tracked
+     * entity attribute behind it, so the dimension's own properties come back
+     * with it. The app only ever writes the id (the aggregation type it applies
+     * is the top-level one). */
     value?: IdRecord & {
         name?: string
         aggregationType?: EventVisualizationGenerated['aggregationType']
+        valueType?: ValueType
+        dimensionItemType?: DimensionType
     }
 }
 

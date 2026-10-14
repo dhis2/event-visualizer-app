@@ -146,7 +146,9 @@
     "value": {
         "aggregationType": "AVERAGE",
         "id": "UXz7xuGCEhU",
-        "name": "MCH Weight (g)"
+        "name": "MCH Weight (g)",
+        "valueType": "NUMBER",
+        "dimensionItemType": "DATA_ELEMENT"
     },
     "filters": [
         {
