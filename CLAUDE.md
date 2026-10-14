@@ -255,9 +255,10 @@ metadata provider. Understanding it is essential when working with any program d
 
 ### Dimension types
 
-- **Tracked entity attribute dimensions** are independent of program/stage context — they always
-  have the same properties across tracked entity types and are identified by a plain (non-compound)
-  ID. No special handling is needed.
+- **Tracked entity attribute dimensions** are independent of program/stage context, but are keyed
+  `trackedEntityTypeId.dimensionId` whenever a tracked entity type is in play (see below). The
+  analytics API returns their headers unprefixed, so `analyticsHeaderToCanonicalDimensionId` adds
+  the prefix back, reading `dimensionType` off the layout to spot them.
 - **Program dimensions** are context-dependent and use compound IDs (see below).
 
 ### Program types
