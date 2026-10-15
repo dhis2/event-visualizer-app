@@ -1,4 +1,5 @@
 import { LineList } from '@components/line-list'
+import { useTotalsMode } from '@components/line-list/totals-debug'
 import type {
     ColumnHeaderClickFn,
     DataSortFn,
@@ -38,6 +39,8 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 }) => {
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
+    /* Prototype only: refetch when the Debug menu changes the totals mode */
+    const totalsMode = useTotalsMode()
 
     // null indicates no custom sorting has been applied
     // undefined cannot be used because that is a valid value to indicate "remove sorting"
@@ -116,6 +119,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         eventVisualization,
         onResponseReceived,
         fetchAnalyticsData,
+        totalsMode,
     ])
 
     logger.debug('LL eventVisualization', eventVisualization)

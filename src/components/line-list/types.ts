@@ -3,7 +3,11 @@ import type { SortDirection } from '@types'
 export type LineListPager = {
     page: number
     pageSize: number
-    isLastPage: boolean
+    /* Sent only when totals are requested (totalPages=true), together with
+     * total; isLastPage is sent only when they are not. */
+    isLastPage?: boolean
+    total?: number
+    pageCount?: number
 }
 export type DataSortPayload = {
     dimension: string

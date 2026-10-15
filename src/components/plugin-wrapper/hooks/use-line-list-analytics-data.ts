@@ -2,6 +2,7 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
+import { getFakeTotal } from '@components/line-list/totals-debug'
 import type { LineListPager } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
@@ -20,7 +21,7 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
@@ -95,6 +96,32 @@ type AnalyticsDataState = {
     data: LineListAnalyticsData | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
+
+const withFakeTotals = ({
+    pager,
+    rows,
+}: {
+    pager: LineListPager
+    rows: string[][]
+}): { pager: LineListPager; rows: string[][] } => {
+    const fakeTotal = getFakeTotal()
+    if (fakeTotal === null) {
+        return { pager, rows }
+    }
+    const rowsBeforePage = (pager.page - 1) * pager.pageSize
+    const total = pager.isLastPage
+        ? rowsBeforePage + rows.length
+        : Math.max(fakeTotal, rowsBeforePage + 1)
+    return {
+        pager: {
+            page: pager.page,
+            pageSize: pager.pageSize,
+            total,
+            pageCount: Math.max(1, Math.ceil(total / pager.pageSize)),
+        },
+        rows: rows.slice(0, total - rowsBeforePage),
+    }
+}
 
 const fetchAnalyticsDataForLL = async ({
     analyticsEngine,
@@ -252,9 +279,8 @@ export const toLineListAnalyticsData = ({
             visualization
         ),
     })),
-    rows: response.rows,
+    ...withFakeTotals({ pager: response.metaData.pager, rows: response.rows }),
     rowContext: response.rowContext,
-    pager: response.metaData.pager,
     metaDataItems: response.metaData.items,
     legendSets,
 })
@@ -271,6 +297,9 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     })
 
     const { reserve, release } = useInFlightDedup()
+    /* Only the most recent request may update state, so a slow response for
+     * a page the user already clicked past can't overwrite the newer one. */
+    const latestRequestIdRef = useRef(0)
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
@@ -292,6 +321,9 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             if (!reserve(requestSignature)) {
                 return
             }
+
+            const requestId = ++latestRequestIdRef.current
+            const isStale = () => requestId !== latestRequestIdRef.current
 
             setState((prevState) => ({
                 ...prevState,
@@ -315,6 +347,28 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     displayProperty,
                 })
 
+                if (isStale()) {
+                    return
+                }
+
+                /* Without totals the user can click past the last page. Keep
+                 * the current page and hand back a fresh pager object so the
+                 * pagination bar snaps back to it. */
+                if (analyticsResponse.rows.length === 0 && page > 1) {
+                    setState((prevState) =>
+                        prevState.data
+                            ? {
+                                  data: {
+                                      ...prevState.data,
+                                      pager: { ...prevState.data.pager },
+                                  },
+                                  isFetching: false,
+                              }
+                            : prevState
+                    )
+                    return
+                }
+
                 if (analyticsResponse.rows.length === 0) {
                     throw new EmptyResponseError()
                 }
@@ -334,6 +388,10 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     dataEngine,
                 })
 
+                if (isStale()) {
+                    return
+                }
+
                 const analyticsData: LineListAnalyticsData = {
                     ...dataWithoutLegendSets,
                     legendSets,
@@ -346,6 +404,9 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived()
             } catch (error) {
+                if (isStale()) {
+                    return
+                }
                 logger.error('fetch LL data error', error)
                 if (isAbortError(error)) {
                     setState((prevState) => ({

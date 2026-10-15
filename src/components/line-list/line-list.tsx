@@ -22,8 +22,8 @@ import { HeaderCell } from './header-cell'
 import { HeadingRow } from './heading-row'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { PaginationBar } from './pagination-bar'
 import { ScrollBox } from './scroll-box'
-import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
@@ -211,13 +211,14 @@ const LineListInternal: FC<LineListProps> = ({
                         </DataTableBody>
                         <DataTableFoot className={classes.fixedFoot}>
                             <DataTableRow>
-                                <StickyPagination
-                                    {...pager}
+                                <PaginationBar
+                                    colSpan={colSpan}
+                                    outputType={visualization.outputType}
+                                    pager={pager}
+                                    pageLength={rows.length}
                                     isDisconnected={isDisconnected}
                                     isFetching={isFetching}
-                                    colSpan={colSpan}
                                     onPaginate={onPaginate}
-                                    pageLength={rows.length}
                                 />
                             </DataTableRow>
                         </DataTableFoot>

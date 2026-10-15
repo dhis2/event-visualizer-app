@@ -39,3 +39,8 @@
         display: none;
     }
 }
+
+.menuIconSpacer {
+    display: inline-block;
+    inline-size: 16px;
+}

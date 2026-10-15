@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-08T14:42:57.891Z\n"
-"PO-Revision-Date: 2026-10-08T14:42:57.892Z\n"
+"POT-Creation-Date: 2026-10-15T10:33:27.254Z\n"
+"PO-Revision-Date: 2026-10-15T10:33:27.254Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -450,14 +450,47 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
-msgid "Rows per page"
-msgstr "Rows per page"
+msgid "1 event"
+msgstr "1 event"
 
-msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgid "{{formattedCount}} events"
+msgstr "{{formattedCount}} events"
+
+msgid "1 enrollment"
+msgstr "1 enrollment"
+
+msgid "{{formattedCount}} enrollments"
+msgstr "{{formattedCount}} enrollments"
+
+msgid "1 tracked entity"
+msgstr "1 tracked entity"
+
+msgid "{{formattedCount}} tracked entities"
+msgstr "{{formattedCount}} tracked entities"
+
+msgid "1 row"
+msgstr "1 row"
+
+msgid "{{formattedCount}} rows"
+msgstr "{{formattedCount}} rows"
 
 msgid "Not available offline"
 msgstr "Not available offline"
+
+msgid "Previous page"
+msgstr "Previous page"
+
+msgid "Next page"
+msgstr "Next page"
+
+msgid "Page number"
+msgstr "Page number"
+
+msgid "Pagination options"
+msgstr "Pagination options"
+
+msgid "Rows per page (view only)"
+msgstr "Rows per page (view only)"
 
 msgid "most recent"
 msgstr "most recent"
@@ -744,6 +777,21 @@ msgstr "Clear search"
 
 msgid "Your most viewed visualizations"
 msgstr "Your most viewed visualizations"
+
+msgid "No totals"
+msgstr "No totals"
+
+msgid "Fake totals (1,234 rows)"
+msgstr "Fake totals (1,234 rows)"
+
+msgid "Fake totals (24,700 rows)"
+msgstr "Fake totals (24,700 rows)"
+
+msgid "Debug"
+msgstr "Debug"
+
+msgid "Line list page totals"
+msgstr "Line list page totals"
 
 msgid "Download"
 msgstr "Download"

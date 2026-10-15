@@ -1,3 +1,8 @@
+import {
+    getTotalsMode,
+    setTotalsMode,
+    type TotalsMode,
+} from '@components/line-list/totals-debug'
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import type { PluginFilters } from '@types'
 import { useState, type FC } from 'react'
@@ -21,9 +26,28 @@ const Plugin: FC<HostPluginProps> = UntypedPlugin
 /* The plugin only checks that a filter is present, never its value. */
 const UNAPPLIED_FILTERS: PluginFilters = { ou: [{ id: 'plugin-host-test' }] }
 
+/* Rough sizes of dashboard items, from a narrow side item to a full row */
+const ITEM_SIZES = {
+    small: { label: 'Small (360 × 300)', width: 360, height: 300 },
+    medium: { label: 'Medium (600 × 400)', width: 600, height: 400 },
+    large: { label: 'Large (800 × 400)', width: 800, height: 400 },
+    wide: { label: 'Full width (1200 × 500)', width: 1200, height: 500 },
+} as const
+
+type ItemSize = keyof typeof ITEM_SIZES
+
+const TOTALS_OPTIONS: Array<{ mode: TotalsMode; label: string }> = [
+    { mode: 'off', label: 'No totals' },
+    { mode: 'fake', label: 'Fake totals (1,234 rows)' },
+    { mode: 'fake-large', label: 'Fake totals (24,700 rows)' },
+]
+
 export const PluginHostApp: FC = () => {
     const [visualizationId, setVisualizationId] = useState('')
     const [filtersOn, setFiltersOn] = useState(false)
+    const [itemSize, setItemSize] = useState<ItemSize>('large')
+    const [totalsMode, setTotalsModeState] = useState(getTotalsMode)
+    const { width, height } = ITEM_SIZES[itemSize]
     const trimmedVisualizationId = visualizationId.trim()
 
     return (
@@ -67,6 +91,42 @@ export const PluginHostApp: FC = () => {
                         only shows the &quot;not applied&quot; notice)
                     </span>
                 </label>
+
+                <label style={{ display: 'grid', gap: 4 }}>
+                    <span>Dashboard item size</span>
+                    <select
+                        value={itemSize}
+                        onChange={(event) =>
+                            setItemSize(event.target.value as ItemSize)
+                        }
+                    >
+                        {Object.entries(ITEM_SIZES).map(([key, { label }]) => (
+                            <option key={key} value={key}>
+                                {label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                {/* Prototype only: the plugin reads this when it fetches, so
+                 * the iframe is remounted (via its key) to pick it up. */}
+                <label style={{ display: 'grid', gap: 4 }}>
+                    <span>Line list page totals</span>
+                    <select
+                        value={totalsMode}
+                        onChange={(event) => {
+                            const mode = event.target.value as TotalsMode
+                            setTotalsMode(mode)
+                            setTotalsModeState(mode)
+                        }}
+                    >
+                        {TOTALS_OPTIONS.map(({ mode, label }) => (
+                            <option key={mode} value={mode}>
+                                {label}
+                            </option>
+                        ))}
+                    </select>
+                </label>
             </div>
 
             {trimmedVisualizationId && (
@@ -74,16 +134,15 @@ export const PluginHostApp: FC = () => {
                     data-test="plugin-host-iframe-wrap"
                     style={{
                         border: '1px solid #d5dde5',
-                        minHeight: 400,
-                        width: 800,
+                        width,
                         maxWidth: '100%',
                     }}
                 >
                     {/* Key by id so each visualization gets a fresh iframe, like a dashboard item. */}
                     <Plugin
-                        key={trimmedVisualizationId}
+                        key={`${trimmedVisualizationId}-${totalsMode}`}
                         pluginSource="/plugin.html"
-                        height={400}
+                        height={height}
                         visualization={{ id: trimmedVisualizationId }}
                         displayProperty="name"
                         forDashboard

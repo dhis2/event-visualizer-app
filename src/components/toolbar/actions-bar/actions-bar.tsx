@@ -20,6 +20,7 @@ import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
 import { useMemo, useState, type FC } from 'react'
+import { DebugMenu } from './debug-menu'
 import { DownloadMenu } from './download-menu'
 import { FileMenu } from './file-menu'
 import { LegacyRenameModal } from './legacy-rename-modal'
@@ -192,6 +193,7 @@ export const ActionsBar: FC = () => {
                     />
                     <ViewMenu />
                     <DownloadMenu />
+                    <DebugMenu />
                 </HoverMenuBar>
             </div>
             <OpenFileDialog

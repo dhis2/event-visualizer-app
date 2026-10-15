@@ -496,7 +496,9 @@ the real dashboard plugin in an iframe the way a dashboard would.
 
 Paste a visualization id to render it. The filter toggle sends a dashboard
 filter to the plugin; since the plugin applies none, it only shows the "filters
-not applied" notice.
+not applied" notice. The item size picker resizes the iframe to typical
+dashboard item sizes, and the page totals picker switches line list pagination
+between no totals and fake totals (the same setting as the app's Debug menu).
 
 ### Version-specific e2e tests
 

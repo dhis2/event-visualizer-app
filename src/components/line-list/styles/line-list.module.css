@@ -26,6 +26,7 @@
 
 .startColumnBottom {
     grid-area: startColumnBottom;
+    container-type: inline-size;
     block-size: 100%;
     min-block-size: 0;
     position: relative;
