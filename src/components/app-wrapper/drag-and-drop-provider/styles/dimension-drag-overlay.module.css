@@ -34,8 +34,6 @@
     padding-inline-end: var(--spacers-dp4);
 }
 
-/* The badge marking what the drop will do. `min-inline-size` keeps the icon
- * badges a circle while letting the count badge grow for two digits. */
 .badge {
     position: absolute;
     inset-block-start: -8px;
