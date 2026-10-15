@@ -5,11 +5,11 @@ import {
 } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import type { CellValueDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import axisClasses from '@components/layout-panel/axis/styles/axis.module.css'
-import { WithTooltip } from '@components/layout-panel/bottom-bar/with-tooltip'
+import { DEFAULT_TOOLTIP_OPEN_DELAY } from '@components/layout-panel/bottom-bar/tooltip-config'
 import { LayoutBlockedOverlay } from '@components/layout-panel/layout-blocked-overlay'
 import { useDimensionSuffix } from '@components/layout-panel/use-layout-dimensions'
 import i18n from '@dhis2/d2-i18n'
-import { IconUndo16 } from '@dhis2/ui'
+import { IconUndo16, Tooltip } from '@dhis2/ui'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import {
     useAppDispatch,
@@ -114,10 +114,9 @@ export const CellValueAxis: FC = () => {
                             }
                             onChange={onAggregationTypeChange}
                         />
-                        <WithTooltip
-                            tooltipConfig={{
-                                content: i18n.t('Reset to count'),
-                            }}
+                        <Tooltip
+                            content={i18n.t('Reset to count')}
+                            openDelay={DEFAULT_TOOLTIP_OPEN_DELAY}
                         >
                             <button
                                 type="button"
@@ -128,15 +127,14 @@ export const CellValueAxis: FC = () => {
                             >
                                 <IconUndo16 />
                             </button>
-                        </WithTooltip>
+                        </Tooltip>
                     </>
                 ) : (
-                    <WithTooltip
-                        tooltipConfig={{
-                            content: i18n.t(
-                                'Cells show a count. Drag a numeric data item here to show its value.'
-                            ),
-                        }}
+                    <Tooltip
+                        content={i18n.t(
+                            'Cells show a count. Drag a numeric data item here to show its value.'
+                        )}
+                        openDelay={DEFAULT_TOOLTIP_OPEN_DELAY}
                     >
                         <span
                             className={classes.text}
@@ -144,7 +142,7 @@ export const CellValueAxis: FC = () => {
                         >
                             {i18n.t('Count')}
                         </span>
-                    </WithTooltip>
+                    </Tooltip>
                 )}
             </div>
         </div>

@@ -1,4 +1,7 @@
-import { type TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
+import {
+    DEFAULT_TOOLTIP_OPEN_DELAY,
+    type TooltipConfig,
+} from '@components/layout-panel/bottom-bar/tooltip-config'
 import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -61,7 +64,8 @@ export const BaseButtonWithConditionalTooltip: FC<
     BaseButtonProps & { tooltipConfig?: TooltipConfig }
 > = ({ tooltipConfig, ...props }) => {
     if (tooltipConfig) {
-        const { content, openDelay = 500 } = tooltipConfig
+        const { content, openDelay = DEFAULT_TOOLTIP_OPEN_DELAY } =
+            tooltipConfig
 
         return (
             <Tooltip content={content} openDelay={openDelay}>

@@ -1,4 +1,4 @@
-import { type TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
+import { type TooltipConfig } from '@components/layout-panel/bottom-bar/tooltip-config'
 import i18n from '@dhis2/d2-i18n'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import {

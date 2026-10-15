@@ -1,7 +1,8 @@
 import { IconTableRows } from '@components/layout-panel/bottom-bar/icon-table-rows'
 import { getOutputTypeTooltipConfig } from '@components/layout-panel/bottom-bar/output-type-validity'
-import { WithTooltip } from '@components/layout-panel/bottom-bar/with-tooltip'
+import { DEFAULT_TOOLTIP_OPEN_DELAY } from '@components/layout-panel/bottom-bar/tooltip-config'
 import i18n from '@dhis2/d2-i18n'
+import { Tooltip } from '@dhis2/ui'
 import { useAppSelector, useMetadataStore, useOutputTypeLabel } from '@hooks'
 import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
@@ -24,20 +25,29 @@ export const RowGranularityLabel: FC = () => {
             }),
         [outputType, visUiConfig, metadataStore]
     )
-    return (
-        <WithTooltip tooltipConfig={tooltipConfig}>
-            <span
-                className={cx(classes.label, {
-                    [classes.unavailable]: Boolean(tooltipConfig),
-                })}
-                data-test="row-granularity-label"
-            >
-                <IconTableRows />
-                {i18n.t('One row for each {{- outputTypeLabel}}', {
-                    outputTypeLabel,
-                    nsSeparator: '^^',
-                })}
-            </span>
-        </WithTooltip>
+    const label = (
+        <span
+            className={cx(classes.label, {
+                [classes.unavailable]: Boolean(tooltipConfig),
+            })}
+            data-test="row-granularity-label"
+        >
+            <IconTableRows />
+            {i18n.t('One row for each {{- outputTypeLabel}}', {
+                outputTypeLabel,
+                nsSeparator: '^^',
+            })}
+        </span>
+    )
+
+    return tooltipConfig ? (
+        <Tooltip
+            content={tooltipConfig.content}
+            openDelay={tooltipConfig.openDelay ?? DEFAULT_TOOLTIP_OPEN_DELAY}
+        >
+            {label}
+        </Tooltip>
+    ) : (
+        label
     )
 }
