@@ -1,3 +1,4 @@
+import { type TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
 import i18n from '@dhis2/d2-i18n'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import {
@@ -24,8 +25,6 @@ export const getAvailableOutputTypes = (
     visualizationType === 'PIVOT_TABLE'
         ? ['ENROLLMENT', 'EVENT']
         : ['TRACKED_ENTITY_INSTANCE', 'ENROLLMENT', 'EVENT']
-
-export type TooltipConfig = { content: string; openDelay?: number } | undefined
 
 const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),

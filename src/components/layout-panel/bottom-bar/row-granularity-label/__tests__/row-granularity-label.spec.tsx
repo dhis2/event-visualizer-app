@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event'
 import type { OutputType, RootState } from '@types'
 import { describe, it, expect } from 'vitest'
 import { RowGranularityLabel } from '../row-granularity-label'
+import classes from '../styles/row-granularity-label.module.css'
 
 const trackerStage = {
     id: 's1',
@@ -118,13 +119,34 @@ describe('RowGranularityLabel', () => {
             buildMockOptions('EVENT', ['s1.de1', 's2.de1'])
         )
 
-        expect(screen.getByText('One row for each Visit')).toBeInTheDocument()
+        expect(screen.getByTestId('row-granularity-label')).toHaveClass(
+            classes.unavailable
+        )
 
         await userEvent.hover(screen.getByText('One row for each Visit'))
 
         await waitFor(() => {
             expect(
                 screen.getByText('Not valid with multiple programs')
+            ).toBeInTheDocument()
+        })
+    })
+
+    it('mutes an enrollment list built on an event program', async () => {
+        await renderWithAppWrapper(
+            <RowGranularityLabel />,
+            buildMockOptions('ENROLLMENT', ['s2.de1'])
+        )
+
+        expect(screen.getByTestId('row-granularity-label')).toHaveClass(
+            classes.unavailable
+        )
+
+        await userEvent.hover(screen.getByText('One row for each Enrollment'))
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('Not valid with event programs')
             ).toBeInTheDocument()
         })
     })
@@ -155,5 +177,8 @@ describe('RowGranularityLabel', () => {
         expect(
             screen.queryByText('Not valid with multiple programs')
         ).not.toBeInTheDocument()
+        expect(screen.getByTestId('row-granularity-label')).not.toHaveClass(
+            classes.unavailable
+        )
     })
 })
