@@ -151,19 +151,6 @@ describe('CellValueAxis', () => {
         expect(getTrigger()).toHaveTextContent('Average')
     })
 
-    it('falls back to the raw id when the cell value has no metadata', async () => {
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({
-                columns: ['s1.de1'],
-                cellValue: { id: 's9.unknown', aggregationType: 'SUM' },
-            })
-        )
-
-        expect(getTrigger()).toHaveTextContent('s9.unknown')
-        expect(getTrigger()).toHaveTextContent('Sum')
-    })
-
     it('offers no aggregation or reset control when showing Count', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,

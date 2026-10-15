@@ -74,10 +74,6 @@ export const CellValueAxis: FC = () => {
         [dispatch, cellValue]
     )
 
-    /* A cell value whose metadata never arrived still has to render something,
-     * so the raw id stands in for the name. */
-    const name = cellValue && (cellValueMetadata?.name ?? cellValue.id)
-
     return (
         <div
             ref={setNodeRef}
@@ -96,7 +92,9 @@ export const CellValueAxis: FC = () => {
                             className={classes.text}
                             data-test="cell-value-label"
                         >
-                            <span className={classes.name}>{name}</span>
+                            <span className={classes.name}>
+                                {cellValueMetadata?.name}
+                            </span>
                             {suffix && (
                                 <span
                                     className={classes.suffix}
