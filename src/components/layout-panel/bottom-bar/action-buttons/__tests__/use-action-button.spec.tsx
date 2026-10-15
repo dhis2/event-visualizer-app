@@ -577,6 +577,31 @@ describe('useActionButton for Enrollment button', () => {
         })
     })
 
+    it('returns correct result for: PT, cell value of the TET already in the layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    cellValue: {
+                        id: metadata['p2.p2s1.d1'].id,
+                        aggregationType: 'SUM',
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        expect(result.current.tooltipConfig).not.toEqual({
+            content: 'Not valid with multiple tracked entity types',
+        })
+    })
+
     it('returns correct result for: LL, event program', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('ENROLLMENT'),

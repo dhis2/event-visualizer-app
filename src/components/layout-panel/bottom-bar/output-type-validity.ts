@@ -257,6 +257,12 @@ export const getOutputTypeTooltipConfig = ({
             .filter(Boolean)
     )
 
+    // Unique TET ids in layout and value axis
+    const selectedTetIds = new Set(tetIdsInLayout)
+    if (cellValueContext.tetId) {
+        selectedTetIds.add(cellValueContext.tetId)
+    }
+
     const programMetadata = programIds[0]
         ? metadataStore.getProgramMetadataItem(programIds[0])
         : undefined
@@ -303,12 +309,7 @@ export const getOutputTypeTooltipConfig = ({
                 hasCompletedOnInLayout:
                     layoutDimensionIds.includes('completed'),
                 hasMultipleProgramsSelected,
-                hasMultipleTetSelected:
-                    new Set(
-                        [...tetIdsInLayout, cellValueContext.tetId].filter(
-                            Boolean
-                        )
-                    ).size > 1,
+                hasMultipleTetSelected: selectedTetIds.size > 1,
                 hasNoTetInLayout: !tetId,
                 hasProgramIndicatorsInLayout:
                     dimensionTypeCount('PROGRAM_INDICATOR') > 0,
