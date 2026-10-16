@@ -17,7 +17,8 @@ export const BottomBar: FC = () => {
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const currentVis = useAppSelector(getCurrentVis)
-    const hasVisualizationInCanvas = !isVisualizationEmpty(currentVis)
+    const shouldShowRowGranularityLabel =
+        !isVisualizationEmpty(currentVis) && visualizationType === 'LINE_LIST'
 
     return (
         <div
@@ -38,10 +39,9 @@ export const BottomBar: FC = () => {
                             <TrackedEntityInstanceButton />
                             <EnrollmentButton />
                             <EventButton />
-                            {hasVisualizationInCanvas &&
-                                visualizationType === 'LINE_LIST' && (
-                                    <RowGranularityLabel />
-                                )}
+                            {shouldShowRowGranularityLabel && (
+                                <RowGranularityLabel />
+                            )}
                         </>
                     )}
                 </div>
