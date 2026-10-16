@@ -178,17 +178,15 @@ export const resolveLayoutContext = (
     }
 }
 
-/* The same context for the cell value, which sits outside the layout. Unlike
- * the layout's ids, the cell value's metadata is not guaranteed to be in the
- * store — it can name a dimension of a program the user has since navigated
- * away from — so a miss yields an empty context rather than throwing. */
+/* The same context for the cell value, which sits outside the layout. A loaded
+ * visualization registers its value under the plain id the API returns, with no
+ * program, stage or tracked entity type, so it contributes no context — unlike
+ * the layout's compound ids, which carry theirs and are read with the throwing
+ * getter. */
 export const resolveCellValueContext = (
     cellValueId: string | undefined,
     metadataStore: MetadataStore
 ): LayoutContext => {
-    /* A loaded visualization registers its value under the plain dimension id
-     * the API returns, with no program, stage or tracked entity type, so such
-     * a cell value contributes no context. */
     const dim = cellValueId
         ? metadataStore.getDimensionMetadataItem(cellValueId)
         : undefined
