@@ -113,7 +113,12 @@ export const useDimensionItemDnd = ({
             populateMetadata,
             isLayoutBlocked: resolvedIsLayoutBlocked,
             layoutBlockedMessage: resolvedLayoutBlockedMessage,
-            canBeCellValue: isValidCellValueDimension(dimension),
+            /* Blocked from the layout means blocked from the cell value too:
+             * the only such dimension that is numeric comes from another
+             * tracked entity type, which no output type accepts. */
+            canBeCellValue:
+                isValidCellValueDimension(dimension) &&
+                !resolvedIsLayoutBlocked,
         }),
         [
             dimension,

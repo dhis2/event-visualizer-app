@@ -45,9 +45,12 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         getVisUiConfigConditionsByDimension(state, dimensionId)
     )
 
-    /* A line list has no cell value axis to send it to. */
+    /* A line list has no cell value axis to send it to, and a dimension
+     * blocked from the layout cannot be its cell value either. */
     const canBeCellValue =
-        visType !== 'LINE_LIST' && isValidCellValueDimension(dimension)
+        visType !== 'LINE_LIST' &&
+        isValidCellValueDimension(dimension) &&
+        layoutBlockedMessage === null
     /* Grouping lives in the same entry but is seeded automatically, so only an
      * explicit filter counts as something the user would lose. */
     const hasFilters = Boolean(conditions.condition?.length)

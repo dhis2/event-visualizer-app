@@ -4,11 +4,7 @@ import type {
     CollisionDetection,
     DroppableContainer,
 } from '@dnd-kit/core'
-import {
-    getActiveDragData,
-    isAxisContainerData,
-    isCellValueDroppableData,
-} from './dnd-data'
+import { getActiveDragData, isAxisContainerData } from './dnd-data'
 import type { AxisContainerDroppableData } from './types'
 
 /**
@@ -151,20 +147,11 @@ export const collisionDetector: CollisionDetection = ({
         return collisions
     }
 
-    const activeDragData = getActiveDragData(active)
-    /* A layout-blocked drag — a dimension that cannot go in the current layout —
-     * has no valid target among the layout axes. The cell value axis judges a
-     * dimension on numeric-ness alone, so it stays reachable for one it would
-     * accept. For one it would not, the drag has nowhere left to go: offering
-     * the axis anyway would let the drop be rejected with an alert, under an
-     * overlay that says the whole layout is closed. */
-    const candidateContainers = activeDragData?.isLayoutBlocked
-        ? droppableContainers.filter(
-              (container) =>
-                  activeDragData.canBeCellValue &&
-                  isCellValueDroppableData(container.data.current)
-          )
-        : droppableContainers
+    /* A dimension that cannot go in the current layout cannot be its cell value
+     * either, so a layout-blocked drag has nowhere to land. */
+    if (getActiveDragData(active)?.isLayoutBlocked) {
+        return collisions
+    }
 
     // Build a small rect centered on the pointer so collision detection
     // stays aligned with the cursor-snapped DragOverlay.
@@ -183,7 +170,7 @@ export const collisionDetector: CollisionDetection = ({
     let maxAxisIntersectionRatio = 0
     let maxItemIntersectionRatio = 0
 
-    for (const droppableContainer of candidateContainers) {
+    for (const droppableContainer of droppableContainers) {
         const intersectionRatio = getIntersectionRatio(
             droppableContainer.rect.current,
             draggedItemRect
@@ -221,7 +208,7 @@ export const collisionDetector: CollisionDetection = ({
         const lineEndMatch = computeLineEndMatch({
             draggedItemRect,
             axis: axisData.axis,
-            droppableContainers: candidateContainers,
+            droppableContainers,
         })
         if (lineEndMatch) {
             collisions.push(lineEndMatch)
