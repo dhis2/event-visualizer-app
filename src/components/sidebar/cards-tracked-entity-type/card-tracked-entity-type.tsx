@@ -98,7 +98,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 fields: [
                     'id',
                     `${displayNameProperty}~rename(name)`,
-                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet]]`,
+                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet,aggregationType]]`,
                 ],
             },
         }),

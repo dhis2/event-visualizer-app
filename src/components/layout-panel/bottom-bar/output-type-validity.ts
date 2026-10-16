@@ -1,6 +1,11 @@
+import { type TooltipConfig } from '@components/layout-panel/bottom-bar/tooltip-config'
 import i18n from '@dhis2/d2-i18n'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
-import { isDimensionInLayout, resolveLayoutContext } from '@modules/layout'
+import {
+    isDimensionInLayout,
+    resolveCellValueContext,
+    resolveLayoutContext,
+} from '@modules/layout'
 import {
     selectLayoutAllDimensionIds,
     type VisUiConfigState,
@@ -13,16 +18,13 @@ import type {
 } from '@types'
 
 /* The output types the bottom bar offers for a visualization type. A pivot
- * table has no tracked entity output; its third button is the custom value
- * variant of EVENT, not an output type of its own. */
+ * table has no tracked entity output. */
 export const getAvailableOutputTypes = (
     visualizationType: VisualizationType
 ): OutputType[] =>
     visualizationType === 'PIVOT_TABLE'
         ? ['ENROLLMENT', 'EVENT']
         : ['TRACKED_ENTITY_INSTANCE', 'ENROLLMENT', 'EVENT']
-
-export type TooltipConfig = { content: string; openDelay?: number } | undefined
 
 const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),
@@ -55,16 +57,16 @@ const getCategoryTooltipConfig = ({
 
 type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
-    hasMultipleProgramStagesInLayout: boolean
+    hasMultipleProgramsSelected: boolean
+    hasMultipleProgramStagesSelected: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
 
 const getEventTooltipConfig = ({
     hasNoProgramInLayout,
-    hasMultipleProgramsInLayout,
-    hasMultipleProgramStagesInLayout,
+    hasMultipleProgramsSelected,
+    hasMultipleProgramStagesSelected,
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipConfigParams): TooltipConfig => {
@@ -73,7 +75,7 @@ const getEventTooltipConfig = ({
     }
 
     if (
-        hasMultipleProgramsInLayout &&
+        hasMultipleProgramsSelected &&
         (visualizationType === 'LINE_LIST' ||
             visualizationType === 'PIVOT_TABLE')
     ) {
@@ -84,7 +86,7 @@ const getEventTooltipConfig = ({
         return getRegistrationOuTooltipConfig()
     }
 
-    if (hasMultipleProgramStagesInLayout) {
+    if (hasMultipleProgramStagesSelected) {
         return { content: i18n.t('Not valid with multiple program stages') }
     }
 
@@ -95,7 +97,7 @@ type EnrollmentTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
+    hasMultipleProgramsSelected: boolean
     hasNoProgramInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
@@ -106,7 +108,7 @@ const getEnrollmentTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
-    hasMultipleProgramsInLayout,
+    hasMultipleProgramsSelected,
     isRegistrationOuInLayout,
     visualizationType,
 }: EnrollmentTooltipConfigParams): TooltipConfig => {
@@ -115,7 +117,7 @@ const getEnrollmentTooltipConfig = ({
     }
 
     if (
-        hasMultipleProgramsInLayout &&
+        hasMultipleProgramsSelected &&
         (visualizationType === 'LINE_LIST' ||
             visualizationType === 'PIVOT_TABLE')
     ) {
@@ -141,8 +143,8 @@ type TrackedEntityInstanceTooltipConfigParams = {
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasCompletedOnInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
-    hasMultipleTetInLayout: boolean
+    hasMultipleProgramsSelected: boolean
+    hasMultipleTetSelected: boolean
     hasNoTetInLayout: boolean
     hasProgramIndicatorsInLayout: boolean
     visualizationType: string
@@ -153,8 +155,8 @@ const getTrackedEntityInstanceTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasCompletedOnInLayout,
-    hasMultipleProgramsInLayout,
-    hasMultipleTetInLayout,
+    hasMultipleProgramsSelected,
+    hasMultipleTetSelected,
     hasNoTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
@@ -165,13 +167,13 @@ const getTrackedEntityInstanceTooltipConfig = ({
         }
     }
 
-    if (hasMultipleTetInLayout) {
+    if (hasMultipleTetSelected) {
         return {
             content: i18n.t('Not valid with multiple tracked entity types'),
         }
     }
 
-    if (hasMultipleProgramsInLayout && visualizationType === 'PIVOT_TABLE') {
+    if (hasMultipleProgramsSelected && visualizationType === 'PIVOT_TABLE') {
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
@@ -225,6 +227,19 @@ export const getOutputTypeTooltipConfig = ({
         metadataStore
     )
 
+    /* The cell value is not a layout dimension, but it carries the same
+     * program/stage/TET context and the output type has to be valid for it too
+     * — a cell value from another program is what the "multiple programs" rule
+     * is there to catch. Only a pivot table has one: in a line list it is
+     * neither shown nor sent, so it must not make an output type look invalid
+     * for a reason nothing on screen explains. */
+    const cellValueContext = resolveCellValueContext(
+        visualizationType === 'PIVOT_TABLE'
+            ? visUiConfig.cellValue?.id
+            : undefined,
+        metadataStore
+    )
+
     const dimensionTypeCount = (dimensionType: string): number =>
         layoutDimensionIds.filter(
             (dimensionId) =>
@@ -242,14 +257,23 @@ export const getOutputTypeTooltipConfig = ({
             .filter(Boolean)
     )
 
+    // Unique TET ids in layout and value axis
+    const selectedTetIds = new Set(tetIdsInLayout)
+    if (cellValueContext.tetId) {
+        selectedTetIds.add(cellValueContext.tetId)
+    }
+
     const programMetadata = programIds[0]
         ? metadataStore.getProgramMetadataItem(programIds[0])
         : undefined
     const hasCategoryInLayout = dimensionTypeCount('CATEGORY') > 0
     const hasCategoryOptionGroupSetInLayout =
         dimensionTypeCount('CATEGORY_OPTION_GROUP_SET') > 0
+    /* Layout-only: a cell value on its own is not a layout, so it must not make
+     * an empty one look valid. */
     const hasNoProgramInLayout = programIds.length === 0
-    const hasMultipleProgramsInLayout = programIds.length > 1
+    const hasMultipleProgramsSelected =
+        new Set([...programIds, ...cellValueContext.programIds]).size > 1
     const isRegistrationOuInLayout = tetId
         ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
         : false
@@ -258,8 +282,12 @@ export const getOutputTypeTooltipConfig = ({
         case 'EVENT':
             return getEventTooltipConfig({
                 hasNoProgramInLayout,
-                hasMultipleProgramsInLayout,
-                hasMultipleProgramStagesInLayout: programStageIds.length > 1,
+                hasMultipleProgramsSelected,
+                hasMultipleProgramStagesSelected:
+                    new Set([
+                        ...programStageIds,
+                        ...cellValueContext.programStageIds,
+                    ]).size > 1,
                 isRegistrationOuInLayout,
                 visualizationType,
             })
@@ -269,7 +297,7 @@ export const getOutputTypeTooltipConfig = ({
                 hasCategoryInLayout,
                 hasCategoryOptionGroupSetInLayout,
                 hasNoProgramInLayout,
-                hasMultipleProgramsInLayout,
+                hasMultipleProgramsSelected,
                 isRegistrationOuInLayout,
                 visualizationType,
             })
@@ -280,8 +308,8 @@ export const getOutputTypeTooltipConfig = ({
                 hasCategoryOptionGroupSetInLayout,
                 hasCompletedOnInLayout:
                     layoutDimensionIds.includes('completed'),
-                hasMultipleProgramsInLayout,
-                hasMultipleTetInLayout: tetIdsInLayout.size > 1,
+                hasMultipleProgramsSelected,
+                hasMultipleTetSelected: selectedTetIds.size > 1,
                 hasNoTetInLayout: !tetId,
                 hasProgramIndicatorsInLayout:
                     dimensionTypeCount('PROGRAM_INDICATOR') > 0,

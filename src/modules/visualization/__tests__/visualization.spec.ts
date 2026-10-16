@@ -349,6 +349,43 @@ describe('getVisualizationUiConfig', () => {
         }
     )
 
+    /* The result is merged into the existing visUiConfig, so the key has to be
+     * present-but-undefined to clear a previously loaded cell value rather than
+     * leaving it in place. */
+    it('emits cellValue as an own key even when the saved vis has no value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(Object.hasOwn(result, 'cellValue')).toBe(true)
+        expect(result.cellValue).toBeUndefined()
+    })
+
+    it('maps a saved value and aggregation type onto the cell value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+            value: { id: 's1.de1' },
+            aggregationType: 'AVERAGE',
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(result.cellValue).toEqual({
+            id: 's1.de1',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
     it('extracts option fields from the saved vis and overrides the base options', () => {
         const input = {
             type: 'LINE_LIST',
@@ -474,6 +511,36 @@ describe('getSaveableVisualization', () => {
         const s0 = (saved.sorting as Array<Record<string, unknown>>)[0]
         expect(s0.dimension).toBe('someDim')
         expect(s0.direction).toBe('DESC')
+    })
+
+    it('reduces the cell value to a plain id, keeping the aggregation type', () => {
+        const vis = {
+            value: {
+                id: 'A03MvHHogjR.UXz7xuGCEhU',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+                valueType: 'NUMBER',
+                dimensionItemType: 'DATA_ELEMENT',
+            },
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toEqual({
+            id: 'UXz7xuGCEhU',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
+    it('leaves the cell value out when the visualization has none', () => {
+        const vis = {
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toBeUndefined()
     })
 
     it('sets sorting to undefined when sorting is not provided or empty', () => {

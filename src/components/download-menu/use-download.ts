@@ -186,7 +186,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     req = req.withLimit(visualization.topLimit)
                 }
 
-                // add custom value and aggregationType
                 if (visualization.value && visualization.aggregationType) {
                     req = req
                         .withValue(visualization.value.id)

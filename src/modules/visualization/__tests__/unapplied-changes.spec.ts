@@ -18,7 +18,7 @@ const STAGE_ID = 'stage1'
 const DIMENSION_ID = `${STAGE_ID}.de1`
 const OPTION_SET_ID = 'optionSet1'
 const LEGEND_SET_ID = 'legendSet1'
-const CUSTOM_VALUE_ID = 'de2'
+const CELL_VALUE_ID = 'de2'
 
 const metadataStore = createMetadataStoreStub({
     dimensions: {
@@ -110,13 +110,12 @@ describe('detecting unapplied changes', () => {
         expect(hasUnappliedChanges(sortedVis)).toBe(false)
     })
 
-    /* The builder only populates the custom value fields when the current vis
-     * already carries one, so configuring a custom value against a vis without
-     * one leaves both sides undefined. */
-    it('reports no change when a custom value is configured on a visualization that has none', () => {
+    /* Only a pivot table carries a cell value, so configuring one against a
+     * line list leaves both sides undefined. */
+    it('reports no change when a cell value is configured on a line list', () => {
         expect(
             hasUnappliedChanges(baseCurrentVis, {
-                customValue: { id: CUSTOM_VALUE_ID, aggregationType: 'SUM' },
+                cellValue: { id: CELL_VALUE_ID, aggregationType: 'SUM' },
             })
         ).toBe(false)
     })
@@ -234,11 +233,11 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
         ).toBe(false)
     })
 
-    it('reports no change for a visualization carrying a custom value with its name and aggregation type', () => {
+    it('reports no change for a visualization carrying a cell value with its name and aggregation type', () => {
         const loadedVis = createLoadedVis(createLoadedColumn(), {
             type: 'PIVOT_TABLE',
             value: {
-                id: CUSTOM_VALUE_ID,
+                id: CELL_VALUE_ID,
                 name: 'Weight in kg',
                 aggregationType: 'AVERAGE',
             },
@@ -250,17 +249,16 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
         ).toBe(false)
     })
 
-    /* Known gap, pending the custom value rework: for a custom value
-     * visualization saved without a top-level aggregationType the ui config
-     * defaults the custom value's aggregation type to DEFAULT, which is not
-     * the SUM the options default to, so the two sides differ on
-     * aggregationType alone and the notice appears with nothing changed.
-     * Accommodating this would mean custom-value-specific logic in the
-     * comparison, which the rework will make obsolete. */
-    it('wrongly reports a change for a custom value visualization with no persisted aggregation type', () => {
+    /* Known gap: for a cell value visualization saved without a top-level
+     * aggregationType the ui config defaults the cell value's aggregation type
+     * to DEFAULT, which is not the SUM the options default to, so the two sides
+     * differ on aggregationType alone and the notice appears with nothing
+     * changed. Closing it would mean cell-value-specific logic in the
+     * comparison. */
+    it('wrongly reports a change for a cell value visualization with no persisted aggregation type', () => {
         const loadedVis = createLoadedVis(createLoadedColumn(), {
             type: 'PIVOT_TABLE',
-            value: { id: CUSTOM_VALUE_ID },
+            value: { id: CELL_VALUE_ID },
         })
 
         expect(

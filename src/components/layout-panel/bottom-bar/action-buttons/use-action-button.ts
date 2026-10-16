@@ -2,28 +2,17 @@ import { getOutputTypeTooltipConfig } from '@components/layout-panel/bottom-bar/
 import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
-import {
-    getVisUiConfigOutputType,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice'
+import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
-/* The two table kinds that share the EVENT output type: a plain event table
- * and a custom value table. Used to label the EVENT/custom-value buttons. */
-export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
-
-export const useActionButton = (
-    buttonType: OutputType,
-    buttonVariant?: EventOutputTypeVariant
-) => {
+export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const visUiConfig = useAppSelector((state) => state.visUiConfig)
     const { tetId, programIds } = useLayoutContext()
     const metadataStore = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
-    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
     const firstProgramMetadata = useMemo(
         () =>
@@ -42,22 +31,11 @@ export const useActionButton = (
         if (isVisualizationEmpty(currentVis)) {
             return 'create'
         } else if (outputType === buttonType) {
-            if (
-                visualizationType === 'PIVOT_TABLE' &&
-                buttonType === 'EVENT' &&
-                buttonVariant !== undefined
-            ) {
-                const hasCustomValue = Boolean(currentVis.value?.id)
-                const activeVariant: EventOutputTypeVariant = hasCustomValue
-                    ? 'CUSTOM_VALUE'
-                    : 'EVENT'
-                return activeVariant === buttonVariant ? 'update' : 'switch'
-            }
             return 'update'
         } else {
             return 'switch'
         }
-    }, [buttonType, buttonVariant, currentVis, outputType, visualizationType])
+    }, [buttonType, currentVis, outputType])
 
     const tooltipConfig = useMemo(
         () =>

@@ -11,6 +11,7 @@ import {
     type SuffixContext,
 } from '@modules/dimension/suffix'
 import {
+    getVisUiConfigCellValue,
     getVisUiConfigLayout,
     getVisUiConfigLayoutAllDimensionIds,
 } from '@store/vis-ui-config-slice'
@@ -87,10 +88,15 @@ const useSuffixContext = (dimensionIds: string[]): SuffixContextResult => {
 
 /* Turns dimension ids into LayoutDimensions, each with its suffix worked out
  * across the whole set passed in. */
+/* `scopeIds` is the set the suffixes are worked out against, which can be wider
+ * than the dimensions being built — the cell value is not in the layout but
+ * still counts towards how many programs and stages are in play. Only
+ * `dimensionIds` must have metadata present. */
 export const useDimensionsWithSuffixes = (
-    dimensionIds: string[]
+    dimensionIds: string[],
+    scopeIds: string[] = dimensionIds
 ): Record<string, LayoutDimension> => {
-    const { context, dimensionMetadataItems } = useSuffixContext(dimensionIds)
+    const { context, dimensionMetadataItems } = useSuffixContext(scopeIds)
 
     return useMemo(() => {
         return dimensionIds.reduce<Record<string, LayoutDimension>>(
@@ -112,8 +118,19 @@ export const useDimensionsWithSuffixes = (
  * Suffixes are worked out across the whole layout, not per axis. */
 export const useLayoutDimensions = (): LayoutDimensionsByAxis => {
     const allDimensionIds = useAppSelector(getVisUiConfigLayoutAllDimensionIds)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
     const { columns, rows, filters } = useAppSelector(getVisUiConfigLayout)
-    const dimensionsLookup = useDimensionsWithSuffixes(allDimensionIds)
+    const scopeIds = useMemo(
+        () =>
+            cellValue && !allDimensionIds.includes(cellValue.id)
+                ? [...allDimensionIds, cellValue.id]
+                : allDimensionIds,
+        [allDimensionIds, cellValue]
+    )
+    const dimensionsLookup = useDimensionsWithSuffixes(
+        allDimensionIds,
+        scopeIds
+    )
 
     return useMemo(
         () => ({
@@ -143,6 +160,6 @@ export const useDimensionSuffix = (dimensionId: string): string | undefined => {
 
     return useMemo(() => {
         const item = dimensionMetadataItems[dimensionId]
-        return getDimensionSuffix(item, context)
+        return item ? getDimensionSuffix(item, context) : undefined
     }, [dimensionMetadataItems, dimensionId, context])
 }
