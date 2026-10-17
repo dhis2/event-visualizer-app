@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
+"POT-Creation-Date: 2026-10-08T14:42:57.891Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: easylin <lin_xd@126.com>, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/hisp-uio/teams/100509/zh_CN/)\n"
@@ -781,6 +781,20 @@ msgstr ""
 msgid "Delete"
 msgstr "删除"
 
+msgid "Save as a new visualization?"
+msgstr ""
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+
+msgid "Save a copy with the new name instead?"
+msgstr ""
+
+msgid "Save as new"
+msgstr "另存为新"
+
 msgid "Open"
 msgstr "打开"
 
@@ -798,11 +812,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr ""
 
-msgid "Rename successful"
-msgstr "重命名成功"
-
 msgid "Rename failed"
 msgstr "重命名失败"
+
+msgid "Rename successful"
+msgstr "重命名成功"
 
 msgid "Hide layout"
 msgstr ""
