@@ -1,3 +1,4 @@
+import { MetadataStore as MetadataStoreClass } from '@modules/metadata/store'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {
@@ -12,6 +13,7 @@ import {
     buildAxis,
     collectProgramDimensions,
     convertLayoutForVisType,
+    resolveCellValueContext,
     resolveDimensionTetId,
     resolveLayoutContext,
     resolveTeiFields,
@@ -1293,5 +1295,29 @@ describe('convertLayoutForVisType', () => {
             'numericDe',
             'textDe',
         ])
+    })
+})
+
+describe('resolveCellValueContext', () => {
+    /* A loaded visualization registers its value under the plain dimension id
+     * the API returns, carrying no program or stage. The real store is used
+     * because the stub does not reproduce that registration. */
+    it('contributes no context for a cell value loaded from a saved visualization', () => {
+        const store = new MetadataStoreClass({})
+        store.addMetadata({
+            loadedValue: {
+                id: 'loadedValue',
+                name: 'MCH Weight (g)',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+                aggregationType: 'AVERAGE',
+            },
+        })
+
+        expect(resolveCellValueContext('loadedValue', store)).toEqual({
+            programIds: [],
+            programStageIds: [],
+            tetId: null,
+        })
     })
 })

@@ -2,6 +2,7 @@ import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-pro
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { isValidCellValueDimension } from '@modules/dimension/cell-value'
 import type { Axis } from '@types'
 import { useMemo, type CSSProperties } from 'react'
 import type { LayoutDimension } from './chip'
@@ -37,6 +38,7 @@ export const useChipDnd = ({
             overlayItemProps: chipBaseProps,
             insertAfter,
             isLayoutBlocked: false,
+            canBeCellValue: isValidCellValueDimension(dimension),
         }),
         [axisId, dimension, chipBaseProps, insertAfter]
     )
