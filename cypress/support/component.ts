@@ -35,16 +35,3 @@ declare global {
     }
 }
 /* eslint-enable @typescript-eslint/no-namespace */
-
-/* `@dhis2-ui/select` debounces its window-resize handler by 50ms but only
- * removes the listener on unmount, without cancelling a pending call. A resize
- * landing just before teardown — which Cypress does between tests — fires the
- * timer against a null ref and throws. Any spec mounting a Select, directly or
- * through Pagination, can fail on it at random. */
-const isSelectResizeAfterUnmount = (error: Error): boolean =>
-    error.message.includes("'offsetWidth'") &&
-    error.message.includes('this.inputRef.current')
-
-Cypress.on('uncaught:exception', (error) =>
-    isSelectResizeAfterUnmount(error) ? false : undefined
-)
