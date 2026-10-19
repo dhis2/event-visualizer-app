@@ -55,17 +55,19 @@ export const buildAxis = (
         const itemIds = visUiConfig.itemsByDimension[id]
         const conditions = visUiConfig.conditionsByDimension[id]
         const repetitions = visUiConfig.repetitionsByDimension[id]
-        const dimension = toEventVisualizationDimensionId({
+        const dimensionId = toEventVisualizationDimensionId({
             dimensionId: dim.dimensionId ?? id,
             programId: dim.programId,
             outputType: visUiConfig.outputType,
             visualizationType: visUiConfig.visualizationType,
         })
         const programId =
-            dimension === 'registrationOu'
+            dimensionId === 'registrationOu'
                 ? getLayoutProgramId(visUiConfig, metadataStore)
                 : dim.programId
-        const dimensionRecord: DimensionRecord = { dimension }
+        const dimensionRecord: DimensionRecord = {
+            dimension: dimensionId,
+        }
         if (itemIds?.length) {
             dimensionRecord.items = itemIds.map((itemId) => ({ id: itemId }))
         }
