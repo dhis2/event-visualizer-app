@@ -127,7 +127,7 @@ export const toEventVisualizationDimensionId = ({
     if (dimensionId !== 'enrollmentOu') {
         return dimensionId
     }
-    const shouldRewriteToOu =
-        outputType === 'ENROLLMENT' || visualizationType === 'PIVOT_TABLE'
-    return shouldRewriteToOu ? 'ou' : 'enrollmentOu'
+    return outputType === 'ENROLLMENT' || visualizationType === 'PIVOT_TABLE'
+        ? 'ou'
+        : 'enrollmentOu'
 }
