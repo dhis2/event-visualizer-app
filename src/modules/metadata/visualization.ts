@@ -247,10 +247,9 @@ const getFixedDimensionOverrides = (
         }
     }
 
-    if (visualization.trackedEntityType) {
-        for (const dim of getTrackedEntityTypeFixedDimensions(
-            visualization.trackedEntityType
-        )) {
+    const tetId = getTetId(visualization)
+    if (tetId) {
+        for (const dim of getTrackedEntityTypeFixedDimensions({ id: tetId })) {
             overrides[dim.id] = dim
         }
     }

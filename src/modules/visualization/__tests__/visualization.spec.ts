@@ -39,6 +39,7 @@ const testCases = {
                         },
                     ],
                     dimension: 'ou',
+                    program: { id: PID },
                 },
                 {
                     dimensionType: 'PROGRAM_INDICATOR',
@@ -107,7 +108,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                enrollmentOu: ['USER_ORGUNIT'],
+                [`${PID}.enrollmentOu`]: ['USER_ORGUNIT'],
                 bcgDoses: [],
                 lastName: [],
                 enrollmentDate: [],
@@ -129,7 +130,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'enrollmentOu',
+                    `${PID}.enrollmentOu`,
                     'bcgDoses',
                     'lastName',
                     'enrollmentDate',
@@ -157,6 +158,8 @@ const testCases = {
                         },
                     ],
                     dimension: 'ou',
+                    program: { id: PID },
+                    programStage: { id: SID },
                 },
                 {
                     dimensionType: 'PERIOD',
@@ -192,7 +195,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                enrollmentOu: ['USER_ORGUNIT'],
+                [`${SID}.ou`]: ['USER_ORGUNIT'],
                 enrollmentDate: [],
                 firstName: [],
                 bcgDoses: [],
@@ -207,7 +210,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'enrollmentOu',
+                    `${SID}.ou`,
                     'enrollmentDate',
                     'firstName',
                     'bcgDoses',
@@ -300,7 +303,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                'tetA.enrollmentOu': ['USER_ORGUNIT'],
+                'tetA.ou': ['USER_ORGUNIT'],
                 'tetA.focusName': [],
                 'tetA.localFocusId': [],
                 'tetA.area': [],
@@ -322,7 +325,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'tetA.enrollmentOu',
+                    'tetA.ou',
                     'tetA.focusName',
                     'tetA.localFocusId',
                     'tetA.area',
@@ -366,6 +369,34 @@ describe('getVisualizationUiConfig', () => {
         expect(Object.hasOwn(result, 'cellValue')).toBe(true)
         expect(result.cellValue).toBeUndefined()
     })
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'keys a saved registrationOu of a %s pivot table under its tracked entity type',
+        (outputType) => {
+            const input = {
+                type: 'PIVOT_TABLE',
+                outputType,
+                columns: [
+                    {
+                        dimension: 'registrationOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        items: [{ id: 'USER_ORGUNIT' }],
+                        program: { id: 'prog' },
+                    },
+                ],
+                rows: [],
+                filters: [],
+                programDimensions: [
+                    { id: 'prog', trackedEntityType: { id: 'tet' } },
+                ],
+            } as unknown as SavedVisualization
+
+            const result = getVisualizationUiConfig(input)
+
+            expect(result.layout.columns).toEqual(['tet.ou'])
+            expect(result.itemsByDimension['tet.ou']).toEqual(['USER_ORGUNIT'])
+        }
+    )
 
     it('maps a saved value and aggregation type onto the cell value', () => {
         const input = {

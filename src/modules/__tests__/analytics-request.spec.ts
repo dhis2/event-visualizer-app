@@ -47,13 +47,13 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         ).toBe(`${SID}.${UID}`)
     })
 
-    it('rewrites bare `ou` to `tetId.enrollmentOu` in TE', () => {
+    it('rewrites bare `ou` to `tetId.ou` in TE', () => {
         const vis = buildVis({
             outputType: 'TRACKED_ENTITY_INSTANCE',
             trackedEntityType: { id: TET, name: 'Person' },
         })
         expect(analyticsHeaderToCanonicalDimensionId('ouname', vis)).toBe(
-            `${TET}.enrollmentOu`
+            `${TET}.ou`
         )
     })
 
@@ -167,11 +167,10 @@ describe('getAnalyticsRequestDimensionName', () => {
         ).toBe(`${SID}.${UID}`)
     })
 
-    it('rewrites TE registration `enrollmentOu` to bare `ou`', () => {
+    it('keeps the TE registration `ou` bare', () => {
         expect(
             getAnalyticsRequestDimensionName({
-                dimensionId: 'enrollmentOu',
-                trackedEntityTypeId: TET,
+                dimensionId: 'ou',
                 outputType: 'TRACKED_ENTITY_INSTANCE',
             })
         ).toBe('ou')
@@ -181,7 +180,6 @@ describe('getAnalyticsRequestDimensionName', () => {
         expect(
             getAnalyticsRequestDimensionName({
                 dimensionId: 'created',
-                trackedEntityTypeId: TET,
                 outputType: 'TRACKED_ENTITY_INSTANCE',
             })
         ).toBe('CREATED')
@@ -206,6 +204,18 @@ describe('getAnalyticsRequestDimensionName', () => {
             })
         ).toBe('ou')
     })
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'emits `REGISTRATION_OU` for the registration org unit in %s',
+        (outputType) => {
+            expect(
+                getAnalyticsRequestDimensionName({
+                    dimensionId: 'ou',
+                    outputType,
+                })
+            ).toBe('REGISTRATION_OU')
+        }
+    )
 
     it('emits bare SCREAMING_SNAKE for enrollment-scoped dims in EVENT', () => {
         expect(
@@ -316,17 +326,29 @@ describe('getAnalyticsRequestHeaderName', () => {
         ).toBe(`${SID}.eventdate`)
     })
 
-    it('rewrites TE registration `enrollmentOu` to bare `ouname`', () => {
+    it('emits `ouname` for the TE registration `ou`', () => {
         expect(
             getAnalyticsRequestHeaderName({
-                dimensionId: 'enrollmentOu',
-                trackedEntityTypeId: TET,
+                dimensionId: 'ou',
                 visualization: buildVis({
                     outputType: 'TRACKED_ENTITY_INSTANCE',
                     trackedEntityType: { id: TET, name: 'Person' },
                 }),
             })
         ).toBe('ouname')
+    })
+
+    it('emits `ounamehierarchy` for the TE registration `ou` when showHierarchy is on', () => {
+        expect(
+            getAnalyticsRequestHeaderName({
+                dimensionId: 'ou',
+                visualization: buildVis({
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    trackedEntityType: { id: TET, name: 'Person' },
+                    showHierarchy: true,
+                }),
+            })
+        ).toBe('ounamehierarchy')
     })
 
     it('prefixes programId for enrollment-scoped dims in TE', () => {
@@ -350,6 +372,21 @@ describe('getAnalyticsRequestHeaderName', () => {
             })
         ).toBe('ouname')
     })
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'emits `registrationou` for the registration org unit in a %s pivot table',
+        (outputType) => {
+            expect(
+                getAnalyticsRequestHeaderName({
+                    dimensionId: 'ou',
+                    visualization: buildVis({
+                        type: 'PIVOT_TABLE',
+                        outputType,
+                    }),
+                })
+            ).toBe('registrationou')
+        }
+    )
 
     it('emits bare lowercase for enrollment-scoped dims in EVENT', () => {
         expect(
