@@ -1,7 +1,13 @@
 import { AXES } from '@constants/axis'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useDimensionMetadataItem,
+    useSetCellValue,
+} from '@hooks'
+import { isValidCellValueDimension } from '@modules/dimension/cell-value'
 import { getAxisName } from '@modules/layout'
 import {
     removeVisUiConfigLayoutDimensionFromAxis,
@@ -24,6 +30,19 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
 
     const dispatch = useAppDispatch()
     const visType = useAppSelector(getVisUiConfigVisualizationType)
+    const dimensionMetadata = useDimensionMetadataItem(dimensionId)
+    const setCellValue = useSetCellValue()
+
+    /* A line list has no cell value axis to send it to. */
+    const canBeCellValue =
+        visType !== 'LINE_LIST' && isValidCellValueDimension(dimensionMetadata)
+
+    const useAsValueHandler = useCallback(() => {
+        if (dimensionMetadata) {
+            setCellValue(dimensionMetadata)
+        }
+        onClose()
+    }, [dimensionMetadata, setCellValue, onClose])
 
     const axisItemHandler = useCallback(
         ({
@@ -87,7 +106,15 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
                     dataTest={`${dataTest}-item-move-${dimensionId}-to-${axisId}`}
                 />
             ))}
-            {applicableAxisIds.length > 0 && (
+            {canBeCellValue && (
+                <MenuItem
+                    key={`use-as-value-${dimensionId}`}
+                    onClick={useAsValueHandler}
+                    label={i18n.t('Use as value')}
+                    dataTest={`${dataTest}-item-use-as-value-${dimensionId}`}
+                />
+            )}
+            {(applicableAxisIds.length > 0 || canBeCellValue) && (
                 <MenuDivider key="menu-divider" dense />
             )}
             <MenuItem

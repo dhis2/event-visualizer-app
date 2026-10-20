@@ -103,9 +103,7 @@ export const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
 /* Dimension IDs that belong at TEI registration scope — prefixed with
  * trackedEntityTypeId when there is no program or stage context.
  * Must match what getTrackedEntityTypeFixedDimensions produces. */
-const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'enrollmentOu',
-])
+const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set(['ou'])
 
 /**
  * Constructs the canonical compound dimension ID from a DimensionRecord.

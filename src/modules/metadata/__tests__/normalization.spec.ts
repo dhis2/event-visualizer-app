@@ -38,6 +38,22 @@ describe('normalizeMetadataInputItem', () => {
         })
     })
 
+    /* The sidebar requests aggregationType so a dimension can be used as a cell
+     * value without a second round trip; nothing may strip it on the way in. */
+    it('preserves aggregationType from a sidebar dimension', () => {
+        const input = {
+            id: 'attr1',
+            name: 'Weight in kg',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            valueType: 'NUMBER',
+            aggregationType: 'AVERAGE',
+        } as unknown as MetadataInputItem
+
+        const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+        expect(result).toHaveProperty('aggregationType', 'AVERAGE')
+    })
+
     describe('object input with id resolution', () => {
         it('uses provided key over uid over id', () => {
             const input = {

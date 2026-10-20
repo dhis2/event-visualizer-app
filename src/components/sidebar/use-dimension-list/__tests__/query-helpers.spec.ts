@@ -177,7 +177,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:TEST_TYPE",
                   "order": "displayName:asc",
                   "pageSize": 10,
@@ -198,7 +198,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:TEST_TYPE",
                   "order": "displayShortName:asc",
                   "pageSize": 10,
@@ -222,7 +222,7 @@ describe('dimension query helpers', () => {
                 "params": {
                   "anotherParam": 123,
                   "customParam": "value",
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:TEST_TYPE",
                   "order": "displayName:asc",
                   "pageSize": 10,
@@ -289,7 +289,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:PROGRAM_ATTRIBUTE",
                   "order": "displayName:asc",
                   "pageSize": 10,
@@ -310,7 +310,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:DATA_ELEMENT",
                   "order": "displayName:asc",
                   "pageSize": 10,
@@ -330,7 +330,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:DATA_ELEMENT",
                   "order": "displayName:asc",
                   "pageSize": 10,
@@ -349,7 +349,7 @@ describe('dimension query helpers', () => {
             expect(result).toMatchInlineSnapshot(`
               {
                 "params": {
-                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
+                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet,aggregationType",
                   "filter": "dimensionType:eq:ORGANISATION_UNIT_GROUP_SET",
                   "order": "displayShortName:asc",
                   "pageSize": 10,

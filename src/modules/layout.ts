@@ -34,6 +34,17 @@ export const isDimensionInLayout = (
         axisDimensionIds.includes(dimensionId)
     )
 
+/* The registration org unit belongs to no program, but an EVENT or ENROLLMENT
+ * visualization stores it qualified with the one program it shows. */
+const getLayoutProgramId = (
+    visUiConfig: VisUiConfigState,
+    metadataStore: MetadataStore
+): string | undefined =>
+    resolveLayoutContext(
+        selectLayoutAllDimensionIds(visUiConfig),
+        metadataStore
+    ).programIds[0]
+
 export const buildAxis = (
     dimensionIds: string[],
     visUiConfig: VisUiConfigState,
@@ -44,13 +55,18 @@ export const buildAxis = (
         const itemIds = visUiConfig.itemsByDimension[id]
         const conditions = visUiConfig.conditionsByDimension[id]
         const repetitions = visUiConfig.repetitionsByDimension[id]
+        const dimensionId = toEventVisualizationDimensionId({
+            dimensionId: dim.dimensionId ?? id,
+            programId: dim.programId,
+            outputType: visUiConfig.outputType,
+            visualizationType: visUiConfig.visualizationType,
+        })
+        const programId =
+            dimensionId === 'registrationOu'
+                ? getLayoutProgramId(visUiConfig, metadataStore)
+                : dim.programId
         const dimensionRecord: DimensionRecord = {
-            dimension: toEventVisualizationDimensionId({
-                dimensionId: dim.dimensionId ?? id,
-                programId: dim.programId,
-                outputType: visUiConfig.outputType,
-                visualizationType: visUiConfig.visualizationType,
-            }),
+            dimension: dimensionId,
         }
         if (itemIds?.length) {
             dimensionRecord.items = itemIds.map((itemId) => ({ id: itemId }))
@@ -66,8 +82,8 @@ export const buildAxis = (
                 indexes: parseUiRepetitions(repetitions),
             }
         }
-        if (dim.programId) {
-            dimensionRecord.program = { id: dim.programId }
+        if (programId) {
+            dimensionRecord.program = { id: programId }
         }
         if (dim.programStageId) {
             dimensionRecord.programStage = { id: dim.programStageId }
@@ -175,6 +191,30 @@ export const resolveLayoutContext = (
         programIds: Array.from(programIds),
         programStageIds: Array.from(programStageIds),
         tetId,
+    }
+}
+
+/* The same context for the cell value, which sits outside the layout. A loaded
+ * visualization registers its value under the plain id the API returns, with no
+ * program, stage or tracked entity type, so it contributes no context — unlike
+ * the layout's compound ids, which carry theirs and are read with the throwing
+ * getter. */
+export const resolveCellValueContext = (
+    cellValueId: string | undefined,
+    metadataStore: MetadataStore
+): LayoutContext => {
+    const dim = cellValueId
+        ? metadataStore.getDimensionMetadataItem(cellValueId)
+        : undefined
+
+    if (!dim) {
+        return { programIds: [], programStageIds: [], tetId: null }
+    }
+
+    return {
+        programIds: dim.programId ? [dim.programId] : [],
+        programStageIds: dim.programStageId ? [dim.programStageId] : [],
+        tetId: resolveDimensionTetId(dim, metadataStore),
     }
 }
 

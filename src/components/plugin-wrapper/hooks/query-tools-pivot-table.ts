@@ -48,7 +48,6 @@ export const getLayoutDimensionMetadataNames = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
 ): Record<string, string> => {
-    const trackedEntityTypeId = visualization.trackedEntityType?.id
     const dimensions = [
         ...(visualization.columns ?? []),
         ...(visualization.rows ?? []),
@@ -65,7 +64,6 @@ export const getLayoutDimensionMetadataNames = (
                 dimensionId: dim.dimension,
                 programId: dim.program?.id,
                 programStageId: dim.programStage?.id,
-                trackedEntityTypeId,
                 visualization,
             })
             names[key] = name
@@ -75,9 +73,9 @@ export const getLayoutDimensionMetadataNames = (
     }, {})
 }
 
-/* Custom value is only sent when both value and aggregationType are set. Shared
+/* The value is only sent when both value and aggregationType are set. Shared
  * by the request builder and the identity so they can't disagree. */
-export const getCustomValueRequestParams = (
+export const getCellValueRequestParams = (
     visualization: CurrentVisualization
 ) =>
     visualization.value && visualization.aggregationType
@@ -88,7 +86,7 @@ export const getCustomValueRequestParams = (
         : undefined
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,
- * so sortOrder, topLimit, timeField and the custom value are part of the
+ * so sortOrder, topLimit, timeField and the value are part of the
  * identity rather than excluded from it. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
@@ -101,6 +99,6 @@ export const getBaseRequestIdentity = (
     showHierarchy: visualization.showHierarchy,
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
-    ...getCustomValueRequestParams(visualization),
+    ...getCellValueRequestParams(visualization),
     relativePeriodDate: relativePeriodDate ?? null,
 })

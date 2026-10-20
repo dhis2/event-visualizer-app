@@ -111,8 +111,8 @@ const metadata = {
         programId: 'p3',
         trackedEntityTypeId: 'tei2',
     },
-    'tei1.enrollmentOu': {
-        id: 'tei1.enrollmentOu',
+    'tei1.ou': {
+        id: 'tei1.ou',
         name: 'Registration org. unit',
         dimensionType: 'ORGANISATION_UNIT',
         valueType: 'ORGANISATION_UNIT',
@@ -312,6 +312,31 @@ describe('useActionButton for Event button', () => {
         })
     })
 
+    it('returns correct result for: PT, registration org. unit in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.ou'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toBeUndefined()
+    })
+
     it('returns correct result for: LL, registration org. unit in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),
@@ -323,7 +348,7 @@ describe('useActionButton for Event button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'LINE_LIST',
@@ -496,6 +521,31 @@ describe('useActionButton for Enrollment button', () => {
         })
     })
 
+    it('returns correct result for: PT, registration org. unit in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('ENROLLMENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.ou'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toBeUndefined()
+    })
+
     it('returns correct result for: LL, registration org. unit in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('ENROLLMENT'),
@@ -507,7 +557,7 @@ describe('useActionButton for Enrollment button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'LINE_LIST',
@@ -574,6 +624,31 @@ describe('useActionButton for Enrollment button', () => {
         expect(output.action).toEqual('create')
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
+        })
+    })
+
+    it('returns correct result for: PT, cell value of the TET already in the layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    cellValue: {
+                        id: metadata['p2.p2s1.d1'].id,
+                        aggregationType: 'SUM',
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        expect(result.current.tooltipConfig).not.toEqual({
+            content: 'Not valid with multiple tracked entity types',
         })
     })
 
@@ -818,7 +893,7 @@ describe('useActionButton for Tracked entity instance button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                             metadata['p2.p2s1.d1'].id,
                             metadata['p3.p3s1.d1'].id,
                         ],
@@ -1017,162 +1092,10 @@ describe('useActionButton for Tracked entity instance button', () => {
     })
 })
 
-describe('useActionButton for Custom value button', () => {
-    it('returns correct result for: PT, currentVis with outputType !== EVENT', async () => {
+describe('useActionButton for Event button with a cell value set', () => {
+    it('returns "update" for: PT, EVENT output, cell value active (currentVis has a value)', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                currentVis: {
-                    outputType: 'ENROLLMENT',
-                    type: 'PIVOT_TABLE',
-                },
-                dimensionSelection: {
-                    dataSourceId: metadata.p2.id,
-                },
-                visUiConfig: {
-                    layout: {
-                        columns: [metadata['p2.p2s1.d1'].id],
-                    },
-                    outputType: 'ENROLLMENT',
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('switch')
-        expect(output.tooltipConfig).toEqual(undefined)
-    })
-
-    it('returns correct result for: PT, currentVis with outputType === EVENT', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                currentVis: {
-                    outputType: 'EVENT',
-                    type: 'PIVOT_TABLE',
-                },
-                dimensionSelection: {
-                    dataSourceId: metadata.p2.id,
-                },
-                visUiConfig: {
-                    layout: {
-                        columns: [metadata['p2.p2s1.d1'].id],
-                    },
-                    outputType: 'EVENT',
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('switch')
-        expect(output.tooltipConfig).toEqual(undefined)
-    })
-
-    it('returns correct result for: PT, empty layout', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                dimensionSelection: {
-                    dataSourceId: metadata.p1.id,
-                },
-                visUiConfig: {
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content:
-                'Nothing selected. Add items to the layout to get started.',
-            openDelay: 1000,
-        })
-    })
-
-    it('returns correct result for: PT, no program', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                visUiConfig: {
-                    layout: {
-                        columns: [metadata['tei1.enrollmentOu'].id],
-                    },
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content: 'Not valid without a program',
-        })
-    })
-
-    it('returns correct result for: PT, multiple programs', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                dimensionSelection: {
-                    dataSourceId: metadata.p2.id,
-                },
-                visUiConfig: {
-                    layout: {
-                        columns: [
-                            metadata['p1.p1s1.d1'].id,
-                            metadata['p2.p2s1.d1'].id,
-                        ],
-                    },
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content: 'Not valid with multiple programs',
-        })
-    })
-
-    it('returns correct result for: PT, multiple program stages', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
-            createStoreWithPreloadedState({
-                dimensionSelection: {
-                    dataSourceId: metadata.p1.id,
-                },
-                visUiConfig: {
-                    layout: {
-                        columns: [
-                            metadata['p1.p1s1.d1'].id,
-                            metadata['p1.p1s2.d1'].id,
-                        ],
-                    },
-                    visualizationType: 'PIVOT_TABLE',
-                },
-            })
-        )
-
-        const output = result.current
-
-        expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content: 'Not valid with multiple program stages',
-        })
-    })
-
-    it('returns "update" for: PT, EVENT output, custom value active (currentVis has a value)', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
+            () => useActionButton('EVENT'),
             createStoreWithPreloadedState({
                 currentVis: {
                     outputType: 'EVENT',
@@ -1194,15 +1117,13 @@ describe('useActionButton for Custom value button', () => {
 
         expect(result.current.action).toEqual('update')
     })
-})
 
-describe('useActionButton for Event button in PIVOT_TABLE custom value mode', () => {
-    it('returns "switch" when a custom value is active (currentVis has a value)', async () => {
+    it('returns "switch" for: PT, ENROLLMENT output, cell value active', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'EVENT'),
+            () => useActionButton('EVENT'),
             createStoreWithPreloadedState({
                 currentVis: {
-                    outputType: 'EVENT',
+                    outputType: 'ENROLLMENT',
                     type: 'PIVOT_TABLE',
                     value: { id: metadata['p2.p2s1.d1'].id },
                 },
@@ -1213,7 +1134,7 @@ describe('useActionButton for Event button in PIVOT_TABLE custom value mode', ()
                     layout: {
                         columns: [metadata['p2.p2s1.d1'].id],
                     },
-                    outputType: 'EVENT',
+                    outputType: 'ENROLLMENT',
                     visualizationType: 'PIVOT_TABLE',
                 },
             })
@@ -1221,28 +1142,89 @@ describe('useActionButton for Event button in PIVOT_TABLE custom value mode', ()
 
         expect(result.current.action).toEqual('switch')
     })
+})
 
-    it('returns "update" when no custom value is active (currentVis has no value)', async () => {
+describe('useActionButton with a cell value from another program', () => {
+    const buildOptions = (columns: string[], cellValueId: string | undefined) =>
+        createStoreWithPreloadedState({
+            dimensionSelection: { dataSourceId: metadata.p1.id },
+            visUiConfig: {
+                layout: { columns },
+                visualizationType: 'PIVOT_TABLE',
+                cellValue: cellValueId
+                    ? { id: cellValueId, aggregationType: 'SUM' }
+                    : undefined,
+            },
+        })
+
+    it.each(['EVENT', 'ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'] as const)(
+        'disables the %s button when the cell value is from another program',
+        async (buttonType) => {
+            const { result } = await renderHookWithAppWrapper(
+                () => useActionButton(buttonType),
+                buildOptions(
+                    [metadata['p1.p1s1.d1'].id],
+                    metadata['p2.p2s1.d1'].id
+                )
+            )
+
+            expect(result.current.tooltipConfig).toEqual({
+                content: 'Not valid with multiple programs',
+            })
+        }
+    )
+
+    /* Cell value and layout are non-exclusive: the same dimension in both is
+     * an unusual but valid selection. */
+    it('accepts the same dimension in the layout and as the cell value', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT', 'EVENT'),
+            () => useActionButton('EVENT'),
+            buildOptions([metadata['p1.p1s1.d1'].id], metadata['p1.p1s1.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig).toBeUndefined()
+    })
+
+    it('flags a cell value from another stage of the same program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            buildOptions([metadata['p1.p1s1.d1'].id], metadata['p1.p1s2.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig).toEqual({
+            content: 'Not valid with multiple program stages',
+        })
+    })
+
+    /* A line list shows no cell value and never sends one, so a stale one must
+     * not disable an output type for a reason nothing on screen explains. */
+    it('ignores the cell value in a line list', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
             createStoreWithPreloadedState({
-                currentVis: {
-                    outputType: 'EVENT',
-                    type: 'PIVOT_TABLE',
-                },
-                dimensionSelection: {
-                    dataSourceId: metadata.p2.id,
-                },
+                dimensionSelection: { dataSourceId: metadata.p1.id },
                 visUiConfig: {
-                    layout: {
-                        columns: [metadata['p2.p2s1.d1'].id],
+                    layout: { columns: [metadata['p1.p1s1.d1'].id] },
+                    visualizationType: 'LINE_LIST',
+                    cellValue: {
+                        id: metadata['p2.p2s1.d1'].id,
+                        aggregationType: 'SUM',
                     },
-                    outputType: 'EVENT',
-                    visualizationType: 'PIVOT_TABLE',
                 },
             })
         )
 
-        expect(result.current.action).toEqual('update')
+        expect(result.current.tooltipConfig).toBeUndefined()
+    })
+
+    it('leaves an empty layout reported as empty, not as multi-program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            buildOptions([], metadata['p2.p2s1.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig?.content).toEqual(
+            'Nothing selected. Add items to the layout to get started.'
+        )
     })
 })

@@ -29,7 +29,6 @@ export const adaptDimensions = (
                     legendSetId: dim.legendSet?.id,
                     programId: dim.program?.id,
                     programStageId: dim.programStage?.id,
-                    trackedEntityTypeId: visualization.trackedEntityType?.id,
                     outputType: visualization.outputType,
                     repetitionIndex,
                 }),

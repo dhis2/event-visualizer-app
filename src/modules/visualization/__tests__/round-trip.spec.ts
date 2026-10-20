@@ -9,6 +9,7 @@ import enrollmentPivotTable from '@modules/visualization/__fixtures__/round-trip
 import eventLineListEventProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-event-program.json'
 import eventLineListTrackerProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-tracker-program.json'
 import eventPivotTableLegendGrouping from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-legend-grouping.json'
+import eventPivotTableRegistrationOu from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-registration-ou.json'
 import eventPivotTable from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table.json'
 import trackedEntityLineListOneProgram from '@modules/visualization/__fixtures__/round-trip/saved/tracked-entity-line-list-one-program.json'
 import trackedEntityLineListTrackedEntityType from '@modules/visualization/__fixtures__/round-trip/saved/tracked-entity-line-list-tracked-entity-type.json'
@@ -94,6 +95,18 @@ const savedCases: RoundTripCase[] = [
         },
     },
     {
+        name: 'an event pivot table with the registration org unit',
+        fixture: eventPivotTableRegistrationOu,
+        expectedLayout: {
+            columns: [
+                sidebarIds.registration('ou'),
+                sidebarIds.enrollment(CHILD_PROGRAMME, 'programStatus'),
+            ],
+            rows: [],
+            filters: [],
+        },
+    },
+    {
         name: 'an enrollment pivot table',
         fixture: enrollmentPivotTable,
         expectedLayout: {
@@ -112,7 +125,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListOneProgram,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.dataElement(LAB_MONITORING, 'Vk1tzSQxvOR'),
                 sidebarIds.enrollment(TB_PROGRAM, 'enrollmentDate'),
                 sidebarIds.stage(TB_PROGRAM, LAB_MONITORING, 'ou'),
@@ -126,7 +139,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListTwoPrograms,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.stage(TB_PROGRAM, LAB_MONITORING, 'ou'),
                 sidebarIds.enrollment(TB_PROGRAM, 'enrollmentDate'),
                 sidebarIds.dataElement(BIRTH, 'UXz7xuGCEhU'),
@@ -143,7 +156,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListTrackedEntityType,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.trackedEntityTypeAttribute('w75KJ2mc4zz'),
                 sidebarIds.trackedEntityTypeAttribute('lZGmxYbs97q'),
                 sidebarIds.metadata('created'),

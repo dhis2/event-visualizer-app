@@ -7,6 +7,7 @@ import { describe, it, expect } from 'vitest'
 import {
     useDimensionSuffix,
     useDimensionsWithSuffixes,
+    useLayoutDimensions,
 } from '../use-layout-dimensions'
 
 const baseMetadata = {
@@ -188,8 +189,8 @@ describe('useDimensionsWithSuffixes', () => {
                     id: 'tet1',
                     name: 'TET 1',
                 },
-                'tet1.enrollmentOu': {
-                    id: 'tet1.enrollmentOu',
+                'tet1.ou': {
+                    id: 'tet1.ou',
                     name: 'Registration org. unit',
                     dimensionType: 'ORGANISATION_UNIT',
                 },
@@ -197,7 +198,7 @@ describe('useDimensionsWithSuffixes', () => {
             const { result } = await renderHookWithAppWrapper(
                 () =>
                     useDimensionsWithSuffixes([
-                        'tet1.enrollmentOu',
+                        'tet1.ou',
                         'p1.enrollmentDate',
                         'p2.enrollmentDate',
                     ]),
@@ -290,5 +291,74 @@ describe('useDimensionSuffix', () => {
             withLayout({ columns: ['p1s1.d1'], rows: [], filters: [] })
         )
         expect(result.current).toBeUndefined()
+    })
+})
+
+/* The cell value sits outside the layout but still counts towards how many
+ * programs and stages are in play, so the chips must be suffixed against the
+ * same scope the value axis uses — otherwise the two disagree. */
+describe('useLayoutDimensions — cell value in the suffix scope', () => {
+    const dimMetadata = {
+        ...baseMetadata,
+        'p1s1.d1': {
+            id: 'p1s1.d1',
+            name: 'Weight',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'NUMBER',
+        },
+        'p2s1.d1': {
+            id: 'p2s1.d1',
+            name: 'Weight',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'NUMBER',
+        },
+    }
+
+    const withCellValue = (cellValueId?: string) => ({
+        metadata: dimMetadata,
+        partialStore: {
+            reducer: { visUiConfig: visUiConfigSlice.reducer },
+            preloadedState: {
+                visUiConfig: {
+                    ...visUiConfigInitialState,
+                    layout: { columns: ['p1s1.d1'], rows: [], filters: [] },
+                    ...(cellValueId && {
+                        cellValue: {
+                            id: cellValueId,
+                            aggregationType: 'SUM' as const,
+                        },
+                    }),
+                },
+            },
+        },
+    })
+
+    it('suffixes a chip once a cell value from another program is set', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useLayoutDimensions(),
+            withCellValue('p2s1.d1')
+        )
+
+        expect(result.current.columns[0].suffix).toBe('P1 Stage1')
+    })
+
+    it('leaves the chip unsuffixed when there is no cell value', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useLayoutDimensions(),
+            withCellValue()
+        )
+
+        expect(result.current.columns[0].suffix).toBeUndefined()
+    })
+
+    /* A cell value whose metadata is not in the store must not take the panel
+     * down with it. */
+    it('tolerates a cell value with no metadata', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useLayoutDimensions(),
+            withCellValue('missing.dimension')
+        )
+
+        expect(result.current.columns[0].suffix).toBeUndefined()
     })
 })

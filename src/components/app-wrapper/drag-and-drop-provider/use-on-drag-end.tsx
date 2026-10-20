@@ -12,6 +12,7 @@ import {
     getDimensionBlockReason,
     type DimensionBlockReason,
 } from '@modules/dimension/blocking'
+import { isValidCellValueDimension } from '@modules/dimension/cell-value'
 import { resolveDimensionTetId, resolveLayoutContext } from '@modules/layout'
 import {
     clearMultiSelection,
@@ -22,23 +23,34 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
-    getVisUiConfigCustomValue,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
+    setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
-import { useCallback } from 'react'
+import type { Axis } from '@types'
+import { useCallback, useEffect, useRef } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
+    isCellValueDroppableData,
     isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
-import type { LayoutDragEndEvent, OverItemEventData } from './types'
+import type {
+    DraggedItemEventData,
+    LayoutDragEndEvent,
+    LayoutDropTargetData,
+    SidebarSortableData,
+} from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
 /* Skipped-dimension alerts can be long, so give the user 10 seconds to read. */
 const SKIPPED_DIMENSIONS_ALERT_OPTIONS = { duration: 10000 }
+
+/* Hoisted for a stable reference: `useAlert` keys its `show` callback on the
+ * options object. */
+const INVALID_CELL_VALUE_ALERT_OPTIONS = { warning: true }
 
 type SkippedByReason = Record<DimensionBlockReason, string[]>
 
@@ -46,7 +58,6 @@ type PartitionMultiSelectedDimensionsArgs = {
     ids: string[]
     metadataStore: ReturnType<typeof useMetadataStore>
     visualizationType: ReturnType<typeof getVisUiConfigVisualizationType>
-    customValueId: string | null
     layoutTetId: string | null
 }
 
@@ -54,14 +65,12 @@ const partitionMultiSelectedDimensions = ({
     ids,
     metadataStore,
     visualizationType,
-    customValueId,
     layoutTetId,
 }: PartitionMultiSelectedDimensionsArgs): {
     validIds: string[]
     skippedByReason: SkippedByReason
 } => {
     const skippedByReason: SkippedByReason = {
-        customValue: [],
         visType: [],
         crossTet: [],
     }
@@ -70,7 +79,6 @@ const partitionMultiSelectedDimensions = ({
         const reason = getDimensionBlockReason({
             dimension: dim,
             visualizationType,
-            customValueId,
             layoutTetId,
             dimensionTetId: resolveDimensionTetId(dim, metadataStore),
         })
@@ -83,9 +91,9 @@ const partitionMultiSelectedDimensions = ({
     return { validIds, skippedByReason }
 }
 
-const getDropTarget = (
-    overItemData: OverItemEventData
-): { targetIndex: number; insertAfter: boolean } =>
+type DropTarget = { targetIndex: number; insertAfter: boolean }
+
+const getDropTarget = (overItemData: LayoutDropTargetData): DropTarget =>
     isAxisContainerData(overItemData)
         ? { targetIndex: 0, insertAfter: false }
         : {
@@ -112,14 +120,22 @@ export const useOnDragEnd = (): OnDragEndFn => {
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
-    const { show: showCustomValueAlert } = useAlert(
-        ({ name }: { name: string }) =>
-            i18n.t(
-                '{{- name}} was not added because it is already used as the custom value.',
-                { name, nsSeparator: '^^' }
-            ),
-        SKIPPED_DIMENSIONS_ALERT_OPTIONS
+    /* `AlertBar` never auto-hides a warning — `duration` only applies when
+     * `!(permanent || warning || critical)`. Hiding it by hand takes the
+     * `hidden` path instead, which animates out regardless of the variant. */
+    const { show: showAlert, hide: hideAlert } = useAlert(
+        i18n.t('Only numeric data items can be used as the cell value.'),
+        INVALID_CELL_VALUE_ALERT_OPTIONS
     )
+    const invalidCellValueTimeout = useRef<ReturnType<typeof setTimeout>>()
+
+    useEffect(() => () => clearTimeout(invalidCellValueTimeout.current), [])
+
+    const showInvalidCellValueAlert = useCallback(() => {
+        showAlert()
+        clearTimeout(invalidCellValueTimeout.current)
+        invalidCellValueTimeout.current = setTimeout(hideAlert, 5000)
+    }, [showAlert, hideAlert])
     const metadataStore = useMetadataStore()
     const store = useAppStore()
     const listFormatter = useListFormatter({ type: 'conjunction' })
@@ -147,16 +163,95 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         : '',
                 })
             }
-            if (skippedByReason.customValue.length > 0) {
-                showCustomValueAlert({ name: skippedByReason.customValue[0] })
+        },
+        [metadataStore, listFormatter, showVisTypeAlert, showCrossTetAlert]
+    )
+
+    /* Taking a dimension as the cell value is a clone: it is added to
+     * `cellValue` and left wherever it already was. */
+    const handleCellValueDrop = useCallback(
+        (draggedItemData: DraggedItemEventData) => {
+            if (isSidebarSortableData(draggedItemData)) {
+                draggedItemData.populateMetadata()
+            }
+
+            const dimension = metadataStore.getDimensionMetadataItem(
+                draggedItemData.dimensionId
+            )
+
+            if (isValidCellValueDimension(dimension)) {
+                dispatch(
+                    setVisUiConfigCellValue({
+                        id: draggedItemData.dimensionId,
+                        aggregationType: 'DEFAULT',
+                    })
+                )
+            } else {
+                showInvalidCellValueAlert()
             }
         },
+        [dispatch, metadataStore, showInvalidCellValueAlert]
+    )
+
+    const handleSidebarDrop = useCallback(
+        (
+            draggedItemData: SidebarSortableData,
+            axis: Axis,
+            { targetIndex, insertAfter }: DropTarget
+        ) => {
+            const isMultiSelectDrag =
+                multiSelectedIds.length >= 1 &&
+                multiSelectedIds.includes(draggedItemData.dimensionId)
+
+            if (!isMultiSelectDrag) {
+                // Single add from sidebar
+                draggedItemData.populateMetadata()
+                dispatch(
+                    addVisUiConfigLayoutDimension({
+                        axis,
+                        dimensionId: draggedItemData.dimensionId,
+                        insertIndex: targetIndex,
+                        insertAfter,
+                    })
+                )
+                return
+            }
+
+            const storeState = store.getState()
+            const visType = getVisUiConfigVisualizationType(storeState)
+            const { tetId: layoutTetId } = resolveLayoutContext(
+                getVisUiConfigLayoutAllDimensionIds(storeState),
+                metadataStore
+            )
+
+            // Batch add from sidebar (metadata already populated eagerly)
+            const { validIds, skippedByReason } =
+                partitionMultiSelectedDimensions({
+                    ids: multiSelectedIds,
+                    metadataStore,
+                    visualizationType: visType,
+                    layoutTetId,
+                })
+
+            if (validIds.length > 0) {
+                dispatch(
+                    addVisUiConfigLayoutDimensions({
+                        axis,
+                        dimensionIds: validIds,
+                        insertIndex: targetIndex,
+                        insertAfter,
+                    })
+                )
+            }
+
+            showSkippedDimensionAlerts(skippedByReason, visType, layoutTetId)
+        },
         [
+            dispatch,
+            multiSelectedIds,
             metadataStore,
-            listFormatter,
-            showVisTypeAlert,
-            showCrossTetAlert,
-            showCustomValueAlert,
+            store,
+            showSkippedDimensionAlerts,
         ]
     )
 
@@ -168,6 +263,14 @@ export const useOnDragEnd = (): OnDragEndFn => {
             }
 
             const overItemData = event.over?.data.current
+
+            /* Handled before the branch below, which reads "not over an axis"
+             * as a removal. */
+            if (isCellValueDroppableData(overItemData)) {
+                handleCellValueDrop(draggedItemData)
+                dispatch(clearMultiSelection())
+                return
+            }
 
             if (!isOverAxis(overItemData)) {
                 // Remove layout dimension when dropped ouside axes
@@ -183,7 +286,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 return
             }
 
-            const { targetIndex, insertAfter } = getDropTarget(overItemData)
+            const dropTarget = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {
                 const isDropInPlace =
@@ -200,8 +303,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         sourceAxis: draggedItemData.axis,
                         targetAxis: overItemData.axis,
                         sourceIndex: draggedItemData.sortable.index,
-                        targetIndex,
-                        insertAfter,
+                        ...dropTarget,
                     })
                 )
                 return
@@ -211,65 +313,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 throw new Error('Dropped an unexpected item')
             }
 
-            const isMultiSelectDrag =
-                multiSelectedIds.length >= 1 &&
-                multiSelectedIds.includes(draggedItemData.dimensionId)
-
-            if (isMultiSelectDrag) {
-                const storeState = store.getState()
-                const visType = getVisUiConfigVisualizationType(storeState)
-                const customValue = getVisUiConfigCustomValue(storeState)
-                const { tetId: layoutTetId } = resolveLayoutContext(
-                    getVisUiConfigLayoutAllDimensionIds(storeState),
-                    metadataStore
-                )
-
-                // Batch add from sidebar (metadata already populated eagerly)
-                const { validIds, skippedByReason } =
-                    partitionMultiSelectedDimensions({
-                        ids: multiSelectedIds,
-                        metadataStore,
-                        visualizationType: visType,
-                        customValueId: customValue?.id ?? null,
-                        layoutTetId,
-                    })
-
-                if (validIds.length > 0) {
-                    dispatch(
-                        addVisUiConfigLayoutDimensions({
-                            axis: overItemData.axis,
-                            dimensionIds: validIds,
-                            insertIndex: targetIndex,
-                            insertAfter,
-                        })
-                    )
-                }
-
-                showSkippedDimensionAlerts(
-                    skippedByReason,
-                    visType,
-                    layoutTetId
-                )
-            } else {
-                // Single add from sidebar
-                draggedItemData.populateMetadata()
-                dispatch(
-                    addVisUiConfigLayoutDimension({
-                        axis: overItemData.axis,
-                        dimensionId: draggedItemData.dimensionId,
-                        insertIndex: targetIndex,
-                        insertAfter,
-                    })
-                )
-            }
+            handleSidebarDrop(draggedItemData, overItemData.axis, dropTarget)
             dispatch(clearMultiSelection())
         },
-        [
-            dispatch,
-            multiSelectedIds,
-            metadataStore,
-            store,
-            showSkippedDimensionAlerts,
-        ]
+        [dispatch, handleCellValueDrop, handleSidebarDrop]
     )
 }

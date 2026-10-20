@@ -63,7 +63,7 @@ describe('getMainDimensions', () => {
 
     it('returns main dimensions for TRACKED_ENTITY_INSTANCE outputType', () => {
         const result = getMainDimensions('TRACKED_ENTITY_INSTANCE')
-        expect(result).toHaveProperty('ou')
+        expect(result).not.toHaveProperty('ou')
         expect(result).toHaveProperty('created')
         expect(result.created?.dimensionType).toBe('PERIOD')
         expect(result).toHaveProperty('lastUpdated')
@@ -259,7 +259,7 @@ describe('toAppLocalDimensions', () => {
         expect(result[0].dimension).toBe('ou')
     })
 
-    it('renames ou to enrollmentOu when dimension has no program/stage (TEI registration ou)', () => {
+    it('keeps ou when dimension has no program/stage (TEI registration ou)', () => {
         const dims: DimensionArray = [
             {
                 dimension: 'ou',
@@ -267,7 +267,20 @@ describe('toAppLocalDimensions', () => {
             },
         ]
         const result = toAppLocalDimensions(dims)
-        expect(result[0].dimension).toBe('enrollmentOu')
+        expect(result[0].dimension).toBe('ou')
+    })
+
+    it('renames registrationOu to ou without its program qualifier', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'registrationOu',
+                items: [{ id: 'USER_ORGUNIT' }],
+                program: { id: 'prog1' },
+            },
+        ]
+        expect(toAppLocalDimensions(dims)).toEqual([
+            { dimension: 'ou', items: [{ id: 'USER_ORGUNIT' }] },
+        ])
     })
 
     it('does not modify non-ou dimensions', () => {
@@ -437,16 +450,31 @@ describe('toEventVisualizationDimensionId', () => {
                 })
             ).toBe('ou')
         })
+    })
 
-        it('rewrites to ou for TEI registration scope (no programId) + LINE_LIST', () => {
+    describe('registration ou (no programId)', () => {
+        it('keeps ou for TEI output + LINE_LIST', () => {
             expect(
                 toEventVisualizationDimensionId({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     outputType: 'TRACKED_ENTITY_INSTANCE',
                     visualizationType: 'LINE_LIST',
                 })
             ).toBe('ou')
         })
+
+        it.each(['EVENT', 'ENROLLMENT'] as const)(
+            'rewrites to registrationOu for %s + PIVOT_TABLE',
+            (outputType) => {
+                expect(
+                    toEventVisualizationDimensionId({
+                        dimensionId: 'ou',
+                        outputType,
+                        visualizationType: 'PIVOT_TABLE',
+                    })
+                ).toBe('registrationOu')
+            }
+        )
     })
 
     it('passes through other dimension IDs unchanged', () => {
@@ -583,11 +611,8 @@ describe('getCompoundDimensionId', () => {
 
     it('uses trackedEntityTypeId prefix for the TEI registration org unit', () => {
         expect(
-            getCompoundDimensionId(
-                { dimension: 'enrollmentOu', items: [] },
-                'tet1'
-            )
-        ).toBe('tet1.enrollmentOu')
+            getCompoundDimensionId({ dimension: 'ou', items: [] }, 'tet1')
+        ).toBe('tet1.ou')
     })
 
     it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
@@ -626,8 +651,8 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
 
         expect(fixedDimensions).toEqual([
             expect.objectContaining({
-                id: 'tet1.enrollmentOu',
-                dimensionId: 'enrollmentOu',
+                id: 'tet1.ou',
+                dimensionId: 'ou',
                 dimensionType: 'ORGANISATION_UNIT',
                 trackedEntityTypeId: 'tet1',
             }),
@@ -639,7 +664,7 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
             id: 'custom-tet',
         })
 
-        expect(fixedDimensions[0].id).toBe('custom-tet.enrollmentOu')
+        expect(fixedDimensions[0].id).toBe('custom-tet.ou')
     })
 })
 
@@ -689,7 +714,6 @@ const getMessage = (
 ): string | null =>
     getDimensionLayoutBlockedMessage({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         crossTetMessage: '',
@@ -701,17 +725,16 @@ type ReasonArgs = Parameters<typeof getDimensionBlockReason>[0]
 const getReason = (args: Partial<ReasonArgs> & Pick<ReasonArgs, 'dimension'>) =>
     getDimensionBlockReason({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         ...args,
     })
 
 describe('getDimensionBlockReason', () => {
-    it('returns customValue when the dim is the custom value', () => {
-        expect(
-            getReason({ dimension: makeDim({ id: 'x' }), customValueId: 'x' })
-        ).toBe('customValue')
+    /* Cell value and layout are non-exclusive: being the cell value never
+     * withholds a dimension from the layout. */
+    it('does not block a dimension that is also the cell value', () => {
+        expect(getReason({ dimension: makeDim({ id: 'x' }) })).toBeNull()
     })
 
     it('returns visType for a program indicator outside line list', () => {
@@ -741,18 +764,7 @@ describe('getDimensionBlockReason', () => {
         ).toBeNull()
     })
 
-    it('prefers customValue, then visType, over crossTet', () => {
-        expect(
-            getReason({
-                dimension: makeDim({
-                    id: 'pi',
-                    dimensionType: 'PROGRAM_INDICATOR',
-                }),
-                customValueId: 'pi',
-                dimensionTetId: 'tetB',
-                layoutTetId: 'tetA',
-            })
-        ).toBe('customValue')
+    it('prefers visType over crossTet', () => {
         expect(
             getReason({
                 dimension: makeDim({ dimensionType: 'PROGRAM_INDICATOR' }),
@@ -763,96 +775,16 @@ describe('getDimensionBlockReason', () => {
     })
 })
 
-describe('getDimensionLayoutBlockedMessage — custom-value rule (Case C)', () => {
-    it('disables the dim whose compound id matches the custom value id', () => {
+describe('getDimensionLayoutBlockedMessage — registration OU', () => {
+    it('does not block the TET registration OU in a pivot table', () => {
         expect(
             getMessage({
-                dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: 'stage1.de1',
-            })
-        ).toBe('Already used as custom value.')
-    })
-
-    it('does not disable a different stage-instance of the same DE', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stageB.de1' }),
-                customValueId: 'stageA.de1',
-            })
-        ).toBeNull()
-    })
-
-    it('leaves non-matching dims enabled', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stage1.de2' }),
-                customValueId: 'stage1.de1',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire when no custom value is set', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: null,
-            })
-        ).toBeNull()
-    })
-})
-
-describe('getDimensionLayoutBlockedMessage — registration OU rule (Case B)', () => {
-    const registrationOuDim = makeDim({
-        id: 'tetA.enrollmentOu',
-        dimensionId: 'enrollmentOu',
-        dimensionType: 'ORGANISATION_UNIT',
-        trackedEntityTypeId: 'tetA',
-    })
-
-    it('blocks the TET registration OU item when vis is PIVOT_TABLE', () => {
-        expect(
-            getMessage({
-                dimension: registrationOuDim,
-                visualizationType: 'PIVOT_TABLE',
-            })
-        ).toBe('Cannot be used in a Pivot table.')
-    })
-
-    it('does not disable the TET registration OU item when vis is LINE_LIST', () => {
-        expect(
-            getMessage({
-                dimension: registrationOuDim,
-                visualizationType: 'LINE_LIST',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire for program-scope enrollment OU (no trackedEntityTypeId)', () => {
-        const programEnrollmentOu = makeDim({
-            id: 'progA.enrollmentOu',
-            dimensionId: 'enrollmentOu',
-            dimensionType: 'ORGANISATION_UNIT',
-            programId: 'progA',
-        })
-        expect(
-            getMessage({
-                dimension: programEnrollmentOu,
-                visualizationType: 'PIVOT_TABLE',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire for stage event OU (dimensionId is "ou", not "enrollmentOu")', () => {
-        const stageOu = makeDim({
-            id: 'stage1.ou',
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            programId: 'progA',
-            programStageId: 'stage1',
-        })
-        expect(
-            getMessage({
-                dimension: stageOu,
+                dimension: makeDim({
+                    id: 'tetA.ou',
+                    dimensionId: 'ou',
+                    dimensionType: 'ORGANISATION_UNIT',
+                    trackedEntityTypeId: 'tetA',
+                }),
                 visualizationType: 'PIVOT_TABLE',
             })
         ).toBeNull()
@@ -910,23 +842,6 @@ describe('getDimensionLayoutBlockedMessage — cross-TET rule (Case D)', () => {
 
 describe('getDimensionLayoutBlockedMessage — rule precedence', () => {
     const crossTetMessage = 'cross-tet message'
-
-    it('returns the custom-value message when it could fire alongside cross-TET', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({
-                    id: 'tetA.enrollmentOu',
-                    dimensionId: 'enrollmentOu',
-                    dimensionType: 'ORGANISATION_UNIT',
-                    trackedEntityTypeId: 'tetA',
-                }),
-                customValueId: 'tetA.enrollmentOu',
-                dimensionTetId: 'tetB',
-                layoutTetId: 'tetA',
-                crossTetMessage,
-            })
-        ).toContain('custom value')
-    })
 
     it('returns the vis-type message when it could fire alongside cross-TET', () => {
         expect(
@@ -1017,7 +932,7 @@ describe('isDimensionFullyInvalidForVisType', () => {
         expect(
             isDimensionFullyInvalidForVisType(
                 makeDim({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     trackedEntityTypeId: 'tetId',
                 }),
                 'LINE_LIST'
@@ -1034,22 +949,14 @@ describe('isDimensionFullyInvalidForVisType', () => {
         ).toBe(true)
     })
 
-    it('marks TET registration OU invalid for PIVOT_TABLE', () => {
+    it('marks TET registration OU valid for PIVOT_TABLE', () => {
         expect(
             isDimensionFullyInvalidForVisType(
                 makeDim({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
+                    dimensionType: 'ORGANISATION_UNIT',
                     trackedEntityTypeId: 'tetId',
                 }),
-                'PIVOT_TABLE'
-            )
-        ).toBe(true)
-    })
-
-    it('marks program-scope enrollmentOu (no TET) valid for PIVOT_TABLE', () => {
-        expect(
-            isDimensionFullyInvalidForVisType(
-                makeDim({ dimensionId: 'enrollmentOu' }),
                 'PIVOT_TABLE'
             )
         ).toBe(false)

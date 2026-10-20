@@ -1,0 +1,21 @@
+.label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp4);
+    padding-block: 6px;
+    padding-inline: var(--spacers-dp8) 8px;
+    border-inline-start: 1px solid var(--colors-grey300);
+    color: var(--colors-grey700);
+    font-size: 13px;
+    line-height: 1;
+    user-select: none;
+}
+
+.label svg {
+    color: var(--colors-grey500);
+}
+
+.label.unavailable,
+.label.unavailable svg {
+    color: var(--colors-grey500);
+}
