@@ -5,15 +5,15 @@
 # Wanda <wanda@frontlineaids.org>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Philip Larsen Donnelly, 2026
-# Nadiia <semchuk@aph.org.ua>, 2026
 # Éva Tamási, 2026
+# Nadiia <semchuk@aph.org.ua>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Éva Tamási, 2026\n"
+"Last-Translator: Nadiia <semchuk@aph.org.ua>, 2026\n"
 "Language-Team: Ukrainian (https://app.transifex.com/hisp-uio/teams/100509/uk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -241,12 +241,6 @@ msgstr ""
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Levels"
-msgstr "Рівні"
-
-msgid "Groups"
-msgstr "Групи"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
@@ -602,6 +596,12 @@ msgstr "Пропустити округлення"
 msgid "Add a subtitle"
 msgstr "Додати підзаголовок"
 
+msgid "Auto generated"
+msgstr "Автоматично згенеровано"
+
+msgid "Custom"
+msgstr "Налаштовуваний користувачем"
+
 msgid "Add a title"
 msgstr "Додати заголовок"
 
@@ -915,9 +915,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Налаштовуваний користувачем"
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -975,6 +972,9 @@ msgstr "Ні"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr "Відсутнє значення"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1027,6 +1027,12 @@ msgstr "Статус реєстрації"
 
 msgid "Registration org. unit"
 msgstr ""
+
+msgid "Levels"
+msgstr "Рівні"
+
+msgid "Groups"
+msgstr "Групи"
 
 msgid "Enrollment date"
 msgstr "Дата реєстрації"
@@ -1281,6 +1287,18 @@ msgstr "Завершено"
 
 msgid "Scheduled"
 msgstr "Заплановано"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Реєстрації"
+
+msgid "Events"
+msgstr "Випадки"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

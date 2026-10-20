@@ -2,18 +2,18 @@
 # Phouthasinh PHEUAYSITHIPHONE, 2026
 # Andres Miguel Rubio, 2026
 # Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
+# Em Le <em.hispvietnam@gmail.com>, 2026
+# Namwan Chanthavisouk, 2026
+# Saysamone Sibounma, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Philip Larsen Donnelly, 2026
-# Em Le <em.hispvietnam@gmail.com>, 2026
-# Saysamone Sibounma, 2026
-# Namwan Chanthavisouk, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Namwan Chanthavisouk, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Lao (https://app.transifex.com/hisp-uio/teams/100509/lo/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -33,6 +33,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -240,12 +243,6 @@ msgstr "ຂັ້ນຕອນໂປແກລມ: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "ຂັ້ນ"
-
-msgid "Groups"
-msgstr "ກຸ່ມ"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -346,6 +343,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -594,6 +594,12 @@ msgstr "ບໍ່ປັດຕົວເລກ"
 
 msgid "Add a subtitle"
 msgstr "ເພີ່ມຫົວຂໍ້ຍ່ອຍ"
+
+msgid "Auto generated"
+msgstr "ສ້າງຂື້ນອັດຕະໂນມັດ"
+
+msgid "Custom"
+msgstr "ກຳນົດເອງ"
 
 msgid "Add a title"
 msgstr "ເພີ່ມຫົວຂໍ໊"
@@ -908,9 +914,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "ກຳນົດເອງ"
-
 msgid "equal to (=)"
 msgstr "ເທົ່າກັບ (=)"
 
@@ -968,6 +971,9 @@ msgstr "ບໍ່ແມ່ນ"
 msgid "Not answered"
 msgstr "ບໍ່ມີຄຳຕອບ"
 
+msgid "No value"
+msgstr "ບໍ່ມີຂໍ້ມູນ"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1020,6 +1026,12 @@ msgstr "ສະຖານະການລົງທະບຽນ"
 
 msgid "Registration org. unit"
 msgstr "ລົງທະບຽນຫົວໜ່ວຍການຈັດຕັ້ງ"
+
+msgid "Levels"
+msgstr "ຂັ້ນ"
+
+msgid "Groups"
+msgstr "ກຸ່ມ"
 
 msgid "Enrollment date"
 msgstr "ວັນທີ່ລົງທະບຽນ"
@@ -1276,6 +1288,18 @@ msgstr "ສໍາເລັດແລ້ວ"
 
 msgid "Scheduled"
 msgstr "ຕາມເວລາທີ່ກໍານົດ"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "ການຂື້ນທະບຽນ"
+
+msgid "Events"
+msgstr "ເຫດການ"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
