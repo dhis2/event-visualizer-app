@@ -48,7 +48,6 @@ export const getLayoutDimensionMetadataNames = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
 ): Record<string, string> => {
-    const trackedEntityTypeId = visualization.trackedEntityType?.id
     const dimensions = [
         ...(visualization.columns ?? []),
         ...(visualization.rows ?? []),
@@ -65,7 +64,6 @@ export const getLayoutDimensionMetadataNames = (
                 dimensionId: dim.dimension,
                 programId: dim.program?.id,
                 programStageId: dim.programStage?.id,
-                trackedEntityTypeId,
                 visualization,
             })
             names[key] = name

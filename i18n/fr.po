@@ -8,20 +8,20 @@
 # Yayra Gomado <ygomado@hispwca.org>, 2026
 # Karoline Tufte Lien <karoline@dhis2.org>, 2026
 # Edem Kossi <ekossi@hispwca.org>, 2026
-# Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2026
 # Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Philip Larsen Donnelly, 2026
 # Elise Desailly, 2026
-# Esther Tokouli, 2026
+# Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2026
 # Cyrille Kabrane, 2026
+# Esther Tokouli, 2026
+# Philip Larsen Donnelly, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Cyrille Kabrane, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: French (https://app.transifex.com/hisp-uio/teams/100509/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -41,6 +41,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -249,12 +252,6 @@ msgstr "Étape du programme : {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Niveaux"
-
-msgid "Groups"
-msgstr "Groupes"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -355,6 +352,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -605,6 +605,12 @@ msgstr "Ne pas arrondir"
 
 msgid "Add a subtitle"
 msgstr "Ajouter un sous-titre"
+
+msgid "Auto generated"
+msgstr "Généré automatiquement"
+
+msgid "Custom"
+msgstr "Personnalisé"
 
 msgid "Add a title"
 msgstr "Ajouter un titre"
@@ -924,9 +930,6 @@ msgstr "Valeur minimale (somme dans la hiérarchie des unités d'organisation)"
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Valeur maximale (somme dans la hiérarchie des unités d'organisation)"
 
-msgid "Custom"
-msgstr "Personnalisé"
-
 msgid "equal to (=)"
 msgstr "égal à (=)"
 
@@ -984,6 +987,9 @@ msgstr "Non"
 msgid "Not answered"
 msgstr "Pas de réponse"
 
+msgid "No value"
+msgstr "Pas de valeur"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1037,6 +1043,12 @@ msgstr "Statut de l'inscription"
 msgid "Registration org. unit"
 msgstr "Enregistrement de l'unité d'org."
 
+msgid "Levels"
+msgstr "Niveaux"
+
+msgid "Groups"
+msgstr "Groupes"
+
 msgid "Enrollment date"
 msgstr "Date d'inscription"
 
@@ -1049,12 +1061,14 @@ msgid ""
 msgstr ""
 
 msgid "Visualization not found"
-msgstr ""
+msgstr "Visualisation introuvable"
 
 msgid ""
 "The visualization you are trying to view could not be found, the ID could be"
 " incorrect or it could have been deleted."
 msgstr ""
+"La visualisation que vous essayez de consulter est introuvable, "
+"l'identifiant est peut-être incorrect ou a été supprimé"
 
 msgid ""
 "Your account cannot access any items in one or more dimensions. Contact a "
@@ -1292,6 +1306,18 @@ msgstr "Terminé"
 
 msgid "Scheduled"
 msgstr "Planifié"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Inscriptions"
+
+msgid "Events"
+msgstr "Événements"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

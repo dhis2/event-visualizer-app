@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jaime Bosque <jaime.bosque@dhis2.org>, 2026\n"
 "Language-Team: Spanish (Latin America) (https://app.transifex.com/hisp-uio/teams/100509/es_419/)\n"
@@ -28,6 +28,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -234,12 +237,6 @@ msgstr ""
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr ""
-
-msgid "Groups"
-msgstr ""
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -340,6 +337,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -587,6 +587,12 @@ msgid "Skip rounding"
 msgstr ""
 
 msgid "Add a subtitle"
+msgstr ""
+
+msgid "Auto generated"
+msgstr ""
+
+msgid "Custom"
 msgstr ""
 
 msgid "Add a title"
@@ -902,9 +908,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr ""
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -962,6 +965,9 @@ msgstr "No"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr ""
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1013,6 +1019,12 @@ msgid "Enrollment status"
 msgstr "Estado de la inscripción."
 
 msgid "Registration org. unit"
+msgstr ""
+
+msgid "Levels"
+msgstr ""
+
+msgid "Groups"
 msgstr ""
 
 msgid "Enrollment date"
@@ -1266,6 +1278,18 @@ msgstr "Completado"
 
 msgid "Scheduled"
 msgstr ""
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Admisiones"
+
+msgid "Events"
+msgstr "Eventos"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
