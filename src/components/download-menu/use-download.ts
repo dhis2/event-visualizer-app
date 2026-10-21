@@ -6,7 +6,7 @@ import { Analytics } from '@dhis2/analytics'
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
-import { getCellValueCompoundId } from '@modules/dimension/cell-value'
+import { getCellValueAnalyticsId } from '@modules/dimension/cell-value'
 import {
     isCurrentVisualizationNew,
     isCurrentVisualizationPersisted,
@@ -189,12 +189,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
                 if (visualization.value && visualization.aggregationType) {
                     req = req
-                        .withValue(
-                            getCellValueCompoundId(
-                                visualization.value,
-                                visualization
-                            )
-                        )
+                        .withValue(getCellValueAnalyticsId(visualization.value))
                         .withAggregationType(visualization.aggregationType)
                 }
 

@@ -33,3 +33,11 @@ export const getCellValueCompoundId = (
         },
         getTetId(visualization)
     )
+
+/* The dimension id analytics reads the cell value by. Only the stage qualifies
+ * it: a tracked entity attribute is sent unprefixed, the same way analytics
+ * returns its headers. */
+export const getCellValueAnalyticsId = (
+    value: NonNullable<SavedVisualization['value']>
+): string =>
+    value.programStage ? `${value.programStage.id}.${value.id}` : value.id

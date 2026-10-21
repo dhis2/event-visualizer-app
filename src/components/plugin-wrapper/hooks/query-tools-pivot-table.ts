@@ -1,5 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
-import { getCellValueCompoundId } from '@modules/dimension/cell-value'
+import { getCellValueAnalyticsId } from '@modules/dimension/cell-value'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
@@ -81,8 +81,7 @@ export const getCellValueRequestParams = (
 ) =>
     visualization.value && visualization.aggregationType
         ? {
-              /* Analytics needs the prefixed id (with program stage) in order to aggregate correctly. */
-              value: getCellValueCompoundId(visualization.value, visualization),
+              value: getCellValueAnalyticsId(visualization.value),
               aggregationType: visualization.aggregationType,
           }
         : undefined
