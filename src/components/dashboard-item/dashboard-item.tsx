@@ -18,8 +18,9 @@ import type {
     CurrentVisualization,
     DashboardPluginProps,
     EmptyVisualization,
+    SavedVisualization,
 } from '@types'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, useState, type FC } from 'react'
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     logger.debug('DashboardPlugin props', props)
@@ -45,26 +46,34 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         },
     })
 
-    // Mirror the in-app load pipeline (see store/thunks.ts): normalise the
-    // raw API response once; the metadata store consumes the SavedVisualization
-    // and the plugin consumes the CurrentVisualization-shaped subset.
-    const savedVisualization = useMemo(() => {
-        const apiVis = data?.eventVisualization as
-            ApiSavedVisualization | undefined
-        return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
-    }, [data])
+    /* Mirror the in-app load pipeline (see store/thunks.ts): normalise the
+     * raw API response once; the metadata store consumes the SavedVisualization
+     * and the plugin consumes the CurrentVisualization-shaped subset.
+     * PluginWrapper reads that metadata on its first render, so the
+     * visualization is only passed down once its metadata is registered. */
+    const [registeredVisualization, setRegisteredVisualization] = useState<
+        SavedVisualization | undefined
+    >(undefined)
 
     useEffect(() => {
-        if (savedVisualization) {
-            metadataStore.setVisualizationMetadata(savedVisualization)
+        const apiVis = data?.eventVisualization as
+            ApiSavedVisualization | undefined
+        if (!apiVis) {
+            return
         }
-    }, [savedVisualization, metadataStore])
+        const savedVisualization = normalizeApiSavedVisualization(apiVis)
+        metadataStore.setVisualizationMetadata(savedVisualization)
+        setRegisteredVisualization(savedVisualization)
+    }, [data, metadataStore])
 
     const currentVisualization = useMemo<
         CurrentVisualization | EmptyVisualization
     >(
-        () => (savedVisualization ? toCurrentVis(savedVisualization) : {}),
-        [savedVisualization]
+        () =>
+            registeredVisualization
+                ? toCurrentVis(registeredVisualization)
+                : {},
+        [registeredVisualization]
     )
 
     const visualizationLoadError = useMemo(
