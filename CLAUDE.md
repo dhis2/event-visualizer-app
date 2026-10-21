@@ -200,8 +200,16 @@ shapes, and filter syntax all change between versions. Look them up against the 
 instance: see the `dhis2-api-lookup` skill for the three-tier procedure (OpenAPI spec →
 probe the live API → read the `dhis2-core` source).
 
-**GET requests only** against the dev instance from `cypress.env.json` — never POST, PUT,
-PATCH, or DELETE, and never a production server.
+### DHIS2 instances
+
+| Instance | URL                                       | Allowed                                                        |
+| -------- | ----------------------------------------- | -------------------------------------------------------------- |
+| Dev      | `https://dev.im.dhis2.org/idv-playground` | Anything: create, edit and delete visualizations to try things |
+| E2E      | `https://e2e.im.dhis2.org/idv-playground` | GET requests only, apart from running the Cypress E2E suite    |
+
+The E2E suite writes to the instance it runs against, the same as CI does, and that is allowed.
+Never send a request to a production server. The credentials in `cypress.env.json` work on both
+instances.
 
 ## Plugins and MCP Servers
 
