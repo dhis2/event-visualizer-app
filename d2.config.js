@@ -15,7 +15,7 @@ const config = {
 
     entryPoints: {
         app: './src/app.ts',
-        plugin: './src/dashboard-plugin.tsx',
+        plugin: './src/dashboard-plugin.ts',
     },
 
     viteConfigExtensions: 'vite-extensions.config.mts',
