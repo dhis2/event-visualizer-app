@@ -196,7 +196,7 @@ describe('getVisualizationTitle', () => {
         })
         const vis = buildVis({
             type: 'PIVOT_TABLE',
-            value: { id: 'de1' },
+            value: { id: 'de1', name: 'MCH Apgar score' },
             aggregationType: 'AVERAGE',
         })
 
@@ -209,19 +209,22 @@ describe('getVisualizationTitle', () => {
         const store = buildStore({
             de1: { id: 'de1', name: 'MCH Apgar score' },
         })
-        const vis = buildVis({ type: 'PIVOT_TABLE', value: { id: 'de1' } })
+        const vis = buildVis({
+            type: 'PIVOT_TABLE',
+            value: { id: 'de1', name: 'MCH Apgar score' },
+        })
 
         expect(getVisualizationTitle(vis, store)).toBe('Events')
     })
 
-    it('throws when the custom value item is unknown to the metadata store', () => {
+    it('ignores a custom value that has no name', () => {
         const vis = buildVis({
             type: 'PIVOT_TABLE',
-            value: { id: 'missing' },
+            value: { id: 'de1' },
             aggregationType: 'AVERAGE',
         })
 
-        expect(() => getVisualizationTitle(vis, buildStore())).toThrow()
+        expect(getVisualizationTitle(vis, buildStore())).toBe('Events')
     })
 
     it('ignores a custom value on a line list', () => {
@@ -229,7 +232,7 @@ describe('getVisualizationTitle', () => {
             de1: { id: 'de1', name: 'MCH Apgar score' },
         })
         const vis = buildVis({
-            value: { id: 'de1' },
+            value: { id: 'de1', name: 'MCH Apgar score' },
             aggregationType: 'AVERAGE',
         })
 

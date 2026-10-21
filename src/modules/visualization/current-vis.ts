@@ -76,8 +76,9 @@ const resolveCellValueFields = (
     const item = metadataStore.getDimensionMetadataItem(cellValue.id)
 
     /* The plain id with its stage beside it, the same shape buildAxis gives a
-     * layout dimension. `dimensionItemType` comes along because a tracked
-     * entity attribute's prefix is rebuilt from it rather than from a stage.
+     * layout dimension. The name comes along because the title reads it from
+     * here: the metadata is keyed by the compound id, which nothing holding
+     * only a saved visualization can rebuild for a tracked entity attribute.
      *
      * `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
      * cell value from an explicit choice. The analytics request needs a real
@@ -88,9 +89,7 @@ const resolveCellValueFields = (
             ...(item?.programStageId && {
                 programStage: { id: item.programStageId },
             }),
-            ...(item?.dimensionType && {
-                dimensionItemType: item.dimensionType,
-            }),
+            ...(item?.name && { name: item.name }),
         },
         aggregationType: resolveAggregationType(
             cellValue.aggregationType,
