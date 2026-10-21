@@ -1349,10 +1349,43 @@ describe('convertLayoutForVisType', () => {
 })
 
 describe('resolveCellValueContext', () => {
-    /* A loaded visualization registers its value under the plain dimension id
-     * the API returns, carrying no program or stage. The real store is used
-     * because the stub does not reproduce that registration. */
-    it('contributes no context for a cell value loaded from a saved visualization', () => {
+    const EMPTY = { programIds: [], programStageIds: [], tetId: null }
+
+    /* The real store is used throughout: the stub resolves no compound ids, so
+     * it cannot show a stage prefix becoming a program and stage. */
+    it('reads the program and stage from a stage-prefixed cell value', () => {
+        const store = new MetadataStoreClass({})
+        store.addMetadata({
+            p1: {
+                id: 'p1',
+                name: 'Program 1',
+                programType: 'WITH_REGISTRATION',
+            },
+            s1: {
+                id: 's1',
+                name: 'Stage 1',
+                repeatable: false,
+                hideDueDate: false,
+                program: { id: 'p1' },
+            },
+            's1.de1': {
+                id: 's1.de1',
+                name: 'MCH Weight (g)',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            },
+        })
+
+        expect(resolveCellValueContext('s1.de1', store)).toEqual({
+            programIds: ['p1'],
+            programStageIds: ['s1'],
+            tetId: null,
+        })
+    })
+
+    /* A legacy visualization names its cell value by the bare uid, so there is
+     * no prefix to resolve a program or stage from. */
+    it('contributes no context for a cell value with no prefix', () => {
         const store = new MetadataStoreClass({})
         store.addMetadata({
             loadedValue: {
@@ -1364,10 +1397,20 @@ describe('resolveCellValueContext', () => {
             },
         })
 
-        expect(resolveCellValueContext('loadedValue', store)).toEqual({
-            programIds: [],
-            programStageIds: [],
-            tetId: null,
-        })
+        expect(resolveCellValueContext('loadedValue', store)).toEqual(EMPTY)
+    })
+
+    /* The layout's ids throw when their metadata is missing; this one must
+     * not, because it runs on every bottom bar render. */
+    it('contributes no context when the cell value has no metadata', () => {
+        expect(
+            resolveCellValueContext('gone', new MetadataStoreClass({}))
+        ).toEqual(EMPTY)
+    })
+
+    it('contributes no context when there is no cell value', () => {
+        expect(
+            resolveCellValueContext(undefined, new MetadataStoreClass({}))
+        ).toEqual(EMPTY)
     })
 })

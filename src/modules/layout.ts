@@ -194,29 +194,17 @@ export const resolveLayoutContext = (
     }
 }
 
-/* The same context for the cell value, which sits outside the layout. A loaded
- * visualization registers its value under the plain id the API returns, with no
- * program, stage or tracked entity type, so it contributes no context — unlike
- * the layout's compound ids, which carry theirs and are read with the throwing
- * getter. */
+/* The same context for the cell value, which sits outside the layout. Unlike
+ * a layout id, it is read without throwing: the cell value can outlive its
+ * metadata for a moment — a load prunes the store before the new config
+ * lands — and this runs on every bottom bar render. */
 export const resolveCellValueContext = (
     cellValueId: string | undefined,
     metadataStore: MetadataStore
-): LayoutContext => {
-    const dim = cellValueId
-        ? metadataStore.getDimensionMetadataItem(cellValueId)
-        : undefined
-
-    if (!dim) {
-        return { programIds: [], programStageIds: [], tetId: null }
-    }
-
-    return {
-        programIds: dim.programId ? [dim.programId] : [],
-        programStageIds: dim.programStageId ? [dim.programStageId] : [],
-        tetId: resolveDimensionTetId(dim, metadataStore),
-    }
-}
+): LayoutContext =>
+    cellValueId && metadataStore.getDimensionMetadataItem(cellValueId)
+        ? resolveLayoutContext([cellValueId], metadataStore)
+        : { programIds: [], programStageIds: [], tetId: null }
 
 type LayoutConversionResult = {
     convertedLayout: Layout
