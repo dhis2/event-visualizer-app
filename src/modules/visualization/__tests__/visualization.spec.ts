@@ -544,7 +544,7 @@ describe('getSaveableVisualization', () => {
         expect(s0.direction).toBe('DESC')
     })
 
-    it('reduces the cell value to a plain id, keeping the aggregation type', () => {
+    it('reduces the cell value to a plain id', () => {
         const vis = {
             value: {
                 id: 'A03MvHHogjR.UXz7xuGCEhU',
@@ -560,7 +560,6 @@ describe('getSaveableVisualization', () => {
 
         expect(getSaveableVisualization(vis).value).toEqual({
             id: 'UXz7xuGCEhU',
-            aggregationType: 'AVERAGE',
         })
     })
 
