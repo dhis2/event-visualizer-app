@@ -200,10 +200,12 @@ const normalizeLegacyDimension = (
  *   a legend set may be a seeded default. Unlike the conversions above this does
  *   not imply `legacy` — the combination was never a valid persisted shape, so
  *   there is nothing to upgrade and the vis can still be saved in place.
- * - Fill a missing top-level `aggregationType` with `DEFAULT` when a cell
- *   `value` is set. Analytics treats it the same way: the value item's own
- *   type. The backend accepts a cell value without a type, though no known
- *   client saves one. This does not imply `legacy` either.
+ * - Keep the top-level `aggregationType` and the cell `value` together: it
+ *   says how the value is aggregated, so it is dropped when there is no value,
+ *   and a missing one becomes `DEFAULT`, which analytics treats the same way:
+ *   the value item's own type. The backend accepts either field without the
+ *   other, though no known client saves that. This does not imply `legacy`
+ *   either.
  *
  * Out of scope (handled downstream — these run on every load, not just legacy
  * visualizations, so they do not imply the `legacy` flag):
@@ -310,7 +312,9 @@ export const normalizeApiSavedVisualization = (
         normalizedVis.topLimit = topLimit
     }
 
-    if (normalizedVis.value && !normalizedVis.aggregationType) {
+    if (!normalizedVis.value) {
+        delete normalizedVis.aggregationType
+    } else if (!normalizedVis.aggregationType) {
         normalizedVis.aggregationType = 'DEFAULT'
     }
 

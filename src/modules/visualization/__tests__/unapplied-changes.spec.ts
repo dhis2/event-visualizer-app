@@ -264,6 +264,19 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
         ).toBe(false)
     })
 
+    it('reports no change for a visualization carrying an aggregation type without a cell value', () => {
+        const loadedVis = normalizeApiSavedVisualization(
+            createLoadedVis(createLoadedColumn(), {
+                type: 'PIVOT_TABLE',
+                aggregationType: 'AVERAGE',
+            }) as unknown as ApiSavedVisualization
+        ) as unknown as CurrentVisualization
+
+        expect(
+            hasUnappliedChanges(loadedVis, {}, createLoadedMetadataStore())
+        ).toBe(false)
+    })
+
     it('reports a change when a dimension is added to a loaded visualization', () => {
         const loadedVis = createLoadedVis(
             createLoadedColumn({

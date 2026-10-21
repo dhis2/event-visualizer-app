@@ -950,6 +950,15 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.aggregationType).toBeUndefined()
     })
 
+    it('drops an aggregation type that has no cell value', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ aggregationType: 'SUM' })
+        )
+
+        expect(result.aggregationType).toBeUndefined()
+        expect(result.legacy).toBeUndefined()
+    })
+
     it('does not mark the vis legacy when it fills the aggregation type', () => {
         const result = normalizeApiSavedVisualization(buildCellValueVis())
 

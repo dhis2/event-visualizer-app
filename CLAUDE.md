@@ -405,9 +405,10 @@ its program qualifier so it reads like the TEI registration OU.
 
 1. `normalizeApiSavedVisualization` (`@modules/visualization/normalize-legacy`) brings the API
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
-   (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also fills a missing top-level
-   `aggregationType` on a visualization with a cell `value` with `DEFAULT` (see
-   [Cell value aggregation type](#cell-value-aggregation-type)). The `PROGRAM_DATA_ELEMENT` →
+   (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
+   `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
+   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)). The
+   `PROGRAM_DATA_ELEMENT` →
    `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
    `transformDimensions` (`@modules/dimension/translation`).
 2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
