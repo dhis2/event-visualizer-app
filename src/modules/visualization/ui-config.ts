@@ -1,5 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { getConditionsFromVisualization } from '@modules/conditions'
+import { getCellValueCompoundId } from '@modules/dimension/cell-value'
 import {
     getCompoundDimensionId,
     DROPPED_LEGACY_DIMENSIONS,
@@ -78,7 +79,7 @@ export const getVisualizationUiConfig = (
          * loaded visualization's cell value into this one. */
         cellValue: vis.value?.id
             ? {
-                  id: vis.value.id,
+                  id: getCellValueCompoundId(vis.value, vis),
                   aggregationType: vis.aggregationType || 'DEFAULT',
               }
             : undefined,
