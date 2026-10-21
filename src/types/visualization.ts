@@ -170,6 +170,7 @@ export type CurrentVisualization = Pick<
     | 'programDimensions'
     | 'sorting'
     | 'value'
+    | 'aggregationType'
 > &
     EventVisualizationOptions & {
         id?: string

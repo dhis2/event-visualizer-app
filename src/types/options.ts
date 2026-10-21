@@ -31,7 +31,6 @@ export type EventVisualizationOptions = Partial<
          * A. The field could be redundant
          * B. The field might be relevant and support needs to be added to the web api
          * C. The field is an app-only field (non-persisted) */
-        | 'aggregationType'
         | 'baseLineValue'
         | 'colSubTotals'
         | 'colTotals'

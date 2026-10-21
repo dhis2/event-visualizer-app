@@ -31,6 +31,7 @@ const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
     'attributeDimensions',
     'sorting',
     'value',
+    'aggregationType',
     'id',
     'programDimensions',
 ]
@@ -75,9 +76,7 @@ const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
 }
 
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
- * leak through. Carries over only id and sorting from the previous currentVis.
- * The value fields go after the options spread so the value's own aggregation
- * type wins over the options default. */
+ * leak through. Carries over only id and sorting from the previous currentVis. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
     visUiConfig,
