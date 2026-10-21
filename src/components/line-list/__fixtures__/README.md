@@ -9,8 +9,10 @@ mirrors the requests the app makes:
   fetches legend sets)
 
 All scenarios exist as saved visualizations on
-[the instance CI's e2e suite runs against](https://e2e.im.dhis2.org/analytics-dev);
-the capture spec maps each directory to its visualization ID:
+[analytics-dev](https://e2e.im.dhis2.org/analytics-dev), which `pnpm cy:capture-fixtures`
+captures from. Two of them (`inpatient-extra-columns-and-legends` and `no-time-dimension`) don't
+exist on the E2E instance CI's e2e suite runs against. The capture spec maps each directory to its
+visualization ID:
 
 - `e2e-enrollment` (`AFjkDs7acBh`) — "E2E: Enrollment": a minimal enrollment
   line list
