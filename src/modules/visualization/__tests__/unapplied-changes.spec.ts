@@ -1,10 +1,12 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { buildCurrentVisFromVisUiConfig } from '@modules/visualization/current-vis'
+import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {
+    ApiSavedVisualization,
     CurrentVisualization,
     DimensionMetadataItem,
     DimensionRecord,
@@ -249,21 +251,17 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
         ).toBe(false)
     })
 
-    /* Known gap: for a cell value visualization saved without a top-level
-     * aggregationType the ui config defaults the cell value's aggregation type
-     * to DEFAULT, which is not the SUM the options default to, so the two sides
-     * differ on aggregationType alone and the notice appears with nothing
-     * changed. Closing it would mean cell-value-specific logic in the
-     * comparison. */
-    it('wrongly reports a change for a cell value visualization with no persisted aggregation type', () => {
-        const loadedVis = createLoadedVis(createLoadedColumn(), {
-            type: 'PIVOT_TABLE',
-            value: { id: CELL_VALUE_ID },
-        })
+    it('reports no change for a visualization carrying a cell value without an aggregation type', () => {
+        const loadedVis = normalizeApiSavedVisualization(
+            createLoadedVis(createLoadedColumn(), {
+                type: 'PIVOT_TABLE',
+                value: { id: CELL_VALUE_ID, aggregationType: 'SUM' },
+            }) as unknown as ApiSavedVisualization
+        ) as unknown as CurrentVisualization
 
         expect(
             hasUnappliedChanges(loadedVis, {}, createLoadedMetadataStore())
-        ).toBe(true)
+        ).toBe(false)
     })
 
     it('reports a change when a dimension is added to a loaded visualization', () => {

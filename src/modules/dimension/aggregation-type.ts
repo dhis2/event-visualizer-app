@@ -10,10 +10,10 @@ export const FALLBACK_AGGREGATION_TYPE: AggregationType = 'AVERAGE'
 
 type AggregatableItem = { aggregationType?: AggregationType }
 
-/* The concrete type to store for an item. `DEFAULT` is a UI-level choice
- * meaning "whatever this item aggregates by", so it is resolved here and never
- * persisted — which is what lets the layout show a real aggregation name
- * instead of the word "default". */
+/* `DEFAULT` means "whatever this item aggregates by", and it is saved as is so
+ * the visualization keeps following the item. It is resolved to a real type
+ * only to show an aggregation name, and for the analytics request, which
+ * rejects `DEFAULT` for an item that aggregates by NONE (E7265). */
 export const resolveAggregationType = (
     aggregationType: AggregationType,
     item: AggregatableItem

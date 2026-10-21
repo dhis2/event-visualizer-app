@@ -8,6 +8,7 @@ import {
 import {
     getAdaptedVisualization as getAdaptedPivotTableVisualization,
     getBaseRequestIdentity as getPivotTableBaseRequestIdentity,
+    getCellValueAnalyticsRequestParams,
     getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
 
@@ -468,5 +469,65 @@ describe('getAdaptedVisualization (pivot table)', () => {
         expect(
             getAdaptedPivotTableVisualization(vis).adaptedVisualization.columns
         ).toEqual([expect.objectContaining({ dimension: `${SID}.${UID}` })])
+    })
+})
+
+describe('getCellValueAnalyticsRequestParams', () => {
+    const createStore = (aggregationType?: string) =>
+        createMetadataStoreStub({
+            dimensions: {
+                de1: {
+                    id: 'de1',
+                    dimensionId: 'de1',
+                    aggregationType,
+                } as DimensionMetadataItem,
+            },
+        })
+
+    const createCellValueVis = (aggregationType: string) =>
+        ({
+            type: 'PIVOT_TABLE',
+            value: { id: 'de1' },
+            aggregationType,
+        }) as unknown as CurrentVisualization
+
+    it('sends an explicit aggregation type as it is', () => {
+        expect(
+            getCellValueAnalyticsRequestParams(
+                createCellValueVis('MAX'),
+                createStore('SUM')
+            )
+        ).toEqual({ value: 'de1', aggregationType: 'MAX' })
+    })
+
+    it("sends the item's own aggregation type for DEFAULT", () => {
+        expect(
+            getCellValueAnalyticsRequestParams(
+                createCellValueVis('DEFAULT'),
+                createStore('SUM')
+            )
+        ).toEqual({ value: 'de1', aggregationType: 'SUM' })
+    })
+
+    /* Analytics rejects DEFAULT for an item that aggregates by NONE (E7265). */
+    it.each([['NONE'], [undefined]])(
+        'sends AVERAGE for DEFAULT when the item aggregates by %s',
+        (itemAggregationType) => {
+            expect(
+                getCellValueAnalyticsRequestParams(
+                    createCellValueVis('DEFAULT'),
+                    createStore(itemAggregationType)
+                )
+            ).toEqual({ value: 'de1', aggregationType: 'AVERAGE' })
+        }
+    )
+
+    it('sends nothing when there is no cell value', () => {
+        expect(
+            getCellValueAnalyticsRequestParams(
+                { type: 'PIVOT_TABLE' } as unknown as CurrentVisualization,
+                createStore('SUM')
+            )
+        ).toBeUndefined()
     })
 })

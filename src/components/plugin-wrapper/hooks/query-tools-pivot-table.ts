@@ -1,4 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
+import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
@@ -84,6 +85,23 @@ export const getCellValueRequestParams = (
               aggregationType: visualization.aggregationType,
           }
         : undefined
+
+export const getCellValueAnalyticsRequestParams = (
+    visualization: CurrentVisualization,
+    metadataStore: MetadataStore
+) => {
+    const params = getCellValueRequestParams(visualization)
+
+    return (
+        params && {
+            ...params,
+            aggregationType: resolveAggregationType(
+                params.aggregationType,
+                metadataStore.getDimensionMetadataItem(params.value) ?? {}
+            ),
+        }
+    )
+}
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,
  * so sortOrder, topLimit, timeField and the value are part of the
