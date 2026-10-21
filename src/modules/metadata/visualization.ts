@@ -14,6 +14,7 @@ import {
     combineAllDimensionsFromVisualization,
     toAppLocalDimensions,
 } from '@modules/dimension/translation'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     MetadataInput,
     MetadataInputItem,
@@ -72,6 +73,9 @@ export const extractTrackedEntityTypeMetadata = (
               [visualization.trackedEntityType.id]: {
                   id: visualization.trackedEntityType.id,
                   name: visualization.trackedEntityType.name,
+                  displayTrackedEntityTypesLabel:
+                      visualization.trackedEntityType
+                          .displayTrackedEntityTypesLabel,
               },
           }
         : {}
@@ -101,14 +105,23 @@ export const extractDimensionMetadata = (
     return dimensionMetadata
 }
 
+/* The API names the cell value's dimension type `dimensionItemType`; the store
+ * knows it as `dimensionType`. Renaming it here is what makes the value
+ * register as a dimension rather than a bare named item. */
 export const extractValueMetadata = (
     visualization: SavedVisualization
-): MetadataInputMap =>
-    visualization.value
-        ? {
-              [visualization.value.id]: visualization.value,
-          }
-        : {}
+): MetadataInputMap => {
+    if (!visualization.value) {
+        return {}
+    }
+    const { dimensionItemType, ...value } = visualization.value
+    return {
+        [value.id]: {
+            ...value,
+            ...(dimensionItemType && { dimensionType: dimensionItemType }),
+        },
+    }
+}
 
 const addPathToOrganisationUnitMetadataItems = (
     metadataInput: MetadataInput,
@@ -131,9 +144,8 @@ export const supplementDimensionMetadata = (
     metadataInput: MetadataInputMap,
     visualization: SavedVisualization
 ) => {
-    const { outputType } = visualization
     const dimensions = combineAllDimensionsFromVisualization(visualization)
-    const tetId = visualization.trackedEntityType?.id
+    const tetId = getTetId(visualization)
     const teaIdsInAttributeDimensions = new Set(
         (visualization.attributeDimensions ?? [])
             .map((entry) => entry.attribute?.id)
@@ -149,11 +161,7 @@ export const supplementDimensionMetadata = (
                 return metadata
             }
 
-            const prefixedId = getCompoundDimensionId(
-                dimension,
-                outputType,
-                tetId
-            )
+            const prefixedId = getCompoundDimensionId(dimension, tetId)
 
             const item = Object.entries(
                 collectedItem
@@ -199,10 +207,9 @@ export const supplementDimensionMetadata = (
                 item.programStageId = dimension.programStage.id
             }
 
-            // Attach trackedEntityTypeId to TEA dimensions that belong to the
-            // vis's TET. Gate on both trackedEntityType (the TEI-scope signal)
-            // and attributeDimensions membership (an EVENT vis may carry TEAs
-            // in attributeDimensions but has no top-level TET).
+            /* Set trackedEntityTypeId to the tracked entity type in the
+             * attribute's `tetId.attrId` id, as the sidebar does. The sidebar's
+             * registration card uses it to count the attribute as selected. */
             if (
                 tetId &&
                 dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
@@ -240,10 +247,9 @@ const getFixedDimensionOverrides = (
         }
     }
 
-    if (visualization.trackedEntityType) {
-        for (const dim of getTrackedEntityTypeFixedDimensions(
-            visualization.trackedEntityType
-        )) {
+    const tetId = getTetId(visualization)
+    if (tetId) {
+        for (const dim of getTrackedEntityTypeFixedDimensions({ id: tetId })) {
             overrides[dim.id] = dim
         }
     }
@@ -305,11 +311,7 @@ export const extractMetadataFromVisualization = (
     // so the plain duplicates are no longer needed.
     const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
-        const compoundId = getCompoundDimensionId(
-            dimension,
-            vis.outputType,
-            vis.trackedEntityType?.id
-        )
+        const compoundId = getCompoundDimensionId(dimension, getTetId(vis))
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]
         }

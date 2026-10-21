@@ -1,0 +1,27 @@
+{
+    "trackedEntityTypeAttributes": [
+        {
+            "trackedEntityAttribute": {
+                "valueType": "TEXT",
+                "id": "lZGmxYbs97q",
+                "name": "Unique ID"
+            }
+        },
+        {
+            "trackedEntityAttribute": {
+                "valueType": "TEXT",
+                "id": "w75KJ2mc4zz",
+                "name": "First name"
+            }
+        },
+        {
+            "trackedEntityAttribute": {
+                "valueType": "TEXT",
+                "id": "zDhUuAYrxNC",
+                "name": "Last name"
+            }
+        }
+    ],
+    "id": "nEenWmSyUEp",
+    "name": "Person"
+}

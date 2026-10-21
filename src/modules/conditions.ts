@@ -3,18 +3,20 @@ import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
+import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
-    OutputType,
+    MetadataItem,
     SavedVisualization,
     ValueType,
 } from '@types'
 
-type Conditions = {
+export type Conditions = {
     condition?: string | string[]
     legendSet?: string
 }
-type FormatValueOptions = {
+export type FormatValueOptions = {
     locale?: string
     digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
     baseUrl?: string
@@ -166,6 +168,8 @@ export const FALSE_VALUE: BooleanValue = '0'
 export const NULL_VALUE: BooleanValue = 'NV'
 export const TRUE_VALUE: BooleanValue = '1'
 export const OPERATOR_IN: QueryOperator = 'IN'
+export const NO_VALUE_OPTION_CODE = 'D2__NOVALUE'
+export const getNoValueOptionName = (): string => i18n.t('No value')
 export const OPERATOR_EQUAL: QueryOperator = 'EQ'
 export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
 export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
@@ -439,8 +443,7 @@ export const getOperatorConditionTexts = (
 }
 
 export const getConditionsFromVisualization = (
-    vis: CurrentVisualization,
-    outputType: OutputType
+    vis: CurrentVisualization
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -450,11 +453,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(
-            item,
-            outputType,
-            vis.trackedEntityType?.id
-        )
+        const dimensionId = getCompoundDimensionId(item, getTetId(vis))
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,
@@ -462,4 +461,93 @@ export const getConditionsFromVisualization = (
     }
 
     return result
+}
+
+export const getConditionsMetadataIds = ({
+    conditions,
+    dimension,
+}: {
+    conditions: Conditions
+    dimension: LayoutDimension
+}): string[] => {
+    const conditionsList = parseConditionsStringToArray(
+        conditions?.condition ?? ''
+    )
+
+    if (shouldUseLegendSetConditions(conditions)) {
+        return getLegendSetConditionMetadataIds(conditions, conditionsList)
+    }
+    if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
+        return getOrgUnitConditionMetadataIds(conditionsList, true)
+    }
+    if (shouldUseOptionSetConditions(conditions, dimension, conditionsList)) {
+        return [
+            getOptionSetIdAndSelectedOptionCodes(dimension, conditionsList)
+                .optionSetId,
+        ]
+    }
+    return []
+}
+
+export const getConditionsTexts = ({
+    conditions,
+    dimension,
+    formatValueOptions,
+    metadataItems,
+}: {
+    conditions: Conditions
+    dimension: LayoutDimension
+    formatValueOptions: FormatValueOptions
+    metadataItems: Record<string, MetadataItem | undefined>
+}): string[] => {
+    const conditionsList = parseConditionsStringToArray(
+        conditions?.condition ?? ''
+    )
+
+    if (shouldUseLegendSetConditions(conditions)) {
+        return getLegendSetConditionMetadataIds(conditions, conditionsList).map(
+            (id) => metadataItems[id]?.name ?? id
+        )
+    }
+
+    if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
+        /* Passed `false` so the prefixed ID is returned: the prefixed entry is
+         * preferred for naming, with the unprefixed one as the fallback. */
+        return getOrgUnitConditionMetadataIds(conditionsList, false).map(
+            (id) =>
+                metadataItems[id]?.name ??
+                metadataItems[ouIdHelper.removePrefix(id)]?.name ??
+                id
+        )
+    }
+
+    if (shouldUseOptionSetConditions(conditions, dimension, conditionsList)) {
+        const { optionSetId, selectedOptionCodes } =
+            getOptionSetIdAndSelectedOptionCodes(dimension, conditionsList)
+        const optionSetMetadata = metadataItems[optionSetId]
+
+        const optionNamesByCode = new Map(
+            isOptionSetMetadataItem(optionSetMetadata)
+                ? optionSetMetadata.options.map((option) => [
+                      option.code,
+                      option.name,
+                  ])
+                : []
+        )
+        optionNamesByCode.set(NO_VALUE_OPTION_CODE, getNoValueOptionName())
+
+        return selectedOptionCodes.map(
+            (code) => optionNamesByCode.get(code) ?? code
+        )
+    }
+
+    if (shouldUseBooleanConditions(conditions, dimension, conditionsList)) {
+        return getBooleanConditionTexts(conditionsList)
+    }
+
+    return getOperatorConditionTexts(
+        dimension,
+        conditionsList,
+        formatValueOptions
+    )
 }

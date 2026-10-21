@@ -11,18 +11,18 @@
 # Andres Miguel Rubio, 2026
 # ericbp <ericbarredap@gmail.com>, 2026
 # Prabhjot Singh, 2026
-# Philip Larsen Donnelly, 2026
-# Viktor Varland <viktor@dhis2.org>, 2026
 # Pablo Del Médico, 2026
 # Enzo Nicolas Rossi <enzo@dhis2.org>, 2026
 # Janeth Cruz, 2026
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Philip Larsen Donnelly, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Janeth Cruz, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Spanish (https://app.transifex.com/hisp-uio/teams/100509/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -42,6 +42,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -250,12 +253,6 @@ msgstr "Etapa del programa: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Niveles"
-
-msgid "Groups"
-msgstr "Grupos"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -356,6 +353,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -606,6 +606,12 @@ msgstr "Evitar redondeo"
 
 msgid "Add a subtitle"
 msgstr "Añadir un subtítulo"
+
+msgid "Auto generated"
+msgstr "Generado automáticamente"
+
+msgid "Custom"
+msgstr "Personalizado"
 
 msgid "Add a title"
 msgstr "Añadir un título"
@@ -921,9 +927,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Personalizado"
-
 msgid "equal to (=)"
 msgstr "igual a (=)"
 
@@ -981,6 +984,9 @@ msgstr "No"
 msgid "Not answered"
 msgstr "No contestado"
 
+msgid "No value"
+msgstr "Sin valor"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1034,6 +1040,12 @@ msgstr "Estado de la inscripción"
 msgid "Registration org. unit"
 msgstr "Registro unidad org."
 
+msgid "Levels"
+msgstr "Niveles"
+
+msgid "Groups"
+msgstr "Grupos"
+
 msgid "Enrollment date"
 msgstr "Fecha de inscripción"
 
@@ -1046,12 +1058,14 @@ msgid ""
 msgstr ""
 
 msgid "Visualization not found"
-msgstr ""
+msgstr "Visualización no encontrada"
 
 msgid ""
 "The visualization you are trying to view could not be found, the ID could be"
 " incorrect or it could have been deleted."
 msgstr ""
+"La visualización que esta tratando de ver no fue encontrada, el ID podría "
+"ser incorrecto o podría haberse eliminado."
 
 msgid ""
 "Your account cannot access any items in one or more dimensions. Contact a "
@@ -1286,6 +1300,18 @@ msgstr "Completado"
 
 msgid "Scheduled"
 msgstr "Planificado"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Admisiones"
+
+msgid "Events"
+msgstr "Eventos"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

@@ -39,6 +39,7 @@ const testCases = {
                         },
                     ],
                     dimension: 'ou',
+                    program: { id: PID },
                 },
                 {
                     dimensionType: 'PROGRAM_INDICATOR',
@@ -107,7 +108,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                enrollmentOu: ['USER_ORGUNIT'],
+                [`${PID}.enrollmentOu`]: ['USER_ORGUNIT'],
                 bcgDoses: [],
                 lastName: [],
                 enrollmentDate: [],
@@ -129,7 +130,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'enrollmentOu',
+                    `${PID}.enrollmentOu`,
                     'bcgDoses',
                     'lastName',
                     'enrollmentDate',
@@ -157,6 +158,8 @@ const testCases = {
                         },
                     ],
                     dimension: 'ou',
+                    program: { id: PID },
+                    programStage: { id: SID },
                 },
                 {
                     dimensionType: 'PERIOD',
@@ -192,7 +195,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                enrollmentOu: ['USER_ORGUNIT'],
+                [`${SID}.ou`]: ['USER_ORGUNIT'],
                 enrollmentDate: [],
                 firstName: [],
                 bcgDoses: [],
@@ -207,7 +210,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'enrollmentOu',
+                    `${SID}.ou`,
                     'enrollmentDate',
                     'firstName',
                     'bcgDoses',
@@ -300,7 +303,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                'tetA.enrollmentOu': ['USER_ORGUNIT'],
+                'tetA.ou': ['USER_ORGUNIT'],
                 'tetA.focusName': [],
                 'tetA.localFocusId': [],
                 'tetA.area': [],
@@ -311,8 +314,7 @@ const testCases = {
                     'kailahun',
                 ],
                 'incidentDateId.enrollmentDate': [],
-                'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification':
-                    [],
+                'dateOfFociRegistrationId.focusDateOfClassification': [],
             },
             conditionsByDimension: {
                 'tetA.area': {
@@ -323,13 +325,13 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'tetA.enrollmentOu',
+                    'tetA.ou',
                     'tetA.focusName',
                     'tetA.localFocusId',
                     'tetA.area',
                     'incidentDateId.enrollmentOu',
                     'incidentDateId.enrollmentDate',
-                    'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification',
+                    'dateOfFociRegistrationId.focusDateOfClassification',
                 ],
                 rows: [],
                 filters: [],
@@ -349,6 +351,71 @@ describe('getVisualizationUiConfig', () => {
             expect(result).toEqual({ ...expected, options: DEFAULT_OPTIONS })
         }
     )
+
+    /* The result is merged into the existing visUiConfig, so the key has to be
+     * present-but-undefined to clear a previously loaded cell value rather than
+     * leaving it in place. */
+    it('emits cellValue as an own key even when the saved vis has no value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(Object.hasOwn(result, 'cellValue')).toBe(true)
+        expect(result.cellValue).toBeUndefined()
+    })
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'keys a saved registrationOu of a %s pivot table under its tracked entity type',
+        (outputType) => {
+            const input = {
+                type: 'PIVOT_TABLE',
+                outputType,
+                columns: [
+                    {
+                        dimension: 'registrationOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        items: [{ id: 'USER_ORGUNIT' }],
+                        program: { id: 'prog' },
+                    },
+                ],
+                rows: [],
+                filters: [],
+                programDimensions: [
+                    { id: 'prog', trackedEntityType: { id: 'tet' } },
+                ],
+            } as unknown as SavedVisualization
+
+            const result = getVisualizationUiConfig(input)
+
+            expect(result.layout.columns).toEqual(['tet.ou'])
+            expect(result.itemsByDimension['tet.ou']).toEqual(['USER_ORGUNIT'])
+        }
+    )
+
+    it('maps a saved value and aggregation type onto the cell value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+            value: { id: 's1.de1' },
+            aggregationType: 'AVERAGE',
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(result.cellValue).toEqual({
+            id: 's1.de1',
+            aggregationType: 'AVERAGE',
+        })
+    })
 
     it('extracts option fields from the saved vis and overrides the base options', () => {
         const input = {
@@ -475,6 +542,36 @@ describe('getSaveableVisualization', () => {
         const s0 = (saved.sorting as Array<Record<string, unknown>>)[0]
         expect(s0.dimension).toBe('someDim')
         expect(s0.direction).toBe('DESC')
+    })
+
+    it('reduces the cell value to a plain id, keeping the aggregation type', () => {
+        const vis = {
+            value: {
+                id: 'A03MvHHogjR.UXz7xuGCEhU',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+                valueType: 'NUMBER',
+                dimensionItemType: 'DATA_ELEMENT',
+            },
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toEqual({
+            id: 'UXz7xuGCEhU',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
+    it('leaves the cell value out when the visualization has none', () => {
+        const vis = {
+            columns: [],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        expect(getSaveableVisualization(vis).value).toBeUndefined()
     })
 
     it('sets sorting to undefined when sorting is not provided or empty', () => {
@@ -661,6 +758,75 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.legacy).toBe(true)
     })
 
+    it('maps a legacy visualization with no title to a hidden title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideTitle: false })
+        )
+
+        expect(result.hideTitle).toBe(true)
+    })
+
+    it('maps a legacy visualization with a title to a shown title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideTitle: true, title: 'Kept' })
+        )
+
+        expect(result.hideTitle).toBe(false)
+        expect(result.title).toBe('Kept')
+    })
+
+    it('treats a legacy whitespace-only title as no title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, title: '  ' })
+        )
+
+        expect(result.hideTitle).toBe(true)
+    })
+
+    it('hides the subtitle of a legacy visualization that has none', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideSubtitle: false })
+        )
+
+        expect(result.hideSubtitle).toBe(true)
+    })
+
+    it('shows the subtitle of a legacy visualization that has one', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideSubtitle: true, subtitle: 'Kept' })
+        )
+
+        expect(result.hideSubtitle).toBe(false)
+    })
+
+    it('honours the stored hideSubtitle on a non-legacy visualization', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ hideSubtitle: false })
+        )
+
+        expect(result.hideSubtitle).toBe(false)
+    })
+
+    it('honours the stored hideTitle on a non-legacy visualization', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ hideTitle: false })
+        )
+
+        expect(result.hideTitle).toBe(false)
+    })
+
+    it('hides the title on a visualization made legacy by an upgrade', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                hideTitle: false,
+                program: { id: PID },
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.legacy).toBe(true)
+        expect(result.hideTitle).toBe(true)
+    })
+
     it('leaves ENROLLMENT enrollment `ou` as `ou`', () => {
         const result = normalizeApiSavedVisualization(
             buildApiVis({
@@ -764,6 +930,7 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
     const apiDefaultOptions: Partial<EventVisualizationOptions> = {
         ...DEFAULT_OPTIONS,
         digitGroupSeparator: 'SPACE',
+        hideSubtitle: true,
     }
 
     const buildApiVis = (
@@ -831,6 +998,20 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
 
         expect(currentVis.digitGroupSeparator).toBe('COMMA')
         expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('hides an empty subtitle when rebuilding', () => {
+        const savedVis = normalizeApiSavedVisualization(buildApiVis())
+
+        expect(rebuildCurrentVis(savedVis).hideSubtitle).toBe(true)
+    })
+
+    it('shows a populated subtitle when rebuilding', () => {
+        const savedVis = normalizeApiSavedVisualization(
+            buildApiVis({ ...apiDefaultOptions, subtitle: 'Shown' })
+        )
+
+        expect(rebuildCurrentVis(savedVis).hideSubtitle).toBe(false)
     })
 
     it('is DIRTY when a real option changes', () => {

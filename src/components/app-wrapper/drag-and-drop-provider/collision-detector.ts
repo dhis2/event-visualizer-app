@@ -143,14 +143,13 @@ export const collisionDetector: CollisionDetection = ({
 }) => {
     const collisions: Collision[] = []
 
-    /*
-     * A layout-blocked drag — a sidebar dimension that cannot go in the
-     * current layout — has no valid drop target anywhere. */
-    if (getActiveDragData(active)?.isLayoutBlocked) {
+    if (!pointerCoordinates) {
         return collisions
     }
 
-    if (!pointerCoordinates) {
+    /* A dimension that cannot go in the current layout cannot be its cell value
+     * either, so a layout-blocked drag has nowhere to land. */
+    if (getActiveDragData(active)?.isLayoutBlocked) {
         return collisions
     }
 

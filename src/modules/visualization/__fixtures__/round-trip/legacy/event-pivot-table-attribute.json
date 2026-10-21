@@ -1,0 +1,288 @@
+{
+    "name": "Child health: ARV at birth by Gender active cases last 12 months",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_12_MONTHS"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "Gender",
+                "id": "cejWyOfXge6"
+            }
+        }
+    ],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "MCH ARV at birth",
+                "id": "wQLfBvPrXqq"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": true,
+    "rowTotals": true,
+    "rowSubTotals": true,
+    "colSubTotals": true,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": true,
+    "type": "PIVOT_TABLE",
+    "program": {
+        "enrollmentDateLabel": "Date of enrollment",
+        "incidentDateLabel": "Date of birth",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": true,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Date of enrollment",
+        "displayIncidentDateLabel": "Date of birth",
+        "displayEnrollmentLabel": "pregnancy",
+        "displayEventLabel": "Visit",
+        "id": "IpHINAT79UW",
+        "programStages": [
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "A03MvHHogjR",
+                "repeatable": false,
+                "name": "Birth"
+            },
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "id": "ZzYYXq4fJie",
+                "repeatable": false,
+                "name": "Baby Postnatal"
+            }
+        ],
+        "name": "Child Programme"
+    },
+    "programStage": {
+        "program": {
+            "id": "IpHINAT79UW"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Report date",
+        "id": "A03MvHHogjR",
+        "repeatable": false,
+        "name": "Birth"
+    },
+    "programDimensions": [],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": true,
+    "eventStatus": "ACTIVE",
+    "dataType": "AGGREGATED_VALUES",
+    "programStatus": "ACTIVE",
+    "filters": [],
+    "parentGraphMap": {
+        "jUb8gELQApl": "ImspTQPwCqd",
+        "TEQlaapDQoK": "ImspTQPwCqd",
+        "eIQbndfxQMb": "ImspTQPwCqd",
+        "Vth0fbpFcsO": "ImspTQPwCqd",
+        "PMa2VCrupOd": "ImspTQPwCqd",
+        "O6uvpzGd5pu": "ImspTQPwCqd",
+        "bL4ooGhyHRQ": "ImspTQPwCqd",
+        "kJq2mPyFEHo": "ImspTQPwCqd",
+        "fdc6uOvgoji": "ImspTQPwCqd",
+        "at6UHUQatSo": "ImspTQPwCqd",
+        "lc3eMKXaEfw": "ImspTQPwCqd",
+        "qhqAxPSTUXp": "ImspTQPwCqd",
+        "jmIPBj66vD6": "ImspTQPwCqd"
+    },
+    "columns": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_12_MONTHS"
+                }
+            ],
+            "dimension": "pe"
+        },
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "cejWyOfXge6",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        }
+    ],
+    "rows": [
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "filter": "IN:NVP only;Others",
+            "dimension": "wQLfBvPrXqq",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "f38bstJioPs",
+                "name": "MNCH Baby ARVs"
+            }
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "jUb8gELQApl"
+                },
+                {
+                    "id": "TEQlaapDQoK"
+                },
+                {
+                    "id": "eIQbndfxQMb"
+                },
+                {
+                    "id": "Vth0fbpFcsO"
+                },
+                {
+                    "id": "PMa2VCrupOd"
+                },
+                {
+                    "id": "O6uvpzGd5pu"
+                },
+                {
+                    "id": "bL4ooGhyHRQ"
+                },
+                {
+                    "id": "kJq2mPyFEHo"
+                },
+                {
+                    "id": "fdc6uOvgoji"
+                },
+                {
+                    "id": "at6UHUQatSo"
+                },
+                {
+                    "id": "lc3eMKXaEfw"
+                },
+                {
+                    "id": "qhqAxPSTUXp"
+                },
+                {
+                    "id": "jmIPBj66vD6"
+                }
+            ],
+            "dimension": "ou"
+        }
+    ],
+    "displayName": "Child health: ARV at birth by Gender active cases last 12 months",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "jUb8gELQApl": {
+            "uid": "jUb8gELQApl",
+            "code": "OU_204856",
+            "name": "Kailahun"
+        },
+        "TEQlaapDQoK": {
+            "uid": "TEQlaapDQoK",
+            "code": "OU_254945",
+            "name": "Port Loko"
+        },
+        "eIQbndfxQMb": {
+            "uid": "eIQbndfxQMb",
+            "code": "OU_268149",
+            "name": "Tonkolili"
+        },
+        "Vth0fbpFcsO": {
+            "uid": "Vth0fbpFcsO",
+            "code": "OU_233310",
+            "name": "Kono"
+        },
+        "PMa2VCrupOd": {
+            "uid": "PMa2VCrupOd",
+            "code": "OU_211212",
+            "name": "Kambia"
+        },
+        "wQLfBvPrXqq": {
+            "uid": "wQLfBvPrXqq",
+            "code": "DE_2008294",
+            "name": "MCH ARV at birth"
+        },
+        "O6uvpzGd5pu": {
+            "uid": "O6uvpzGd5pu",
+            "code": "OU_264",
+            "name": "Bo"
+        },
+        "bL4ooGhyHRQ": {
+            "uid": "bL4ooGhyHRQ",
+            "code": "OU_260377",
+            "name": "Pujehun"
+        },
+        "kJq2mPyFEHo": {
+            "uid": "kJq2mPyFEHo",
+            "code": "OU_222616",
+            "name": "Kenema"
+        },
+        "fdc6uOvgoji": {
+            "uid": "fdc6uOvgoji",
+            "code": "OU_193190",
+            "name": "Bombali"
+        },
+        "cejWyOfXge6": {
+            "uid": "cejWyOfXge6",
+            "name": "Gender"
+        },
+        "at6UHUQatSo": {
+            "uid": "at6UHUQatSo",
+            "code": "OU_278310",
+            "name": "Western Area"
+        },
+        "lc3eMKXaEfw": {
+            "uid": "lc3eMKXaEfw",
+            "code": "OU_197385",
+            "name": "Bonthe"
+        },
+        "qhqAxPSTUXp": {
+            "uid": "qhqAxPSTUXp",
+            "code": "OU_226213",
+            "name": "Koinadugu"
+        },
+        "jmIPBj66vD6": {
+            "uid": "jmIPBj66vD6",
+            "code": "OU_246990",
+            "name": "Moyamba"
+        }
+    },
+    "displayFormName": "Child health: ARV at birth by Gender active cases last 12 months",
+    "id": "sAqSL9Qrl1u",
+    "sorting": []
+}

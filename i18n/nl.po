@@ -3,16 +3,16 @@
 # Philip Larsen Donnelly, 2026
 # Transifex Bot <>, 2026
 # Yury Rogachev <yury@dhis2.org>, 2026
-# Cherise Beek <cherise.beek@gmail.com>, 2026
 # Rica, 2026
 # Charel van den Elsen <zobeadzorg@gmail.com>, 2026
+# Cherise Beek <cherise.beek@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Charel van den Elsen <zobeadzorg@gmail.com>, 2026\n"
+"Last-Translator: Cherise Beek <cherise.beek@gmail.com>, 2026\n"
 "Language-Team: Dutch (https://app.transifex.com/hisp-uio/teams/100509/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -241,12 +241,6 @@ msgstr "Programmafase: {{- stageName}}"
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Levels"
-msgstr "Niveaus"
-
-msgid "Groups"
-msgstr "Groepen"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
@@ -600,6 +594,12 @@ msgstr ""
 msgid "Add a subtitle"
 msgstr ""
 
+msgid "Auto generated"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
 msgid "Add a title"
 msgstr "Voeg een titel toe"
 
@@ -913,9 +913,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr ""
-
 msgid "equal to (=)"
 msgstr "gelijk aan (=)"
 
@@ -973,6 +970,9 @@ msgstr "Nee"
 msgid "Not answered"
 msgstr "Niet geantwoord"
 
+msgid "No value"
+msgstr "Geen waarde"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1025,6 +1025,12 @@ msgstr "Inschrijving Status"
 
 msgid "Registration org. unit"
 msgstr ""
+
+msgid "Levels"
+msgstr "Niveaus"
+
+msgid "Groups"
+msgstr "Groepen"
 
 msgid "Enrollment date"
 msgstr "Inschrijvingsdatum"
@@ -1280,6 +1286,18 @@ msgstr "Voltooid"
 
 msgid "Scheduled"
 msgstr "Gepland"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Inschrijvingen"
+
+msgid "Events"
+msgstr "Gebeurtenissen"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

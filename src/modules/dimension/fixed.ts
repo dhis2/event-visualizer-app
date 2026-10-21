@@ -1,5 +1,4 @@
 import i18n from '@dhis2/d2-i18n'
-import { getDefaultOrgUnitMetadata } from '@modules/metadata/org-unit'
 import type {
     DimensionId,
     DimensionMetadataItem,
@@ -61,12 +60,7 @@ export const getFixedMetaDimensions = (): DimensionMetadataItem[] => [
 export const getMainDimensions = (
     outputType: OutputType
 ): DimensionRecordObject => ({
-    ...(outputType === 'TRACKED_ENTITY_INSTANCE'
-        ? {
-              ...getDefaultOrgUnitMetadata(outputType),
-              ...getCreatedDimension(),
-          }
-        : {}),
+    ...(outputType === 'TRACKED_ENTITY_INSTANCE' ? getCreatedDimension() : {}),
     lastUpdated: {
         id: 'lastUpdated',
         dimensionId: 'lastUpdated',
@@ -177,8 +171,8 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
     id: string
 }): DimensionMetadataItem[] => [
     {
-        id: `${trackedEntityType.id}.enrollmentOu`,
-        dimensionId: 'enrollmentOu',
+        id: `${trackedEntityType.id}.ou`,
+        dimensionId: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,

@@ -8,7 +8,7 @@ import type {
 import type { DimensionType } from './dimension'
 import type { MetadataInputMap } from './metadata'
 import type { EventVisualizationOptions } from './options'
-import type { Program } from './program'
+import type { Program, TrackedEntityTypeRef } from './program'
 import type { ProgramStage } from './program-stage'
 import type { VisualizationType } from './visualization-type'
 
@@ -71,7 +71,7 @@ type SavedVisualizationFieldOverrides = {
     program: Program
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
-    trackedEntityType?: IdNameRecord
+    trackedEntityType?: TrackedEntityTypeRef
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
@@ -91,13 +91,15 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    /* The API returns the custom value's name and aggregation type alongside
-     * its id; the app only ever writes the id (the aggregation type it applies
-     * is the top-level one). The name does not need to be propagated to
-     * currentVis on update. */
+    /* The API resolves the cell value against the data element or tracked
+     * entity attribute behind it, so the dimension's own properties come back
+     * with it. The app only ever writes the id (the aggregation type it applies
+     * is the top-level one). */
     value?: IdRecord & {
         name?: string
         aggregationType?: EventVisualizationGenerated['aggregationType']
+        valueType?: ValueType
+        dimensionItemType?: DimensionType
     }
 }
 

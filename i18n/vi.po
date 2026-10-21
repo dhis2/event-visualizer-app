@@ -1,17 +1,17 @@
 # Translators:
 # Andres Miguel Rubio, 2026
+# Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
+# Mai Nguyen <thanhmai.jica@gmail.com>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Philip Larsen Donnelly, 2026
-# Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
 # Em Le <em.hispvietnam@gmail.com>, 2026
-# Mai Nguyen <thanhmai.jica@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-08T14:42:57.891Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Mai Nguyen <thanhmai.jica@gmail.com>, 2026\n"
+"Last-Translator: Em Le <em.hispvietnam@gmail.com>, 2026\n"
 "Language-Team: Vietnamese (https://app.transifex.com/hisp-uio/teams/100509/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -31,6 +31,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -237,12 +240,6 @@ msgstr "Giai đoạn chương trình: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Các cấp độ"
-
-msgid "Groups"
-msgstr "Nhóm"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -343,6 +340,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -594,6 +594,12 @@ msgstr "Không làm tròn"
 msgid "Add a subtitle"
 msgstr "Thêm tiêu đề phụ"
 
+msgid "Auto generated"
+msgstr "Tự động tạo"
+
+msgid "Custom"
+msgstr "Tùy chỉnh"
+
 msgid "Add a title"
 msgstr "Thêm tiêu đề"
 
@@ -779,6 +785,20 @@ msgstr "Lấy đường dẫn liên kết..."
 msgid "Delete"
 msgstr "Xóa"
 
+msgid "Save as a new visualization?"
+msgstr ""
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+
+msgid "Save a copy with the new name instead?"
+msgstr ""
+
+msgid "Save as new"
+msgstr "Lưu mới"
+
 msgid "Open"
 msgstr "Mở"
 
@@ -796,11 +816,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr ""
 
-msgid "Rename successful"
-msgstr "Đổi tên thành công"
-
 msgid "Rename failed"
 msgstr "Đổi tên thất bại"
+
+msgid "Rename successful"
+msgstr "Đổi tên thành công"
 
 msgid "Hide layout"
 msgstr "Ẩn bố cục"
@@ -907,9 +927,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Tùy chỉnh"
-
 msgid "equal to (=)"
 msgstr "bằng (=)"
 
@@ -967,6 +984,9 @@ msgstr "Không"
 msgid "Not answered"
 msgstr "Không trả lời"
 
+msgid "No value"
+msgstr "Không có giá trị"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1019,6 +1039,12 @@ msgstr "Trạng thái đăng ký"
 
 msgid "Registration org. unit"
 msgstr "Đơn vị đăng ký"
+
+msgid "Levels"
+msgstr "Các cấp độ"
+
+msgid "Groups"
+msgstr "Nhóm"
 
 msgid "Enrollment date"
 msgstr "Ngày đăng ký vào chương trình"
@@ -1273,6 +1299,18 @@ msgstr "Đã hoàn tất"
 
 msgid "Scheduled"
 msgstr "Đã lên lịch"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Đăng ký"
+
+msgid "Events"
+msgstr "Sự kiện"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

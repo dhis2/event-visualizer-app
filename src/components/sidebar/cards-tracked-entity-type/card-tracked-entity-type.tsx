@@ -55,7 +55,7 @@ const transformItem = (
     }
 }
 
-const transformTrackedEntityTypeAttributes = (
+export const transformTrackedEntityTypeAttributes = (
     data: unknown,
     trackedEntityTypeId: string
 ): ReturnType<Transformer> => {
@@ -98,7 +98,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 fields: [
                     'id',
                     `${displayNameProperty}~rename(name)`,
-                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet]]`,
+                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet,aggregationType]]`,
                 ],
             },
         }),

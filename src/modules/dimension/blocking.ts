@@ -21,25 +21,11 @@ export const isDimensionTypeFullyInvalidForVisType = (
 }
 
 export const isDimensionFullyInvalidForVisType = (
-    dim: Partial<
-        Pick<
-            DimensionMetadataItem,
-            'dimensionType' | 'dimensionId' | 'trackedEntityTypeId'
-        >
-    >,
+    dim: Partial<Pick<DimensionMetadataItem, 'dimensionType'>>,
     visType: VisualizationType
-): boolean => {
-    if (visType === 'LINE_LIST') {
-        return false
-    }
-    if (
-        dim.dimensionType &&
-        isDimensionTypeFullyInvalidForVisType(dim.dimensionType, visType)
-    ) {
-        return true
-    }
-    return dim.dimensionId === 'enrollmentOu' && !!dim.trackedEntityTypeId
-}
+): boolean =>
+    !!dim.dimensionType &&
+    isDimensionTypeFullyInvalidForVisType(dim.dimensionType, visType)
 
 export const isDimensionCrossTet = (
     dimensionTetId: string | null,
@@ -53,12 +39,11 @@ export const isDimensionCrossTet = (
 // Layout-blocking: whether — and why — a dimension cannot be placed in the layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type DimensionBlockReason = 'customValue' | 'visType' | 'crossTet'
+export type DimensionBlockReason = 'visType' | 'crossTet'
 
 type DimensionBlockReasonInput = {
     dimension: DimensionMetadataItem
     visualizationType: VisualizationType
-    customValueId: string | null
     layoutTetId: string | null
     dimensionTetId: string | null
 }
@@ -69,13 +54,9 @@ type DimensionBlockReasonInput = {
 export const getDimensionBlockReason = ({
     dimension,
     visualizationType,
-    customValueId,
     layoutTetId,
     dimensionTetId,
 }: DimensionBlockReasonInput): DimensionBlockReason | null => {
-    if (customValueId && dimension.id === customValueId) {
-        return 'customValue'
-    }
     if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
         return 'visType'
     }
@@ -102,8 +83,6 @@ export const getDimensionLayoutBlockedMessage = (
     input: DimensionDisablingInput
 ): string | null => {
     switch (getDimensionBlockReason(input)) {
-        case 'customValue':
-            return i18n.t('Already used as custom value.')
         case 'visType':
             return i18n.t('Cannot be used in a {{visType}}.', {
                 visType: visTypeDisplayNames[input.visualizationType],

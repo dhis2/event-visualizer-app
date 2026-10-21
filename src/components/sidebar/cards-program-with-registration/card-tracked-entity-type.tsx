@@ -16,7 +16,7 @@ import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension/fixed'
 import type { DataSourceProgramWithRegistration } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 
-const transformProgramAttributes = (
+export const transformProgramAttributes = (
     data: unknown,
     trackedEntityTypeId: string
 ): ReturnType<Transformer> => {
@@ -75,10 +75,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
         (selectedDimension) => {
-            if (
-                selectedDimension.id ===
-                `${program.trackedEntityType.id}.enrollmentOu`
-            ) {
+            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
                 return true
             }
             return (

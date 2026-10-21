@@ -1,16 +1,16 @@
 # Translators:
 # Andres Miguel Rubio, 2026
-# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Martin <martin@moid.se>, 2026
 # Jan Henrik Øverland, 2026
 # Karoline Tufte Lien <karoline@dhis2.org>, 2026
+# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2026\n"
+"Last-Translator: Caroline Hesthagen Holen <caroline@devotta.no>, 2026\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/hisp-uio/teams/100509/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -30,6 +30,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -237,12 +240,6 @@ msgstr "Programfase: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Nivå"
-
-msgid "Groups"
-msgstr "Grupper"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -343,6 +340,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -593,6 +593,12 @@ msgstr "Ingen avrunding"
 
 msgid "Add a subtitle"
 msgstr "Legg til en undertittel"
+
+msgid "Auto generated"
+msgstr "Automatisk generert"
+
+msgid "Custom"
+msgstr "Tilpasset"
 
 msgid "Add a title"
 msgstr "Legg til en tittel"
@@ -907,9 +913,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Tilpasset"
-
 msgid "equal to (=)"
 msgstr "lik (=)"
 
@@ -967,6 +970,9 @@ msgstr "Nei"
 msgid "Not answered"
 msgstr "Ikke besvart"
 
+msgid "No value"
+msgstr "Ingen verdi"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1019,6 +1025,12 @@ msgstr "Registreringsstatus"
 
 msgid "Registration org. unit"
 msgstr "Registrering org. enhet"
+
+msgid "Levels"
+msgstr "Nivå"
+
+msgid "Groups"
+msgstr "Grupper"
 
 msgid "Enrollment date"
 msgstr "Registreringsdato"
@@ -1273,6 +1285,18 @@ msgstr "Fullført"
 
 msgid "Scheduled"
 msgstr "Planlagt"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Registreringer"
+
+msgid "Events"
+msgstr "Hendelser"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
