@@ -544,14 +544,15 @@ describe('getSaveableVisualization', () => {
         expect(s0.direction).toBe('DESC')
     })
 
-    it('reduces the cell value to a plain id, keeping the aggregation type', () => {
+    it('keeps only the persisted fields of the cell value', () => {
         const vis = {
             value: {
-                id: 'A03MvHHogjR.UXz7xuGCEhU',
+                id: 'UXz7xuGCEhU',
                 name: 'MCH Weight (g)',
                 aggregationType: 'AVERAGE',
                 valueType: 'NUMBER',
                 dimensionItemType: 'DATA_ELEMENT',
+                programStage: { id: 'A03MvHHogjR' },
             },
             columns: [],
             rows: [],
@@ -560,7 +561,7 @@ describe('getSaveableVisualization', () => {
 
         expect(getSaveableVisualization(vis).value).toEqual({
             id: 'UXz7xuGCEhU',
-            aggregationType: 'AVERAGE',
+            programStage: { id: 'A03MvHHogjR' },
         })
     })
 

@@ -102,7 +102,11 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
-        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.value).toEqual({
+            id: 'de1',
+            programStage: { id: 's1' },
+            dimensionItemType: 'DATA_ELEMENT',
+        })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
@@ -115,7 +119,11 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
-        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.value).toEqual({
+            id: 'de1',
+            programStage: { id: 's1' },
+            dimensionItemType: 'DATA_ELEMENT',
+        })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
