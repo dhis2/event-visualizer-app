@@ -1,5 +1,6 @@
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
+import { getCellValueCompoundId } from '@modules/dimension/cell-value'
 import { isPopulatedString } from '@modules/utils/guards'
 import type { CurrentVisualization, MetadataStore } from '@types'
 
@@ -12,27 +13,28 @@ const getCountOrListTitle = (
         : i18n.t('{{- label}} list', { label })
 
 type VisualizationWithCustomValue = CurrentVisualization & {
-    value: { id: string; name: string }
+    value: { id: string }
     aggregationType: NonNullable<CurrentVisualization['aggregationType']>
 }
 
-/* The name is required: without it there is nothing to title the table with,
- * so such a visualization falls through to the count title instead. */
 const hasCustomValue = (
     visualization: CurrentVisualization
 ): visualization is VisualizationWithCustomValue =>
     visualization.type === 'PIVOT_TABLE' &&
     Boolean(visualization.value?.id) &&
-    Boolean(visualization.value?.name) &&
     Boolean(visualization.aggregationType)
 
 const getCustomValueTitle = (
-    visualization: VisualizationWithCustomValue
+    visualization: VisualizationWithCustomValue,
+    metadataStore: MetadataStore
 ): string => {
+    const itemName = metadataStore.getMetadataItemOrThrow(
+        getCellValueCompoundId(visualization.value, visualization)
+    ).name
     const aggregationName =
         aggregationTypeDisplayNames[visualization.aggregationType]
 
-    return `${visualization.value.name} · ${aggregationName}`
+    return `${itemName} · ${aggregationName}`
 }
 
 const getTrackedEntityTitle = (
@@ -61,7 +63,7 @@ export const getAutoTitle = (
     metadataStore: MetadataStore
 ): string => {
     if (hasCustomValue(visualization)) {
-        return getCustomValueTitle(visualization)
+        return getCustomValueTitle(visualization, metadataStore)
     }
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
