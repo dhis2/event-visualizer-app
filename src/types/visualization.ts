@@ -100,6 +100,7 @@ type SavedVisualizationFieldOverrides = {
         aggregationType?: EventVisualizationGenerated['aggregationType']
         valueType?: ValueType
         dimensionItemType?: DimensionType
+        programStage?: IdRecord
     }
 }
 

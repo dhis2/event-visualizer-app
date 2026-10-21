@@ -1,5 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { resolveAggregationType } from '@modules/dimension/aggregation-type'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -72,14 +73,28 @@ const resolveCellValueFields = (
         return { value: undefined, aggregationType: undefined }
     }
 
-    /* `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
+    const item = metadataStore.getDimensionMetadataItem(cellValue.id)
+
+    /* The plain id with its stage beside it, the same shape buildAxis gives a
+     * layout dimension. `dimensionItemType` comes along because a tracked
+     * entity attribute's prefix is rebuilt from it rather than from a stage.
+     *
+     * `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
      * cell value from an explicit choice. The analytics request needs a real
      * type, so it is resolved here, at the boundary. */
     return {
-        value: { id: cellValue.id },
+        value: {
+            id: item?.dimensionId ?? extractPlainDimensionId(cellValue.id),
+            ...(item?.programStageId && {
+                programStage: { id: item.programStageId },
+            }),
+            ...(item?.dimensionType && {
+                dimensionItemType: item.dimensionType,
+            }),
+        },
         aggregationType: resolveAggregationType(
             cellValue.aggregationType,
-            metadataStore.getDimensionMetadataItem(cellValue.id) ?? {}
+            item ?? {}
         ),
     }
 }

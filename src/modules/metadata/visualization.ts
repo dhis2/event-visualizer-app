@@ -1,3 +1,4 @@
+import { getCellValueCompoundId } from '@modules/dimension/cell-value'
 import { getUiDimensionType } from '@modules/dimension/dimension-type'
 import {
     getEnrollmentFixedDimensions,
@@ -105,19 +106,26 @@ export const extractDimensionMetadata = (
     return dimensionMetadata
 }
 
-/* The API names the cell value's dimension type `dimensionItemType`; the store
- * knows it as `dimensionType`. Renaming it here is what makes the value
- * register as a dimension rather than a bare named item. */
+/* Keyed by the compound id, so the cell value resolves to the same item
+ * whether it was dragged in or loaded back. The stage prefix is what gives it
+ * programStageId and programId, resolved from the stage already in the store,
+ * so the raw `programStage` is dropped. The API names the dimension type
+ * `dimensionItemType`; the store knows it as `dimensionType`, and that rename
+ * is what registers the value as a dimension rather than a bare named item. */
 export const extractValueMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
     if (!visualization.value) {
         return {}
     }
-    const { dimensionItemType, ...value } = visualization.value
+    const { id, name, aggregationType, valueType, dimensionItemType } =
+        visualization.value
     return {
-        [value.id]: {
-            ...value,
+        [getCellValueCompoundId(visualization.value, visualization)]: {
+            id,
+            name,
+            aggregationType,
+            valueType,
             ...(dimensionItemType && { dimensionType: dimensionItemType }),
         },
     }

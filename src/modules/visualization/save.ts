@@ -1,5 +1,4 @@
 import { getHeadersMap } from '@modules/analytics-request'
-import { extractPlainDimensionId } from '@modules/dimension/ids'
 import { removeNonPersistedDimensionProperties } from '@modules/dimension/translation'
 import type {
     CurrentVisualization,
@@ -49,12 +48,16 @@ export const getSaveableVisualization = (
     const result: Partial<SavedVisualization> = {
         ...visualization,
         sorting,
-        /* The backend looks the cell value up as a data element or attribute
-         * uid, so a compound id matches nothing and the value is dropped. */
+        /* Only the fields the backend stores: it looks the item up by uid and
+         * reads the stage it was chosen from, which is what keeps a data
+         * element belonging to several stages from aggregating across all of
+         * them. The aggregation the user chose is the top-level one; the
+         * `aggregationType` the API returns here is the data item's own
+         * default, which the app reads but never writes. */
         value: vis.value
             ? {
-                  id: extractPlainDimensionId(vis.value.id),
-                  aggregationType: vis.value.aggregationType,
+                  id: vis.value.id,
+                  programStage: vis.value.programStage,
               }
             : undefined,
     }
