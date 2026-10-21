@@ -92,15 +92,16 @@ export const getCellValueAnalyticsRequestParams = (
 ) => {
     const params = getCellValueRequestParams(visualization)
 
-    return (
-        params && {
-            ...params,
-            aggregationType: resolveAggregationType(
-                params.aggregationType,
-                metadataStore.getDimensionMetadataItem(params.value) ?? {}
-            ),
-        }
-    )
+    if (!params) {
+        return undefined
+    }
+
+    const item = metadataStore.getDimensionMetadataItemOrThrow(params.value)
+
+    return {
+        ...params,
+        aggregationType: resolveAggregationType(params.aggregationType, item),
+    }
 }
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,

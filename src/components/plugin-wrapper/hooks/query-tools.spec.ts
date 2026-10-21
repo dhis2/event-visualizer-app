@@ -522,6 +522,15 @@ describe('getCellValueAnalyticsRequestParams', () => {
         }
     )
 
+    it('throws when the cell value item is unknown to the metadata store', () => {
+        expect(() =>
+            getCellValueAnalyticsRequestParams(
+                createCellValueVis('DEFAULT'),
+                createMetadataStoreStub()
+            )
+        ).toThrow()
+    })
+
     it('sends nothing when there is no cell value', () => {
         expect(
             getCellValueAnalyticsRequestParams(
