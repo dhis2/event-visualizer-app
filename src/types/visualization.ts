@@ -72,6 +72,10 @@ type SavedVisualizationFieldOverrides = {
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
     trackedEntityType?: TrackedEntityTypeRef
+    /* How the cell `value` is aggregated. Not the same as
+     * `value.aggregationType`, which is the value item's own default. The
+     * backend does not require it, and leaves it out when it is not set. */
+    aggregationType?: EventVisualizationGenerated['aggregationType']
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
@@ -93,8 +97,8 @@ type SavedVisualizationFieldOverrides = {
     type: VisualizationType
     /* The API resolves the cell value against the data element or tracked
      * entity attribute behind it, so the dimension's own properties come back
-     * with it. The app only ever writes the id (the aggregation type it applies
-     * is the top-level one). */
+     * with it. The backend only stores the id: the aggregation type the
+     * visualization applies is the top-level one. */
     value?: IdRecord & {
         name?: string
         aggregationType?: EventVisualizationGenerated['aggregationType']
@@ -166,6 +170,7 @@ export type CurrentVisualization = Pick<
     | 'programDimensions'
     | 'sorting'
     | 'value'
+    | 'aggregationType'
 > &
     EventVisualizationOptions & {
         id?: string
