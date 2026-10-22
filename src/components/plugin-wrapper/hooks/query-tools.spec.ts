@@ -500,27 +500,28 @@ describe('getCellValueAnalyticsRequestParams', () => {
         ).toEqual({ value: 'de1', aggregationType: 'MAX' })
     })
 
-    it("sends the item's own aggregation type for DEFAULT", () => {
-        expect(
-            getCellValueAnalyticsRequestParams(
-                createCellValueVis('DEFAULT'),
-                createStore('SUM')
-            )
-        ).toEqual({ value: 'de1', aggregationType: 'SUM' })
-    })
-
-    /* Analytics rejects DEFAULT for an item that aggregates by NONE (E7265). */
-    it.each([['NONE'], [undefined]])(
-        'sends AVERAGE for DEFAULT when the item aggregates by %s',
+    /* Analytics works out what DEFAULT means for the item itself. */
+    it.each([['SUM'], [undefined]])(
+        'sends DEFAULT as it is when the item aggregates by %s',
         (itemAggregationType) => {
             expect(
                 getCellValueAnalyticsRequestParams(
                     createCellValueVis('DEFAULT'),
                     createStore(itemAggregationType)
                 )
-            ).toEqual({ value: 'de1', aggregationType: 'AVERAGE' })
+            ).toEqual({ value: 'de1', aggregationType: 'DEFAULT' })
         }
     )
+
+    /* Analytics rejects DEFAULT for an item that aggregates by NONE (E7265). */
+    it('sends AVERAGE for DEFAULT when the item aggregates by NONE', () => {
+        expect(
+            getCellValueAnalyticsRequestParams(
+                createCellValueVis('DEFAULT'),
+                createStore('NONE')
+            )
+        ).toEqual({ value: 'de1', aggregationType: 'AVERAGE' })
+    })
 
     it('throws when the cell value item is unknown to the metadata store', () => {
         expect(() =>

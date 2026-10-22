@@ -1,5 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
-import { resolveAggregationType } from '@modules/dimension/aggregation-type'
+import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
@@ -97,11 +97,14 @@ export const getCellValueAnalyticsRequestParams = (
     }
 
     const item = metadataStore.getDimensionMetadataItemOrThrow(params.value)
+    /* Analytics works out what DEFAULT means for the item itself, but rejects
+     * it for an item that aggregates by NONE (E7265). */
+    const isDefaultForNoneItem =
+        params.aggregationType === 'DEFAULT' && item.aggregationType === 'NONE'
 
-    return {
-        ...params,
-        aggregationType: resolveAggregationType(params.aggregationType, item),
-    }
+    return isDefaultForNoneItem
+        ? { ...params, aggregationType: FALLBACK_AGGREGATION_TYPE }
+        : params
 }
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,

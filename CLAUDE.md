@@ -474,11 +474,12 @@ Two fields share the name `aggregationType`:
 - `value.aggregationType` is the item's own aggregation type. The API returns it with the value,
   but only `value.id` is persisted.
 
-`DEFAULT` means "whatever the item aggregates by", and it is persisted as `DEFAULT` so the
-visualization keeps following the item. It is resolved to a real type (`resolveAggregationType` in
-`@modules/dimension/aggregation-type`) only to show an aggregation name, and for the analytics
-request (`getCellValueAnalyticsRequestParams`): analytics rejects `DEFAULT` for an item that
-aggregates by NONE (E7265), so the request falls back to AVERAGE there.
+`DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
+`DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
+one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` for it (E7265), so
+the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
+to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
+aggregation name.
 
 ## Grouping values by legend
 
