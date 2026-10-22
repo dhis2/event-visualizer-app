@@ -10,6 +10,16 @@ vi.mock('@dhis2/app-runtime', () => ({
     useDataEngine: () => ({}),
 }))
 
+vi.mock(
+    '@components/app-wrapper/metadata-provider/metadata-provider',
+    async () => {
+        const { createMetadataStoreStub } =
+            await import('@test-utils/metadata-store-stub')
+        const metadataStore = createMetadataStoreStub()
+        return { useMetadataStore: () => metadataStore }
+    }
+)
+
 vi.mock('@hooks', async () => {
     const { useSelector } = await import('react-redux')
     return {

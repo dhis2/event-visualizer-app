@@ -1,5 +1,4 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -32,6 +31,7 @@ const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
     'attributeDimensions',
     'sorting',
     'value',
+    'aggregationType',
     'id',
     'programDimensions',
 ]
@@ -59,10 +59,7 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-const resolveCellValueFields = (
-    visUiConfig: VisUiConfigState,
-    metadataStore: MetadataStore
-) => {
+const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
     /* Always include the `value` key: setCurrentVis merges into the previous
      * currentVis, so omitting it would leave a stale value behind. Only a pivot
      * table shows aggregated cells, so only it can carry a cell value. */
@@ -72,22 +69,14 @@ const resolveCellValueFields = (
         return { value: undefined, aggregationType: undefined }
     }
 
-    /* `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
-     * cell value from an explicit choice. The analytics request needs a real
-     * type, so it is resolved here, at the boundary. */
     return {
         value: { id: cellValue.id },
-        aggregationType: resolveAggregationType(
-            cellValue.aggregationType,
-            metadataStore.getDimensionMetadataItem(cellValue.id) ?? {}
-        ),
+        aggregationType: cellValue.aggregationType,
     }
 }
 
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
- * leak through. Carries over only id and sorting from the previous currentVis.
- * The value fields go after the options spread so the value's own aggregation
- * type wins over the options default. */
+ * leak through. Carries over only id and sorting from the previous currentVis. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
     visUiConfig,
@@ -113,5 +102,5 @@ export const buildCurrentVisFromVisUiConfig = ({
     // There is no generated subtitle, so an empty one is a hidden one
     hideSubtitle: !isPopulatedString(visUiConfig.options.subtitle),
     ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCellValueFields(visUiConfig, metadataStore),
+    ...resolveCellValueFields(visUiConfig),
 })

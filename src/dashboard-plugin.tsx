@@ -18,8 +18,9 @@ import type {
     CurrentVisualization,
     DashboardPluginProps,
     EmptyVisualization,
+    SavedVisualization,
 } from '@types'
-import { useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, useState, type FC } from 'react'
 import './locales/index.js'
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
@@ -55,17 +56,28 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 
+    /* React runs a child's effects before its parent's, so the visualization
+     * only reaches PluginWrapper once its metadata is in the store: the
+     * analytics request in PluginWrapper's effects reads it. */
+    const [registeredVisualization, setRegisteredVisualization] = useState<
+        SavedVisualization | undefined
+    >()
+
     useEffect(() => {
         if (savedVisualization) {
             metadataStore.setVisualizationMetadata(savedVisualization)
+            setRegisteredVisualization(savedVisualization)
         }
     }, [savedVisualization, metadataStore])
 
     const currentVisualization = useMemo<
         CurrentVisualization | EmptyVisualization
     >(
-        () => (savedVisualization ? toCurrentVis(savedVisualization) : {}),
-        [savedVisualization]
+        () =>
+            registeredVisualization
+                ? toCurrentVis(registeredVisualization)
+                : {},
+        [registeredVisualization]
     )
 
     const visualizationLoadError = useMemo(

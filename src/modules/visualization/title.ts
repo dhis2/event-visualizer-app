@@ -1,5 +1,6 @@
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
+import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import { isPopulatedString } from '@modules/utils/guards'
 import type { CurrentVisualization, MetadataStore } from '@types'
 
@@ -27,13 +28,15 @@ const getCustomValueTitle = (
     visualization: VisualizationWithCustomValue,
     metadataStore: MetadataStore
 ): string => {
-    const itemName = metadataStore.getMetadataItemOrThrow(
+    const item = metadataStore.getDimensionMetadataItemOrThrow(
         visualization.value.id
-    ).name
-    const aggregationName =
-        aggregationTypeDisplayNames[visualization.aggregationType]
+    )
+    const aggregationType = resolveAggregationType(
+        visualization.aggregationType,
+        item
+    )
 
-    return `${itemName} · ${aggregationName}`
+    return `${item.name} · ${aggregationTypeDisplayNames[aggregationType]}`
 }
 
 const getTrackedEntityTitle = (
