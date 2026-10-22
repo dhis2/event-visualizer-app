@@ -1,11 +1,12 @@
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { DashboardItem } from '@components/dashboard-item/dashboard-item'
 import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getVisualizationTitle } from '@modules/visualization/title'
 import { render, screen } from '@testing-library/react'
 import type { CurrentVisualization, EmptyVisualization } from '@types'
 import type { FC, ReactNode } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+// eslint-disable-next-line no-restricted-imports
+import DashboardPlugin from './dashboard-plugin'
 
 const pivotTableWithCellValue = {
     id: 'vis1',
@@ -68,9 +69,11 @@ vi.mock('@components/plugin-wrapper/plugin-wrapper', () => ({
     }) => <PluginWrapperStub {...props} />,
 }))
 
-describe('DashboardItem', () => {
+describe('DashboardPlugin', () => {
     it("registers the visualization's metadata before PluginWrapper renders it", () => {
-        render(<DashboardItem displayProperty="name" visualizationId="vis1" />)
+        render(
+            <DashboardPlugin displayProperty="name" visualizationId="vis1" />
+        )
 
         expect(cellValueMetadataSeenByPluginWrapper).toHaveBeenCalled()
         for (const [metadataItem] of cellValueMetadataSeenByPluginWrapper.mock
@@ -80,7 +83,9 @@ describe('DashboardItem', () => {
     })
 
     it('renders the title of a pivot table with a cell value', () => {
-        render(<DashboardItem displayProperty="name" visualizationId="vis1" />)
+        render(
+            <DashboardPlugin displayProperty="name" visualizationId="vis1" />
+        )
 
         expect(screen.getByRole('heading').textContent).toBe('Weight · Average')
     })

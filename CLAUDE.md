@@ -41,7 +41,7 @@ This is a DHIS2 "App Shell App" with a special build structure:
 
 ### Provider boundary: app vs plugin
 
-The app (`src/app.ts`) and the dashboard plugin (`src/dashboard-plugin.ts`) are
+The app (`src/app.ts`) and the dashboard plugin (`src/dashboard-plugin.tsx`) are
 two entry points with deliberately different provider stacks.
 
 - The **app** mounts a wide range of providers in the app-wrapper — the Redux

@@ -21,6 +21,7 @@ import type {
     SavedVisualization,
 } from '@types'
 import { useEffect, useMemo, useState, type FC } from 'react'
+import './locales/index.js'
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     logger.debug('DashboardPlugin props', props)
@@ -105,8 +106,11 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     )
 }
 
-export const DashboardItem: FC<DashboardPluginProps> = (props) => (
+const DashboardPlugin: FC<DashboardPluginProps> = (props) => (
     <PluginMetadataProvider>
         <DashboardPluginContent {...props} />
     </PluginMetadataProvider>
 )
+
+// eslint-disable-next-line import/no-default-export
+export default DashboardPlugin
