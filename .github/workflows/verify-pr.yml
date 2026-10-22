@@ -27,9 +27,9 @@ jobs:
     verify-and-build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
               with:
                   node-version: lts/*
                   cache: pnpm
@@ -61,7 +61,7 @@ jobs:
             - name: Build
               run: pnpm d2-app-scripts build
 
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7
               with:
                   name: app-build
                   path: |
@@ -75,7 +75,7 @@ jobs:
         outputs:
             matrix: ${{ steps.set-matrix.outputs.specs }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
             - name: Generate Test matrix
               id: set-matrix
               run: echo "::set-output name=specs::$(node scripts/generate-test-matrix.cjs)"
@@ -89,9 +89,9 @@ jobs:
             matrix:
                 spec-group: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
         steps:
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
               with:
                   node-version: lts/*
                   cache: pnpm
@@ -136,10 +136,10 @@ jobs:
         needs: verify-and-build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
               with:
                   fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
             - name: SonarQube Scan
-              uses: SonarSource/sonarqube-scan-action@v6
+              uses: SonarSource/sonarqube-scan-action@v8
               env:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
