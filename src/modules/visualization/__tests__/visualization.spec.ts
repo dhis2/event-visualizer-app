@@ -922,6 +922,50 @@ describe('normalizeApiSavedVisualization', () => {
 
         expect(result.columns?.[0].legendSet).toBeUndefined()
     })
+
+    const buildCellValueVis = (
+        overrides: Partial<ApiSavedVisualization> = {}
+    ) =>
+        buildApiVis({
+            type: 'PIVOT_TABLE',
+            value: { id: UID, aggregationType: 'MAX' },
+            ...overrides,
+        })
+
+    it('fills a missing aggregation type with DEFAULT', () => {
+        const result = normalizeApiSavedVisualization(buildCellValueVis())
+
+        expect(result.aggregationType).toBe('DEFAULT')
+    })
+
+    it('keeps a saved aggregation type', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({ aggregationType: 'SUM' })
+        )
+
+        expect(result.aggregationType).toBe('SUM')
+    })
+
+    it('leaves the aggregation type unset when there is no cell value', () => {
+        const result = normalizeApiSavedVisualization(buildApiVis())
+
+        expect(result.aggregationType).toBeUndefined()
+    })
+
+    it('drops an aggregation type that has no cell value', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ aggregationType: 'SUM' })
+        )
+
+        expect(result.aggregationType).toBeUndefined()
+        expect(result.legacy).toBeUndefined()
+    })
+
+    it('does not mark the vis legacy when it fills the aggregation type', () => {
+        const result = normalizeApiSavedVisualization(buildCellValueVis())
+
+        expect(result.legacy).toBeUndefined()
+    })
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {

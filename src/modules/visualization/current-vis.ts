@@ -1,5 +1,4 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import { extractPlainDimensionId } from '@modules/dimension/ids'
 import {
     buildAxis,
@@ -33,6 +32,7 @@ const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
     'attributeDimensions',
     'sorting',
     'value',
+    'aggregationType',
     'id',
     'programDimensions',
 ]
@@ -81,9 +81,9 @@ const resolveCellValueFields = (
      * find its metadata — and a tracked entity attribute has no stage to
      * rebuild it from, only its type.
      *
-     * `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
-     * cell value from an explicit choice. The analytics request needs a real
-     * type, so it is resolved here, at the boundary. */
+     * The aggregation type is passed through as the user chose it, `DEFAULT`
+     * included: it is resolved against the data item where it is read, not
+     * here. */
     return {
         value: {
             id: item?.dimensionId ?? extractPlainDimensionId(cellValue.id),
@@ -94,17 +94,12 @@ const resolveCellValueFields = (
                 dimensionItemType: item.dimensionType,
             }),
         },
-        aggregationType: resolveAggregationType(
-            cellValue.aggregationType,
-            item ?? {}
-        ),
+        aggregationType: cellValue.aggregationType,
     }
 }
 
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
- * leak through. Carries over only id and sorting from the previous currentVis.
- * The value fields go after the options spread so the value's own aggregation
- * type wins over the options default. */
+ * leak through. Carries over only id and sorting from the previous currentVis. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
     visUiConfig,
