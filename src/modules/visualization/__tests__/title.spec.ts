@@ -192,7 +192,12 @@ describe('getVisualizationTitle', () => {
 
     it('replaces the output-type title with the custom value on a pivot', () => {
         const store = buildStore({
-            de1: { id: 'de1', name: 'MCH Apgar score' },
+            de1: {
+                id: 'de1',
+                name: 'MCH Apgar score',
+                dimensionType: 'DATA_ELEMENT',
+                aggregationType: 'SUM',
+            },
         })
         const vis = buildVis({
             type: 'PIVOT_TABLE',
@@ -205,9 +210,32 @@ describe('getVisualizationTitle', () => {
         )
     })
 
+    it("names the value item's own aggregation type for DEFAULT", () => {
+        const store = buildStore({
+            de1: {
+                id: 'de1',
+                name: 'MCH Apgar score',
+                dimensionType: 'DATA_ELEMENT',
+                aggregationType: 'SUM',
+            },
+        })
+        const vis = buildVis({
+            type: 'PIVOT_TABLE',
+            value: { id: 'de1' },
+            aggregationType: 'DEFAULT',
+        })
+
+        expect(getVisualizationTitle(vis, store)).toBe('MCH Apgar score · Sum')
+    })
+
     it('ignores a custom value that is missing its aggregation type', () => {
         const store = buildStore({
-            de1: { id: 'de1', name: 'MCH Apgar score' },
+            de1: {
+                id: 'de1',
+                name: 'MCH Apgar score',
+                dimensionType: 'DATA_ELEMENT',
+                aggregationType: 'SUM',
+            },
         })
         const vis = buildVis({ type: 'PIVOT_TABLE', value: { id: 'de1' } })
 
@@ -226,7 +254,12 @@ describe('getVisualizationTitle', () => {
 
     it('ignores a custom value on a line list', () => {
         const store = buildStore({
-            de1: { id: 'de1', name: 'MCH Apgar score' },
+            de1: {
+                id: 'de1',
+                name: 'MCH Apgar score',
+                dimensionType: 'DATA_ELEMENT',
+                aggregationType: 'SUM',
+            },
         })
         const vis = buildVis({
             value: { id: 'de1' },

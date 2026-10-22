@@ -39,7 +39,6 @@
         "@testing-library/jest-dom": "^7.0.1",
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.8",
-        "@types/jest": "^30.0.0",
         "@types/node": "^26.6.5",
         "@types/prop-types": "^15",
         "@types/react": "^18.3.23",
@@ -62,7 +61,7 @@
         "typescript": "^6",
         "typescript-plugin-css-modules": "^5.2.0",
         "vite": "^8.3.4",
-        "vitest": "^4.1.11",
+        "vitest": "^5.0.3",
         "vitest-canvas-mock": "^1.2.0"
     },
     "dependencies": {

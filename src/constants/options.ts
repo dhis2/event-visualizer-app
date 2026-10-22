@@ -10,7 +10,6 @@ export const DEFAULT_LEGEND_OPTION: LegendOption = {
     set: undefined,
 }
 export const DEFAULT_OPTIONS: EventVisualizationOptions = {
-    aggregationType: 'SUM',
     baseLineValue: undefined,
     colSubTotals: false,
     colTotals: false,

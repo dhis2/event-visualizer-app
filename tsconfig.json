@@ -11,7 +11,7 @@
         "moduleResolution": "bundler",
         "types": [
             "vite/client",
-            "@testing-library/jest-dom",
+            "@testing-library/jest-dom/vitest",
             "cypress",
             "cypress/react",
             "cypress-real-events"
