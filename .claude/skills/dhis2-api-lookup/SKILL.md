@@ -9,8 +9,8 @@ AI models frequently hallucinate DHIS2 API details — endpoint paths, query par
 shapes, and filter syntax all evolve between versions. Do not rely on training data for DHIS2 API
 specifics. Instead, consult the actual API of the target instance using the approaches below.
 
-Read `cypress.env.json` (gitignored) for the DHIS2 server URL and credentials. Use these for all
-API interactions described in this section.
+Use the instances listed under "DHIS2 instances" in CLAUDE.md, with the credentials from
+`cypress.env.json` (gitignored), and follow the rules there on which requests each one allows.
 
 ### Tier 1: OpenAPI spec (endpoint structure, parameters, types)
 
@@ -34,8 +34,8 @@ API endpoint.
 ### Tier 2: Probe the live API (verify actual response shapes)
 
 When the OpenAPI spec doesn't fully answer the question — especially for complex endpoints like
-`/api/analytics` where responses vary based on query parameters — make GET requests against the
-dev instance to see actual data:
+`/api/analytics` where responses vary based on query parameters — make requests against the dev
+instance to see actual data:
 
 ```bash
 curl -u <user>:<pass> "<server>/api/<resource>?<params>"
@@ -43,8 +43,8 @@ curl -u <user>:<pass> "<server>/api/<resource>?<params>"
 
 **Rules:**
 
-- **GET requests only** — never POST, PUT, PATCH, or DELETE against the instance
-- **Use the dev/test instance** from `cypress.env.json`, never a production server
+- **Which requests**: see "DHIS2 instances" in CLAUDE.md. The dev instance allows any request,
+  the E2E instance only GET. Never use a production server
 - **Limit response size** — use `pageSize=1` or `pageSize=5` and `fields=` filtering to avoid
   flooding context with large responses
 

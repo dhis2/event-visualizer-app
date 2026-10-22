@@ -11,7 +11,7 @@ env:
     GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
     GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
     CI: true
-    DEV_URL: 'https://e2e.im.dhis2.org/analytics-dev'
+    E2E_URL: 'https://e2e.im.dhis2.org/idv-playground'
     API_VERSION: '44'
     SHOULD_RECORD: ${{ contains(github.event.pull_request.labels.*.name, 'e2e record') }}
 
@@ -117,7 +117,7 @@ jobs:
                   CI: true
                   BROWSER: none
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-                  CYPRESS_dhis2BaseUrl: ${{ env.DEV_URL }}
+                  CYPRESS_dhis2BaseUrl: ${{ env.E2E_URL }}
                   CYPRESS_dhis2InstanceVersion: ${{ env.API_VERSION }}
                   CYPRESS_dhis2Username: ${{ secrets.CYPRESS_DHIS2_USERNAME }}
                   CYPRESS_dhis2Password: ${{ secrets.CYPRESS_DHIS2_PASSWORD }}

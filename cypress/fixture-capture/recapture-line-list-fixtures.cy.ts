@@ -1,8 +1,9 @@
 /**
  * Recaptures the line-list fixtures by loading each visualization in the
- * running app against the e2e.im.dhis2.org/analytics-dev instance (the
- * same one CI's e2e suite runs against) and writing the intercepted API
- * responses verbatim into the fixture directories.
+ * running app against the e2e.im.dhis2.org/analytics-dev instance and
+ * writing the intercepted API responses verbatim into the fixture
+ * directories. Not the E2E instance CI uses: two of these visualizations
+ * only exist on analytics-dev.
  *
  * Excluded from normal e2e runs (it lives outside the e2e specPattern);
  * run it with:
