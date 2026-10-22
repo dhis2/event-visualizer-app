@@ -6,14 +6,14 @@ import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization, MetadataStore } from '@types'
 import { useCallback, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
-    getCellValueRequestParams,
+    getCellValueAnalyticsRequestParams,
     getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
 import { useInFlightDedup } from './use-in-flight-dedup'
@@ -23,6 +23,7 @@ type FetchAnalyticsDataForPTInternalParams = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
     relativePeriodDate: unknown
+    metadataStore: MetadataStore
 }
 
 export const fetchAnalyticsDataForPT = async ({
@@ -30,6 +31,7 @@ export const fetchAnalyticsDataForPT = async ({
     displayProperty,
     visualization,
     relativePeriodDate,
+    metadataStore,
 }: FetchAnalyticsDataForPTInternalParams) => {
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
@@ -62,7 +64,10 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withLimit(visualization.topLimit)
     }
 
-    const cellValueParams = getCellValueRequestParams(visualization)
+    const cellValueParams = getCellValueAnalyticsRequestParams(
+        visualization,
+        metadataStore
+    )
     if (cellValueParams) {
         req = req
             .withValue(cellValueParams.value)
@@ -148,6 +153,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     visualization,
                     displayProperty,
                     relativePeriodDate,
+                    metadataStore,
                 })
 
                 logger.debug('PT analytics response', analyticsResponse)
