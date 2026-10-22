@@ -67,9 +67,9 @@ jobs:
                       echo "URL: https://$slug.event-visualizer.netlify.dhis2.org"
                   } >>"$GITHUB_STEP_SUMMARY"
 
-            - uses: actions/checkout@v4
-            - uses: pnpm/action-setup@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v7
               with:
                   node-version: lts/*
                   cache: pnpm
@@ -81,7 +81,7 @@ jobs:
               run: pnpm d2-app-scripts build --standalone
 
             - name: Deploy
-              uses: nwtgck/actions-netlify@v3
+              uses: nwtgck/actions-netlify@v4
               timeout-minutes: 2
               with:
                   github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
