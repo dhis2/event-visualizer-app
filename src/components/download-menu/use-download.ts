@@ -1,6 +1,10 @@
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { getAnalyticsEndpoint } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { getAdaptedVisualization as getAdaptedVisualizationForLL } from '@components/plugin-wrapper/hooks/query-tools-line-list'
-import { getAdaptedVisualization as getAdaptedVisualizationForPT } from '@components/plugin-wrapper/hooks/query-tools-pivot-table'
+import {
+    getAdaptedVisualization as getAdaptedVisualizationForPT,
+    getCellValueAnalyticsRequestParams,
+} from '@components/plugin-wrapper/hooks/query-tools-pivot-table'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
@@ -31,6 +35,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
     const currentVis = useAppSelector(getCurrentVis)
     const currentUser = useCurrentUser()
+    const metadataStore = useMetadataStore()
 
     const downloadForLL: DownloadFn = useCallback(
         ({ type, format, idScheme }) => {
@@ -186,10 +191,14 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     req = req.withLimit(visualization.topLimit)
                 }
 
-                if (visualization.value && visualization.aggregationType) {
+                const cellValueParams = getCellValueAnalyticsRequestParams(
+                    visualization,
+                    metadataStore
+                )
+                if (cellValueParams) {
                     req = req
-                        .withValue(visualization.value.id)
-                        .withAggregationType(visualization.aggregationType)
+                        .withValue(cellValueParams.value)
+                        .withAggregationType(cellValueParams.aggregationType)
                 }
 
                 if (
@@ -257,6 +266,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             config.apiVersion,
             currentVis,
             currentUser.settings,
+            metadataStore,
             relativePeriodDate,
         ]
     )

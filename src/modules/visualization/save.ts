@@ -52,10 +52,7 @@ export const getSaveableVisualization = (
         /* The backend looks the cell value up as a data element or attribute
          * uid, so a compound id matches nothing and the value is dropped. */
         value: vis.value
-            ? {
-                  id: extractPlainDimensionId(vis.value.id),
-                  aggregationType: vis.value.aggregationType,
-              }
+            ? { id: extractPlainDimensionId(vis.value.id) }
             : undefined,
     }
     // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
