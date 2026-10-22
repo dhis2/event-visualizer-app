@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-12T14:10:41.887Z\n"
-"PO-Revision-Date: 2026-10-12T14:10:41.887Z\n"
+"POT-Creation-Date: 2026-10-22T12:48:15.232Z\n"
+"PO-Revision-Date: 2026-10-22T12:48:15.232Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -222,6 +222,11 @@ msgstr "Remove"
 
 msgid "all"
 msgstr "all"
+
+msgid "And {{- count}} other..."
+msgid_plural "And {{- count}} other..."
+msgstr[0] "And {{- count}} other..."
+msgstr[1] "And {{- count}} others..."
 
 msgid "None selected"
 msgstr "None selected"
@@ -683,6 +688,11 @@ msgstr "Expand all cards"
 
 msgid "Collapse all cards"
 msgstr "Collapse all cards"
+
+msgid "Enter at least {{- count}} characters to search"
+msgid_plural "Enter at least {{- count}} characters to search"
+msgstr[0] "Enter at least {{- count}} characters to search"
+msgstr[1] "Enter at least {{- count}} characters to search"
 
 msgid "Something went wrong while searching."
 msgstr "Something went wrong while searching."
@@ -1294,8 +1304,8 @@ msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
+msgstr "Individual Data Visualizer"
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"
+msgstr "Individual data visualizer app and plugin"
