@@ -7,8 +7,9 @@ _text_
 ---
 
 ### Quality checklist
-
-Add _N/A_ to items that are not applicable and check them, or strike them through (`- [ ] ~item~`).
+<!---
+Strike through items that are not applicable: `- [ ] ~item~`
+-->
 
 - [ ] Cypress and/or Jest tests added/updated
 - [ ] Docs added
