@@ -405,7 +405,10 @@ its program qualifier so it reads like the TEI registration OU.
 
 1. `normalizeApiSavedVisualization` (`@modules/visualization/normalize-legacy`) brings the API
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
-   (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). The `PROGRAM_DATA_ELEMENT` →
+   (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
+   `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
+   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)). The
+   `PROGRAM_DATA_ELEMENT` →
    `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
    `transformDimensions` (`@modules/dimension/translation`).
 2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
@@ -460,6 +463,23 @@ reference them.
 | `optionSetId`     | ID reference to the option set (if applicable)                                                 |
 | `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
 | `legendSetIds`    | IDs of every legend set assigned to the data item, i.e. the grouping options available         |
+
+## Cell value aggregation type
+
+A pivot table can show a cell value: a numeric data element or attribute, aggregated in each cell.
+Two fields share the name `aggregationType`:
+
+- The top-level `aggregationType` is how the visualization aggregates the cell value. It is
+  persisted, and only means something together with `value`.
+- `value.aggregationType` is the item's own aggregation type. The API returns it with the value,
+  but only `value.id` is persisted.
+
+`DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
+`DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
+one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` for it (E7265), so
+the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
+to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
+aggregation name.
 
 ## Grouping values by legend
 
