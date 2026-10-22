@@ -55,8 +55,9 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 
-    /* PluginWrapper reads the visualization's metadata on its first render,
-     * so the visualization is only passed down once the store has it. */
+    /* PluginWrapper reads the visualization's metadata while rendering and in
+     * its effects, which React runs before this component's, so the
+     * visualization is only passed down once the store has it. */
     const [isMetadataStorePopulated, setIsMetadataStorePopulated] =
         useState(false)
 
