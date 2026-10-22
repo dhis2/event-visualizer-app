@@ -8,9 +8,7 @@ _text_
 
 ### Quality checklist
 
-Add _N/A_ to items that are not applicable and check them.
-
-<!--Checkmate-->
+Add _N/A_ to items that are not applicable and check them, or strike them through (`- [ ] ~item~`).
 
 - [ ] Cypress and/or Jest tests added/updated
 - [ ] Docs added
@@ -19,8 +17,6 @@ Add _N/A_ to items that are not applicable and check them.
 ---
 
 ### ToDos
-
-<!--Checkmate-->
 
 - [ ] _todo_
 
