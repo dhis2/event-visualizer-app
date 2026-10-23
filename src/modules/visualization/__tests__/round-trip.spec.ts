@@ -21,10 +21,11 @@ import {
     toCurrentVis,
 } from '@modules/visualization/current-vis'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
+import { getSaveableVisualization } from '@modules/visualization/save'
 import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
-import type { ApiSavedVisualization, Layout } from '@types'
+import type { ApiSavedVisualization, Layout, SavedVisualization } from '@types'
 import { describe, expect, it } from 'vitest'
 import { sidebarIds } from './round-trip-test-utils'
 
@@ -388,4 +389,18 @@ it('keys a legacy data element cell value with the root stage', () => {
     expect(currentVisFromVisUiConfig.value?.programStage).toEqual({
         id: BIRTH,
     })
+})
+
+/* A legacy visualization is only saved as a copy, from the visualization
+ * rebuilt from its ui config. */
+it('saves a legacy data element cell value with the root stage', () => {
+    const { currentVisFromVisUiConfig } = roundTrip(
+        legacyEventPivotTableCustomValue
+    )
+
+    expect(
+        getSaveableVisualization(
+            currentVisFromVisUiConfig as SavedVisualization
+        ).value
+    ).toEqual({ id: 'UXz7xuGCEhU', programStage: { id: BIRTH } })
 })
