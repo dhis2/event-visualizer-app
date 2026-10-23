@@ -1,5 +1,9 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
+import {
+    getCellValueAnalyticsId,
+    getCellValueMetadataItemOrThrow,
+} from '@modules/dimension/cell-value'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
@@ -81,7 +85,7 @@ export const getCellValueRequestParams = (
 ) =>
     visualization.value && visualization.aggregationType
         ? {
-              value: visualization.value.id,
+              value: getCellValueAnalyticsId(visualization.value),
               aggregationType: visualization.aggregationType,
           }
         : undefined
@@ -92,11 +96,15 @@ export const getCellValueAnalyticsRequestParams = (
 ) => {
     const params = getCellValueRequestParams(visualization)
 
-    if (!params) {
+    if (!params || !visualization.value) {
         return undefined
     }
 
-    const item = metadataStore.getDimensionMetadataItemOrThrow(params.value)
+    const item = getCellValueMetadataItemOrThrow(
+        visualization.value,
+        visualization,
+        metadataStore
+    )
     /* Analytics works out what DEFAULT means for the item itself, but rejects
      * it for an item that aggregates by NONE (E7265). */
     const isDefaultForNoneItem =

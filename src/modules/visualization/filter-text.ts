@@ -28,7 +28,7 @@ export const getVisualizationFilterText = ({
     locale?: string
 }): string => {
     const { layout, itemsByDimension, conditionsByDimension } =
-        getVisualizationUiConfig(visualization)
+        getVisualizationUiConfig(visualization, metadataStore)
     if (!layout.filters.length) {
         return ''
     }

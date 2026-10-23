@@ -1,4 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { getCellValueRef } from '@modules/dimension/cell-value'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -56,10 +58,16 @@ export const toCurrentVis = (
             result[key] = savedVis[key]
         }
     }
+    if (savedVis.value) {
+        result.value = getCellValueRef(savedVis.value)
+    }
     return result as CurrentVisualization
 }
 
-const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
+const resolveCellValueFields = (
+    visUiConfig: VisUiConfigState,
+    metadataStore: MetadataStore
+) => {
     /* Always include the `value` key: setCurrentVis merges into the previous
      * currentVis, so omitting it would leave a stale value behind. Only a pivot
      * table shows aggregated cells, so only it can carry a cell value. */
@@ -69,8 +77,21 @@ const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
         return { value: undefined, aggregationType: undefined }
     }
 
+    const item = metadataStore.getDimensionMetadataItem(cellValue.id)
+
+    /* The plain id with its stage beside it, the same shape buildAxis gives a
+     * layout dimension.
+     *
+     * The aggregation type is passed through as the user chose it, `DEFAULT`
+     * included: it is resolved against the data item where it is read, not
+     * here. */
     return {
-        value: { id: cellValue.id },
+        value: {
+            id: item?.dimensionId ?? extractPlainDimensionId(cellValue.id),
+            ...(item?.programStageId && {
+                programStage: { id: item.programStageId },
+            }),
+        },
         aggregationType: cellValue.aggregationType,
     }
 }
@@ -102,5 +123,5 @@ export const buildCurrentVisFromVisUiConfig = ({
     // There is no generated subtitle, so an empty one is a hidden one
     hideSubtitle: !isPopulatedString(visUiConfig.options.subtitle),
     ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCellValueFields(visUiConfig),
+    ...resolveCellValueFields(visUiConfig, metadataStore),
 })

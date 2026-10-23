@@ -1,5 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { getConditionsFromVisualization } from '@modules/conditions'
+import { getCellValueMetadataItemOrThrow } from '@modules/dimension/cell-value'
 import {
     getCompoundDimensionId,
     DROPPED_LEGACY_DIMENSIONS,
@@ -11,6 +12,7 @@ import type {
     CurrentVisualization,
     DimensionArray,
     EventVisualizationOptions,
+    MetadataStore,
 } from '@types'
 
 const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
@@ -36,6 +38,7 @@ const extractOptions = (
 
 export const getVisualizationUiConfig = (
     raw: CurrentVisualization,
+    metadataStore: MetadataStore,
     baseOptions: EventVisualizationOptions = DEFAULT_OPTIONS
 ) => {
     const vis: CurrentVisualization = {
@@ -78,7 +81,11 @@ export const getVisualizationUiConfig = (
          * loaded visualization's cell value into this one. */
         cellValue: vis.value?.id
             ? {
-                  id: vis.value.id,
+                  id: getCellValueMetadataItemOrThrow(
+                      vis.value,
+                      vis,
+                      metadataStore
+                  ).id,
                   aggregationType: vis.aggregationType || 'DEFAULT',
               }
             : undefined,

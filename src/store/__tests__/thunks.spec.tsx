@@ -1,4 +1,5 @@
 import { FetchError } from '@dhis2/app-runtime'
+import eventPivotTableAttributeValue from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-attribute-value.json'
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getVisualizationLoadError } from '@store/loader-slice'
@@ -102,7 +103,10 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
-        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.value).toEqual({
+            id: 'de1',
+            programStage: { id: 's1' },
+        })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
@@ -115,7 +119,10 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
-        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.value).toEqual({
+            id: 'de1',
+            programStage: { id: 's1' },
+        })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
@@ -222,6 +229,27 @@ describe('tClearVisualization', () => {
 })
 
 describe('tLoadSavedVisualization', () => {
+    /* The value names no type, so its key comes from the metadata the load
+     * registers, which has to be in the store by the time the ui config is
+     * derived. */
+    it('keys an attribute cell value under its tracked entity type', async () => {
+        const { store } = await renderHookWithAppWrapper(() => null, {
+            queryData: {
+                eventVisualizations: () => eventPivotTableAttributeValue,
+            },
+        } as unknown as MockOptions)
+
+        await store.dispatch(tLoadSavedVisualization({ id: 'TIuOzZ0ID0V' }))
+
+        expect(getVisualizationLoadError(store.getState())).toBeNull()
+        expect(store.getState().visUiConfig.cellValue?.id).toBe(
+            'nEenWmSyUEp.OvY4VVhSDeJ'
+        )
+        expect(getCurrentVis(store.getState()).value).toEqual({
+            id: 'OvY4VVhSDeJ',
+        })
+    })
+
     it('keeps a failed fetch as a fetch error instead of a runtime one', async () => {
         /* PluginWrapper rethrows a 'runtime' load error to the app-shell crash
          * screen, so a fetch failure tagged that way costs the user the

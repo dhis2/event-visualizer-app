@@ -33,7 +33,11 @@ const rebuild = (vis: Partial<CurrentVisualization>) => {
 
     return buildCurrentVisFromVisUiConfig({
         previousCurrentVis: currentVis,
-        visUiConfig: getVisualizationUiConfig(currentVis, DEFAULT_OPTIONS),
+        visUiConfig: getVisualizationUiConfig(
+            currentVis,
+            metadataStore,
+            DEFAULT_OPTIONS
+        ),
         metadataStore,
     })
 }

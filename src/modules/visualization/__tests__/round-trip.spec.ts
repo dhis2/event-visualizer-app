@@ -8,6 +8,8 @@ import enrollmentLineList from '@modules/visualization/__fixtures__/round-trip/s
 import enrollmentPivotTable from '@modules/visualization/__fixtures__/round-trip/saved/enrollment-pivot-table.json'
 import eventLineListEventProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-event-program.json'
 import eventLineListTrackerProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-tracker-program.json'
+import eventPivotTableAttributeValue from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-attribute-value.json'
+import eventPivotTableCustomValue from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-custom-value.json'
 import eventPivotTableLegendGrouping from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-legend-grouping.json'
 import eventPivotTableRegistrationOu from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-registration-ou.json'
 import eventPivotTable from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table.json'
@@ -19,10 +21,11 @@ import {
     toCurrentVis,
 } from '@modules/visualization/current-vis'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
+import { getSaveableVisualization } from '@modules/visualization/save'
 import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
-import type { ApiSavedVisualization, Layout } from '@types'
+import type { ApiSavedVisualization, Layout, SavedVisualization } from '@types'
 import { describe, expect, it } from 'vitest'
 import { sidebarIds } from './round-trip-test-utils'
 
@@ -35,6 +38,7 @@ const CHILD_PROGRAMME = 'IpHINAT79UW'
 const BIRTH = 'A03MvHHogjR'
 const TB_PROGRAM = 'ur1Edk5Oe2n'
 const LAB_MONITORING = 'EPEcjy3FWmI'
+const TB_VISIT = 'ZkbAXlQUYJG'
 const INPATIENT_PROGRAM = 'eBAyeGv0exc'
 const INPATIENT_STAGE = 'Zj7UnCAulEk'
 
@@ -92,6 +96,36 @@ const savedCases: RoundTripCase[] = [
             ],
             rows: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'ou')],
             filters: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'eventDate')],
+        },
+    },
+    {
+        /* The cell value is a data element of the Birth stage, and the same
+         * data element belongs to three stages of another program, so its
+         * stage is what makes the choice unambiguous. */
+        name: 'an event pivot table with a cell value',
+        fixture: eventPivotTableCustomValue,
+        expectedLayout: {
+            columns: [
+                sidebarIds.programAttribute(CHILD_PROGRAMME, 'cejWyOfXge6'),
+                sidebarIds.dataElement(BIRTH, 'wQLfBvPrXqq'),
+            ],
+            rows: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'ou')],
+            filters: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'eventDate')],
+        },
+    },
+    {
+        /* A tracked entity attribute as the cell value. It belongs to the
+         * tracked entity type rather than to a stage, so it carries no
+         * programStage and is keyed by the tet prefix instead. */
+        name: 'an event pivot table with an attribute cell value',
+        fixture: eventPivotTableAttributeValue,
+        expectedLayout: {
+            columns: [
+                sidebarIds.programAttribute(TB_PROGRAM, 'spFvx9FndA4'),
+                sidebarIds.dataElement(TB_VISIT, 'D7m8vpzxHDJ'),
+            ],
+            rows: [sidebarIds.stage(TB_PROGRAM, TB_VISIT, 'ou')],
+            filters: [sidebarIds.stage(TB_PROGRAM, TB_VISIT, 'eventDate')],
         },
     },
     {
@@ -279,6 +313,7 @@ const roundTrip = (fixture: unknown) => {
     const currentVisFromApiVis = toCurrentVis(savedVis)
     const visUiConfigFromCurrentVis = getVisualizationUiConfig(
         currentVisFromApiVis,
+        metadataStore,
         DEFAULT_OPTIONS
     ) as VisUiConfigState
     const currentVisFromVisUiConfig = buildCurrentVisFromVisUiConfig({
@@ -293,6 +328,7 @@ const roundTrip = (fixture: unknown) => {
         currentVisFromVisUiConfig,
         visUiConfigFromRebuiltVis: getVisualizationUiConfig(
             currentVisFromVisUiConfig,
+            metadataStore,
             DEFAULT_OPTIONS
         ),
     }
@@ -338,3 +374,33 @@ describe.each([...savedCases, ...legacyCases])(
         })
     }
 )
+
+/* Legacy pivot tables keep their single stage at the root, and the cell value
+ * names none. Without the stage, analytics aggregates the data element across
+ * every stage it belongs to. */
+it('keys a legacy data element cell value with the root stage', () => {
+    const { visUiConfigFromCurrentVis, currentVisFromVisUiConfig } = roundTrip(
+        legacyEventPivotTableCustomValue
+    )
+
+    expect(visUiConfigFromCurrentVis.cellValue?.id).toBe(
+        sidebarIds.dataElement(BIRTH, 'UXz7xuGCEhU')
+    )
+    expect(currentVisFromVisUiConfig.value?.programStage).toEqual({
+        id: BIRTH,
+    })
+})
+
+/* A legacy visualization is only saved as a copy, from the visualization
+ * rebuilt from its ui config. */
+it('saves a legacy data element cell value with the root stage', () => {
+    const { currentVisFromVisUiConfig } = roundTrip(
+        legacyEventPivotTableCustomValue
+    )
+
+    expect(
+        getSaveableVisualization(
+            currentVisFromVisUiConfig as SavedVisualization
+        ).value
+    ).toEqual({ id: 'UXz7xuGCEhU', programStage: { id: BIRTH } })
+})

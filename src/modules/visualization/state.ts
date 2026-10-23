@@ -58,16 +58,22 @@ const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
         return comparableDim
     })
 
-const idOnly = (ref: unknown): unknown =>
+/* Which item the cell value names, and the stage it was chosen from. The stage
+ * is compared because losing it silently changes what the cells aggregate.
+ * Everything else the API returns alongside — a display name, an aggregation
+ * type, a value type — the app never writes. */
+const comparableValue = (ref: unknown): unknown =>
     ref && typeof ref === 'object' && 'id' in ref
-        ? { id: (ref as { id: string }).id }
+        ? {
+              id: (ref as { id: string }).id,
+              programStage: (ref as { programStage?: { id: string } })
+                  .programStage,
+          }
         : ref
 
 const isFieldEquivalent = (key: string, a: unknown, b: unknown): boolean => {
-    /* The custom value: the API returns it with a display name and an
-     * aggregation type, where visUiConfig holds nothing but the id. */
     if (key === 'value') {
-        return deepEqual(idOnly(a), idOnly(b))
+        return deepEqual(comparableValue(a), comparableValue(b))
     }
 
     if (key in DEFAULT_OPTIONS) {

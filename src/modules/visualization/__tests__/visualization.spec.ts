@@ -12,9 +12,11 @@ import {
     isDefaultOptionValue,
 } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
+import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,
+    DimensionMetadataItem,
     EventVisualizationOptions,
     SavedVisualization,
 } from '@types'
@@ -342,11 +344,14 @@ const testCases = {
 }
 
 describe('getVisualizationUiConfig', () => {
+    const emptyStore = createMetadataStoreStub()
+
     it.each(Object.entries(testCases))(
         'should return correct config for %s visualization',
         (_name, { input, expected }) => {
             const result = getVisualizationUiConfig(
-                input as unknown as SavedVisualization
+                input as unknown as SavedVisualization,
+                emptyStore
             )
             expect(result).toEqual({ ...expected, options: DEFAULT_OPTIONS })
         }
@@ -364,7 +369,7 @@ describe('getVisualizationUiConfig', () => {
             filters: [],
         } as unknown as SavedVisualization
 
-        const result = getVisualizationUiConfig(input)
+        const result = getVisualizationUiConfig(input, emptyStore)
 
         expect(Object.hasOwn(result, 'cellValue')).toBe(true)
         expect(result.cellValue).toBeUndefined()
@@ -391,30 +396,66 @@ describe('getVisualizationUiConfig', () => {
                 ],
             } as unknown as SavedVisualization
 
-            const result = getVisualizationUiConfig(input)
+            const result = getVisualizationUiConfig(input, emptyStore)
 
             expect(result.layout.columns).toEqual(['tet.ou'])
             expect(result.itemsByDimension['tet.ou']).toEqual(['USER_ORGUNIT'])
         }
     )
 
-    it('maps a saved value and aggregation type onto the cell value', () => {
-        const input = {
+    const buildCellValueInput = (overrides: Partial<SavedVisualization> = {}) =>
+        ({
             type: 'PIVOT_TABLE',
             outputType: 'EVENT',
             rows: [],
             columns: [],
             filters: [],
-            value: { id: 's1.de1' },
             aggregationType: 'AVERAGE',
-        } as unknown as SavedVisualization
+            ...overrides,
+        }) as unknown as SavedVisualization
 
-        const result = getVisualizationUiConfig(input)
+    const storeWithDimension = (id: string) =>
+        createMetadataStoreStub({
+            dimensions: { [id]: { id } as DimensionMetadataItem },
+        })
+
+    it('keys a data element cell value by its stage', () => {
+        const result = getVisualizationUiConfig(
+            buildCellValueInput({
+                value: { id: 'de1', programStage: { id: 's1' } },
+            }),
+            storeWithDimension('s1.de1')
+        )
 
         expect(result.cellValue).toEqual({
             id: 's1.de1',
             aggregationType: 'AVERAGE',
         })
+    })
+
+    /* The value names no type: the store is what tells a tracked entity
+     * attribute, keyed under its tracked entity type, from a plain item. */
+    it('keys an attribute cell value under the tracked entity type', () => {
+        const result = getVisualizationUiConfig(
+            buildCellValueInput({
+                value: { id: 'attr1' },
+                programDimensions: [
+                    { id: 'prog', trackedEntityType: { id: 'tet' } },
+                ] as SavedVisualization['programDimensions'],
+            }),
+            storeWithDimension('tet.attr1')
+        )
+
+        expect(result.cellValue?.id).toBe('tet.attr1')
+    })
+
+    it('throws when the cell value has no metadata', () => {
+        expect(() =>
+            getVisualizationUiConfig(
+                buildCellValueInput({ value: { id: 'de1' } }),
+                emptyStore
+            )
+        ).toThrow('de1')
     })
 
     it('extracts option fields from the saved vis and overrides the base options', () => {
@@ -435,7 +476,7 @@ describe('getVisualizationUiConfig', () => {
             hideTitle: false,
         }
 
-        const result = getVisualizationUiConfig(input, baseOptions)
+        const result = getVisualizationUiConfig(input, emptyStore, baseOptions)
 
         expect(result.options).toEqual({
             ...baseOptions,
@@ -468,7 +509,8 @@ describe('getVisualizationUiConfig', () => {
         } as unknown as ApiSavedVisualization
 
         const result = getVisualizationUiConfig(
-            normalizeApiSavedVisualization(apiVis)
+            normalizeApiSavedVisualization(apiVis),
+            emptyStore
         )
 
         expect(result.conditionsByDimension[`${SID}.${UID}`]).toEqual({
@@ -544,14 +586,15 @@ describe('getSaveableVisualization', () => {
         expect(s0.direction).toBe('DESC')
     })
 
-    it('reduces the cell value to a plain id', () => {
+    it('keeps only the persisted fields of the cell value', () => {
         const vis = {
             value: {
-                id: 'A03MvHHogjR.UXz7xuGCEhU',
+                id: 'UXz7xuGCEhU',
                 name: 'MCH Weight (g)',
                 aggregationType: 'AVERAGE',
                 valueType: 'NUMBER',
                 dimensionItemType: 'DATA_ELEMENT',
+                programStage: { id: 'A03MvHHogjR' },
             },
             columns: [],
             rows: [],
@@ -560,6 +603,7 @@ describe('getSaveableVisualization', () => {
 
         expect(getSaveableVisualization(vis).value).toEqual({
             id: 'UXz7xuGCEhU',
+            programStage: { id: 'A03MvHHogjR' },
         })
     })
 
@@ -964,6 +1008,66 @@ describe('normalizeApiSavedVisualization', () => {
 
         expect(result.legacy).toBeUndefined()
     })
+
+    const buildLegacyCellValueVis = (value: ApiSavedVisualization['value']) =>
+        buildCellValueVis({
+            program: { id: PID },
+            programStage: { id: SID },
+            value,
+        } as Partial<ApiSavedVisualization>)
+
+    it('moves the root stage onto a data element cell value', () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({
+                id: UID,
+                dimensionItemType: 'DATA_ELEMENT',
+            })
+        )
+
+        expect(result.value?.programStage).toEqual({ id: SID })
+    })
+
+    it.each(['PROGRAM_ATTRIBUTE', 'PROGRAM_INDICATOR'] as const)(
+        'does not give a %s cell value a stage',
+        (dimensionItemType) => {
+            const result = normalizeApiSavedVisualization(
+                buildLegacyCellValueVis({ id: UID, dimensionItemType })
+            )
+
+            expect(result.value?.programStage).toBeUndefined()
+        }
+    )
+
+    it('does not give a stage to a cell value of unknown type', () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({ id: UID })
+        )
+
+        expect(result.value?.programStage).toBeUndefined()
+    })
+
+    it("keeps the cell value's own stage over the root stage", () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({
+                id: UID,
+                dimensionItemType: 'DATA_ELEMENT',
+                programStage: { id: 'otherStage1' },
+            })
+        )
+
+        expect(result.value?.programStage).toEqual({ id: 'otherStage1' })
+    })
+
+    it('leaves a data element cell value without a stage when there is no root stage', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                program: { id: PID },
+                value: { id: UID, dimensionItemType: 'DATA_ELEMENT' },
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.value?.programStage).toBeUndefined()
+    })
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {
@@ -1000,10 +1104,15 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
         instanceDefaults: EventVisualizationOptions = DEFAULT_OPTIONS
     ): CurrentVisualization => {
         const baseline = toCurrentVis(savedVis)
+        const metadataStore = new MetadataStore({})
         return buildCurrentVisFromVisUiConfig({
             previousCurrentVis: baseline,
-            visUiConfig: getVisualizationUiConfig(baseline, instanceDefaults),
-            metadataStore: new MetadataStore({}),
+            visUiConfig: getVisualizationUiConfig(
+                baseline,
+                metadataStore,
+                instanceDefaults
+            ),
+            metadataStore,
         })
     }
 

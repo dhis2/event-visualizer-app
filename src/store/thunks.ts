@@ -82,7 +82,11 @@ export const tLoadSavedVisualization = createAsyncThunk<
                 dispatch(setDataSourceId(selectedDataSourceId))
                 dispatch(
                     setVisUiConfig(
-                        getVisualizationUiConfig(currentVis, currentOptions)
+                        getVisualizationUiConfig(
+                            currentVis,
+                            extra.metadataStore,
+                            currentOptions
+                        )
                     )
                 )
                 dispatch(setCurrentVis(currentVis))

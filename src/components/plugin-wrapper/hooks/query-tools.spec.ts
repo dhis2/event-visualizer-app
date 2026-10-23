@@ -523,6 +523,33 @@ describe('getCellValueAnalyticsRequestParams', () => {
         ).toEqual({ value: 'de1', aggregationType: 'AVERAGE' })
     })
 
+    /* The value names no type, so the attribute is found under the tracked
+     * entity type of the tracker program, and is sent unprefixed. */
+    it('sends AVERAGE for DEFAULT when an attribute aggregates by NONE', () => {
+        const vis = {
+            type: 'PIVOT_TABLE',
+            value: { id: 'attr1' },
+            aggregationType: 'DEFAULT',
+            programDimensions: [
+                { id: 'p1', trackedEntityType: { id: 'tet1' } },
+            ],
+        } as unknown as CurrentVisualization
+        const store = createMetadataStoreStub({
+            dimensions: {
+                'tet1.attr1': {
+                    id: 'tet1.attr1',
+                    dimensionId: 'attr1',
+                    aggregationType: 'NONE',
+                } as DimensionMetadataItem,
+            },
+        })
+
+        expect(getCellValueAnalyticsRequestParams(vis, store)).toEqual({
+            value: 'attr1',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
     it('throws when the cell value item is unknown to the metadata store', () => {
         expect(() =>
             getCellValueAnalyticsRequestParams(

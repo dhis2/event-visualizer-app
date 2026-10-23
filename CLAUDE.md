@@ -415,10 +415,11 @@ its program qualifier so it reads like the TEI registration OU.
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
    (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
    `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
-   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)). The
-   `PROGRAM_DATA_ELEMENT` →
-   `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
-   `transformDimensions` (`@modules/dimension/translation`).
+   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)).
+   A legacy pivot table keeps its one stage at the root and saves a data element value without a
+   stage, so the root stage is moved onto the value; attribute and program indicator values get
+   none. The `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` mapping is not its concern — that runs per
+   analytics request, in `transformDimensions` (`@modules/dimension/translation`).
 2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:
@@ -480,7 +481,7 @@ Two fields share the name `aggregationType`:
 - The top-level `aggregationType` is how the visualization aggregates the cell value. It is
   persisted, and only means something together with `value`.
 - `value.aggregationType` is the item's own aggregation type. The API returns it with the value,
-  but only `value.id` is persisted.
+  but only `value.id` and `value.programStage` are persisted.
 
 `DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
 `DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
@@ -488,6 +489,21 @@ one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` fo
 the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
 to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
 aggregation name.
+
+### Cell value identity
+
+The app keeps only `{ id, programStage }` of the value (`CellValueRef`); everything else about the
+item is read from the metadata store, where it is keyed like a layout dimension: `stageId.id` for a
+data element, `tetId.id` for a tracked entity attribute, plain `id` for a program indicator.
+
+- **Registering**: `extractValueMetadata` (`@modules/metadata/visualization`) builds the key from
+  the saved payload, the only place that carries the item's `dimensionItemType`.
+- **Reading**: `getCellValueMetadataItemOrThrow` (`@modules/dimension/cell-value`) finds the item
+  from the id and stage alone: a value without a stage is looked up under the tracked entity type
+  first, then plain. The title, the analytics request and `getVisualizationUiConfig` use it, so the
+  value's metadata must be in the store before the ui config is derived from a visualization.
+- **Legacy**: an ER pivot table keeps its one stage at the root, so on load
+  `normalizeApiSavedVisualization` moves it onto a data element value.
 
 ## Grouping values by legend
 

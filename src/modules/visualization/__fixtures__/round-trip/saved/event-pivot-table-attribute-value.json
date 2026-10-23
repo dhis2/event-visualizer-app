@@ -1,0 +1,182 @@
+{
+    "name": "Event pivot table with an attribute cell value",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "Gender",
+                "id": "cejWyOfXge6"
+            }
+        }
+    ],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": true,
+    "showDimensionLabels": false,
+    "type": "PIVOT_TABLE",
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Start of treatment date",
+            "incidentDateLabel": "Start of treatment date",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": false,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Start of treatment date",
+            "displayIncidentDateLabel": "Start of treatment date",
+            "id": "ur1Edk5Oe2n",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "ur1Edk5Oe2n"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "TB visit date",
+                    "id": "ZkbAXlQUYJG",
+                    "repeatable": false,
+                    "name": "TB visit"
+                }
+            ],
+            "name": "TB program"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "ROW",
+            "dimension": "ou",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "FILTER",
+            "dimension": "eventDate",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimension": "eventDate",
+            "dimensionType": "PERIOD",
+            "program": {
+                "id": "ur1Edk5Oe2n"
+            },
+            "programStage": {
+                "id": "ZkbAXlQUYJG"
+            },
+            "items": [
+                {
+                    "id": "LAST_12_MONTHS"
+                }
+            ]
+        }
+    ],
+    "columns": [
+        {
+            "dimension": "spFvx9FndA4",
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "valueType": "AGE"
+        },
+        {
+            "dimension": "D7m8vpzxHDJ",
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "valueType": "TEXT",
+            "program": {
+                "id": "ur1Edk5Oe2n"
+            },
+            "programStage": {
+                "id": "ZkbAXlQUYJG"
+            }
+        }
+    ],
+    "rows": [
+        {
+            "dimension": "ou",
+            "dimensionType": "ORGANISATION_UNIT",
+            "program": {
+                "id": "ur1Edk5Oe2n"
+            },
+            "programStage": {
+                "id": "ZkbAXlQUYJG"
+            },
+            "items": [
+                {
+                    "id": "ImspTQPwCqd"
+                }
+            ]
+        }
+    ],
+    "displayName": "Event pivot table with an attribute cell value",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "spFvx9FndA4": {
+            "uid": "spFvx9FndA4",
+            "name": "Age"
+        },
+        "D7m8vpzxHDJ": {
+            "uid": "D7m8vpzxHDJ",
+            "name": "TB Disease Classification"
+        },
+        "OvY4VVhSDeJ": {
+            "uid": "OvY4VVhSDeJ",
+            "name": "Weight in kg"
+        },
+        "ImspTQPwCqd": {
+            "uid": "ImspTQPwCqd",
+            "name": "Sierra Leone"
+        }
+    },
+    "displayFormName": "Event pivot table with an attribute cell value",
+    "id": "attrValuePT1",
+    "sorting": [],
+    "repetitions": [],
+    "aggregationType": "AVERAGE",
+    "value": {
+        "id": "OvY4VVhSDeJ",
+        "name": "Weight in kg",
+        "aggregationType": "NONE",
+        "valueType": "NUMBER",
+        "dimensionItemType": "PROGRAM_ATTRIBUTE"
+    }
+}
