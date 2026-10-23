@@ -1,5 +1,6 @@
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { render, waitFor } from '@testing-library/react'
+import { getVisualizationTitle } from '@modules/visualization/title'
+import { render, screen, waitFor } from '@testing-library/react'
 import type { CurrentVisualization, DashboardPluginProps } from '@types'
 import { useEffect, type FC } from 'react'
 import { describe, it, expect, vi } from 'vitest'
@@ -77,13 +78,15 @@ vi.mock('@components/plugin-wrapper/plugin-wrapper', () => {
             }
         }, [hasVisualization, metadataStore])
 
-        return null
+        return hasVisualization ? (
+            <h1>{getVisualizationTitle(visualization, metadataStore)}</h1>
+        ) : null
     }
     return { PluginWrapper }
 })
 
 describe('DashboardPlugin', () => {
-    it("registers the visualization's metadata before the plugin uses it", async () => {
+    const renderDashboardPlugin = () =>
         render(
             <DashboardPlugin
                 {...({
@@ -92,6 +95,9 @@ describe('DashboardPlugin', () => {
                 } as DashboardPluginProps)}
             />
         )
+
+    it("registers the visualization's metadata before the plugin uses it", async () => {
+        renderDashboardPlugin()
 
         await waitFor(() =>
             expect(cellValueItemsSeen.inEffect.length).toBeGreaterThan(0)
@@ -108,5 +114,13 @@ describe('DashboardPlugin', () => {
             ...cellValueItemsSeen.onRender,
             ...cellValueItemsSeen.inEffect,
         ]).not.toContain(undefined)
+    })
+
+    it('renders the title of a pivot table with a cell value', async () => {
+        renderDashboardPlugin()
+
+        expect((await screen.findByRole('heading')).textContent).toBe(
+            'Weight · Sum'
+        )
     })
 })

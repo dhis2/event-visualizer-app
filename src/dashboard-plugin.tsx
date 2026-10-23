@@ -18,7 +18,6 @@ import type {
     CurrentVisualization,
     DashboardPluginProps,
     EmptyVisualization,
-    SavedVisualization,
 } from '@types'
 import { useEffect, useMemo, useState, type FC } from 'react'
 import './locales/index.js'
@@ -56,17 +55,16 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 
-    /* React runs a child's effects before its parent's, so the visualization
-     * only reaches PluginWrapper once its metadata is in the store: the
-     * analytics request in PluginWrapper's effects reads it. */
-    const [registeredVisualization, setRegisteredVisualization] = useState<
-        SavedVisualization | undefined
-    >()
+    /* PluginWrapper reads the visualization's metadata while rendering and in
+     * its effects, which React runs before this component's, so the
+     * visualization is only passed down once the store has it. */
+    const [isMetadataStorePopulated, setIsMetadataStorePopulated] =
+        useState(false)
 
     useEffect(() => {
         if (savedVisualization) {
             metadataStore.setVisualizationMetadata(savedVisualization)
-            setRegisteredVisualization(savedVisualization)
+            setIsMetadataStorePopulated(true)
         }
     }, [savedVisualization, metadataStore])
 
@@ -74,10 +72,10 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         CurrentVisualization | EmptyVisualization
     >(
         () =>
-            registeredVisualization
-                ? toCurrentVis(registeredVisualization)
+            savedVisualization && isMetadataStorePopulated
+                ? toCurrentVis(savedVisualization)
                 : {},
-        [registeredVisualization]
+        [savedVisualization, isMetadataStorePopulated]
     )
 
     const visualizationLoadError = useMemo(
