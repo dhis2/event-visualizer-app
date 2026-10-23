@@ -1,7 +1,7 @@
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { resolveAggregationType } from '@modules/dimension/aggregation-type'
-import { getCellValueCompoundId } from '@modules/dimension/cell-value'
+import { getCellValueMetadataItemOrThrow } from '@modules/dimension/cell-value'
 import { isPopulatedString } from '@modules/utils/guards'
 import type { CurrentVisualization, MetadataStore } from '@types'
 
@@ -29,10 +29,10 @@ const getCustomValueTitle = (
     visualization: VisualizationWithCustomValue,
     metadataStore: MetadataStore
 ): string => {
-    /* The visualization names the item by its plain uid; the store is keyed by
-     * the compound id, which is what carries the stage or tracked entity type. */
-    const item = metadataStore.getDimensionMetadataItemOrThrow(
-        getCellValueCompoundId(visualization.value, visualization)
+    const item = getCellValueMetadataItemOrThrow(
+        visualization.value,
+        visualization,
+        metadataStore
     )
     const aggregationType = resolveAggregationType(
         visualization.aggregationType,

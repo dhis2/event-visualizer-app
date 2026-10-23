@@ -2,7 +2,7 @@ import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
 import {
     getCellValueAnalyticsId,
-    getCellValueCompoundId,
+    getCellValueMetadataItemOrThrow,
 } from '@modules/dimension/cell-value'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
@@ -100,11 +100,10 @@ export const getCellValueAnalyticsRequestParams = (
         return undefined
     }
 
-    /* Not `params.value`: that is the id analytics reads the item by, which
-     * drops the prefix for a tracked entity attribute. The store is keyed by
-     * the compound id. */
-    const item = metadataStore.getDimensionMetadataItemOrThrow(
-        getCellValueCompoundId(visualization.value, visualization)
+    const item = getCellValueMetadataItemOrThrow(
+        visualization.value,
+        visualization,
+        metadataStore
     )
     /* Analytics works out what DEFAULT means for the item itself, but rejects
      * it for an item that aggregates by NONE (E7265). */

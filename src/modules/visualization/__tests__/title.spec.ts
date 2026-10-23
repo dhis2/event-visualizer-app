@@ -228,6 +228,28 @@ describe('getVisualizationTitle', () => {
         expect(getVisualizationTitle(vis, store)).toBe('MCH Apgar score · Sum')
     })
 
+    it('names an attribute value found under the tracked entity type', () => {
+        const store = buildStore({
+            [TET_ID]: { id: TET_ID, name: 'Person' },
+            [`${TET_ID}.attr1`]: {
+                id: `${TET_ID}.attr1`,
+                name: 'Weight in kg',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+                aggregationType: 'NONE',
+            },
+        })
+        const vis = buildVis({
+            type: 'PIVOT_TABLE',
+            programDimensions: [
+                { ...buildProgram(), trackedEntityType: { id: TET_ID } },
+            ] as CurrentVisualization['programDimensions'],
+            value: { id: 'attr1' },
+            aggregationType: 'DEFAULT',
+        })
+
+        expect(getVisualizationTitle(vis, store)).toBe('Weight in kg · Average')
+    })
+
     it('ignores a custom value that is missing its aggregation type', () => {
         const store = buildStore({
             de1: {

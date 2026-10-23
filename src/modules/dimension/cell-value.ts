@@ -68,11 +68,11 @@ export const getCellValueMetadataItemOrThrow = (
     }
 
     const tetId = getTetId(visualization)
-    const attributeId = tetId && `${tetId}.${value.id}`
+    const attributeItem = tetId
+        ? metadataStore.getDimensionMetadataItem(`${tetId}.${value.id}`)
+        : undefined
 
-    return metadataStore.getDimensionMetadataItemOrThrow(
-        attributeId && metadataStore.getMetadataItem(attributeId)
-            ? attributeId
-            : value.id
+    return (
+        attributeItem ?? metadataStore.getDimensionMetadataItemOrThrow(value.id)
     )
 }
