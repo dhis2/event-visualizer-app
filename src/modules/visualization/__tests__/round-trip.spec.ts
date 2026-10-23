@@ -371,3 +371,19 @@ describe.each([...savedCases, ...legacyCases])(
         })
     }
 )
+
+/* Legacy pivot tables keep their single stage at the root, and the cell value
+ * names none. Without the stage, analytics aggregates the data element across
+ * every stage it belongs to. */
+it('keys a legacy data element cell value with the root stage', () => {
+    const { visUiConfigFromCurrentVis, currentVisFromVisUiConfig } = roundTrip(
+        legacyEventPivotTableCustomValue
+    )
+
+    expect(visUiConfigFromCurrentVis.cellValue?.id).toBe(
+        sidebarIds.dataElement(BIRTH, 'UXz7xuGCEhU')
+    )
+    expect(currentVisFromVisUiConfig.value?.programStage).toEqual({
+        id: BIRTH,
+    })
+})

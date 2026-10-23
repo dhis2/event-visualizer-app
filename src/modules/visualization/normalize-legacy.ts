@@ -167,6 +167,21 @@ const normalizeLegacyDimension = (
     )
 }
 
+type CellValue = NonNullable<SavedVisualization['value']>
+
+/* A legacy pivot table has a single stage, kept at the root, so its data
+ * element value names no stage of its own. Without one, analytics aggregates
+ * the data element across every stage it belongs to. */
+const normalizeLegacyValue = (
+    value: CellValue,
+    stageRef: LegacyDimensionContext['stageRef']
+): CellValue =>
+    stageRef &&
+    !value.programStage &&
+    value.dimensionItemType === 'DATA_ELEMENT'
+        ? { ...value, programStage: stageRef }
+        : value
+
 /**
  * Legacy → canonical normalisation for saved visualizations received from the
  * eventVisualizations API. Converts the legacy shapes (old line-listing
@@ -187,7 +202,8 @@ const normalizeLegacyDimension = (
  *   `timeField` would duplicate it. Preserve `timeField` when it holds a
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
- * - Drop top-level `program` and `programStage`
+ * - Drop top-level `program` and `programStage`, after moving the stage onto
+ *   a data element cell value that names none
  * - Drop the legacy `dy`/`latitude`/`longitude` dimensions
  * - Mark output as `legacy: true` whenever any of the above upgraded the
  *   persisted shape, so the vis cannot be overwritten in place — only "Save
@@ -314,8 +330,12 @@ export const normalizeApiSavedVisualization = (
 
     if (!normalizedVis.value) {
         delete normalizedVis.aggregationType
-    } else if (!normalizedVis.aggregationType) {
-        normalizedVis.aggregationType = 'DEFAULT'
+    } else {
+        normalizedVis.value = normalizeLegacyValue(
+            normalizedVis.value,
+            context.stageRef
+        )
+        normalizedVis.aggregationType ??= 'DEFAULT'
     }
 
     /* Legacy visualizations don't set the hide flags reliably, so they are

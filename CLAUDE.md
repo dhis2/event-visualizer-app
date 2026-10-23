@@ -415,10 +415,11 @@ its program qualifier so it reads like the TEI registration OU.
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
    (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
    `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
-   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)). The
-   `PROGRAM_DATA_ELEMENT` →
-   `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
-   `transformDimensions` (`@modules/dimension/translation`).
+   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)).
+   A legacy pivot table keeps its one stage at the root and saves a data element value without a
+   stage, so the root stage is moved onto the value; attribute and program indicator values get
+   none. The `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` mapping is not its concern — that runs per
+   analytics request, in `transformDimensions` (`@modules/dimension/translation`).
 2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:

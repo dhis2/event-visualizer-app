@@ -966,6 +966,66 @@ describe('normalizeApiSavedVisualization', () => {
 
         expect(result.legacy).toBeUndefined()
     })
+
+    const buildLegacyCellValueVis = (value: ApiSavedVisualization['value']) =>
+        buildCellValueVis({
+            program: { id: PID },
+            programStage: { id: SID },
+            value,
+        } as Partial<ApiSavedVisualization>)
+
+    it('moves the root stage onto a data element cell value', () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({
+                id: UID,
+                dimensionItemType: 'DATA_ELEMENT',
+            })
+        )
+
+        expect(result.value?.programStage).toEqual({ id: SID })
+    })
+
+    it.each(['PROGRAM_ATTRIBUTE', 'PROGRAM_INDICATOR'] as const)(
+        'does not give a %s cell value a stage',
+        (dimensionItemType) => {
+            const result = normalizeApiSavedVisualization(
+                buildLegacyCellValueVis({ id: UID, dimensionItemType })
+            )
+
+            expect(result.value?.programStage).toBeUndefined()
+        }
+    )
+
+    it('does not give a stage to a cell value of unknown type', () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({ id: UID })
+        )
+
+        expect(result.value?.programStage).toBeUndefined()
+    })
+
+    it("keeps the cell value's own stage over the root stage", () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis({
+                id: UID,
+                dimensionItemType: 'DATA_ELEMENT',
+                programStage: { id: 'otherStage1' },
+            })
+        )
+
+        expect(result.value?.programStage).toEqual({ id: 'otherStage1' })
+    })
+
+    it('leaves a data element cell value without a stage when there is no root stage', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                program: { id: PID },
+                value: { id: UID, dimensionItemType: 'DATA_ELEMENT' },
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.value?.programStage).toBeUndefined()
+    })
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {
