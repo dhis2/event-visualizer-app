@@ -1,7 +1,11 @@
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { isValueTypeNumeric } from '@modules/value-type'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
-import type { DimensionMetadataItem, SavedVisualization } from '@types'
+import type {
+    DimensionMetadataItem,
+    MetadataStore,
+    SavedVisualization,
+} from '@types'
 
 /* Whether a dimension can stand as the cell value at all. Only numeric-ness is
  * judged here: whether the choice suits the layout and the output type is
@@ -41,3 +45,34 @@ export const getCellValueAnalyticsId = (
     value: NonNullable<SavedVisualization['value']>
 ): string =>
     value.programStage ? `${value.programStage.id}.${value.id}` : value.id
+
+/* Finds the cell value's metadata from what is saved: the id and the stage.
+ * A value without a stage is a tracked entity attribute, keyed under the
+ * tracked entity type, or a program indicator, keyed plain; uids are unique,
+ * so whichever key the store holds is the right one. */
+export const getCellValueMetadataItemOrThrow = (
+    value: Pick<
+        NonNullable<SavedVisualization['value']>,
+        'id' | 'programStage'
+    >,
+    visualization: Pick<
+        SavedVisualization,
+        'trackedEntityType' | 'programDimensions'
+    >,
+    metadataStore: MetadataStore
+): DimensionMetadataItem => {
+    if (value.programStage) {
+        return metadataStore.getDimensionMetadataItemOrThrow(
+            `${value.programStage.id}.${value.id}`
+        )
+    }
+
+    const tetId = getTetId(visualization)
+    const attributeId = tetId && `${tetId}.${value.id}`
+
+    return metadataStore.getDimensionMetadataItemOrThrow(
+        attributeId && metadataStore.getMetadataItem(attributeId)
+            ? attributeId
+            : value.id
+    )
+}
