@@ -1,5 +1,8 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import { buildCurrentVisFromVisUiConfig } from '@modules/visualization/current-vis'
+import {
+    buildCurrentVisFromVisUiConfig,
+    toCurrentVis,
+} from '@modules/visualization/current-vis'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
@@ -12,6 +15,7 @@ import type {
     DimensionRecord,
     MetadataStore,
     Program,
+    SavedVisualization,
 } from '@types'
 import { describe, it, expect } from 'vitest'
 
@@ -56,7 +60,7 @@ const hasUnappliedChanges = (
         buildCurrentVisFromVisUiConfig({
             previousCurrentVis: currentVis,
             visUiConfig: {
-                ...getVisualizationUiConfig(currentVis, DEFAULT_OPTIONS),
+                ...getVisualizationUiConfig(currentVis, store, DEFAULT_OPTIONS),
                 ...visUiConfigOverrides,
             },
             metadataStore: store,
@@ -142,6 +146,11 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
                     dimensionType: 'DATA_ELEMENT',
                     valueType: 'TEXT',
                     ...dimensionOverrides,
+                } as DimensionMetadataItem,
+                [CELL_VALUE_ID]: {
+                    id: CELL_VALUE_ID,
+                    dimensionId: CELL_VALUE_ID,
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionMetadataItem,
             },
             programs: {
@@ -236,7 +245,8 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
     })
 
     it('reports no change for a visualization carrying a cell value with its name and aggregation type', () => {
-        const loadedVis = createLoadedVis(createLoadedColumn(), {
+        const loadedVis = toCurrentVis({
+            ...createLoadedVis(createLoadedColumn()),
             type: 'PIVOT_TABLE',
             value: {
                 id: CELL_VALUE_ID,
@@ -244,7 +254,7 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
                 aggregationType: 'AVERAGE',
             },
             aggregationType: 'AVERAGE',
-        })
+        } as unknown as SavedVisualization)
 
         expect(
             hasUnappliedChanges(loadedVis, {}, createLoadedMetadataStore())
@@ -252,12 +262,13 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
     })
 
     it('reports no change for a visualization carrying a cell value without an aggregation type', () => {
-        const loadedVis = normalizeApiSavedVisualization(
-            createLoadedVis(createLoadedColumn(), {
+        const loadedVis = toCurrentVis(
+            normalizeApiSavedVisualization({
+                ...createLoadedVis(createLoadedColumn()),
                 type: 'PIVOT_TABLE',
                 value: { id: CELL_VALUE_ID, aggregationType: 'SUM' },
-            }) as unknown as ApiSavedVisualization
-        ) as unknown as CurrentVisualization
+            } as unknown as ApiSavedVisualization)
+        )
 
         expect(
             hasUnappliedChanges(loadedVis, {}, createLoadedMetadataStore())

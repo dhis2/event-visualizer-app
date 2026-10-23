@@ -1,6 +1,7 @@
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { resolveAggregationType } from '@modules/dimension/aggregation-type'
+import { getCellValueMetadataItemOrThrow } from '@modules/dimension/cell-value'
 import { isPopulatedString } from '@modules/utils/guards'
 import type { CurrentVisualization, MetadataStore } from '@types'
 
@@ -28,8 +29,10 @@ const getCustomValueTitle = (
     visualization: VisualizationWithCustomValue,
     metadataStore: MetadataStore
 ): string => {
-    const item = metadataStore.getDimensionMetadataItemOrThrow(
-        visualization.value.id
+    const item = getCellValueMetadataItemOrThrow(
+        visualization.value,
+        visualization,
+        metadataStore
     )
     const aggregationType = resolveAggregationType(
         visualization.aggregationType,
