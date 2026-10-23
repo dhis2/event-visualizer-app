@@ -312,6 +312,7 @@ const roundTrip = (fixture: unknown) => {
     const currentVisFromApiVis = toCurrentVis(savedVis)
     const visUiConfigFromCurrentVis = getVisualizationUiConfig(
         currentVisFromApiVis,
+        metadataStore,
         DEFAULT_OPTIONS
     ) as VisUiConfigState
     const currentVisFromVisUiConfig = buildCurrentVisFromVisUiConfig({
@@ -326,6 +327,7 @@ const roundTrip = (fixture: unknown) => {
         currentVisFromVisUiConfig,
         visUiConfigFromRebuiltVis: getVisualizationUiConfig(
             currentVisFromVisUiConfig,
+            metadataStore,
             DEFAULT_OPTIONS
         ),
     }

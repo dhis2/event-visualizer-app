@@ -1,4 +1,3 @@
-import { getCellValueCompoundId } from '@modules/dimension/cell-value'
 import { getUiDimensionType } from '@modules/dimension/dimension-type'
 import {
     getEnrollmentFixedDimensions,
@@ -111,7 +110,9 @@ export const extractDimensionMetadata = (
  * programStageId and programId, resolved from the stage already in the store,
  * so the raw `programStage` is dropped. The API names the dimension type
  * `dimensionItemType`; the store knows it as `dimensionType`, and that rename
- * is what registers the value as a dimension rather than a bare named item. */
+ * is what registers the value as a dimension rather than a bare named item.
+ * The type is only in the saved payload, which is why the value is keyed
+ * here: a tracked entity attribute has no stage to key it by. */
 export const extractValueMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
@@ -120,8 +121,16 @@ export const extractValueMetadata = (
     }
     const { id, name, aggregationType, valueType, dimensionItemType } =
         visualization.value
+    const compoundId = getCompoundDimensionId(
+        {
+            dimension: id,
+            dimensionType: dimensionItemType,
+            programStage: visualization.value.programStage,
+        },
+        getTetId(visualization)
+    )
     return {
-        [getCellValueCompoundId(visualization.value, visualization)]: {
+        [compoundId]: {
             id,
             name,
             aggregationType,

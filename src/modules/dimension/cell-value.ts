@@ -1,7 +1,7 @@
-import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { isValueTypeNumeric } from '@modules/value-type'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
+    CellValueRef,
     DimensionMetadataItem,
     MetadataStore,
     SavedVisualization,
@@ -17,33 +17,18 @@ export const isValidCellValueDimension = (
 ): boolean =>
     Boolean(dimension?.valueType && isValueTypeNumeric(dimension.valueType))
 
-/* The id the app keys the cell value by, matching how it keys a layout
- * dimension, so the same data item dragged in and loaded back resolves to one
- * id. Only the stage has to come from the saved payload: a tracked entity
- * attribute's type is derived from the visualization, and the remaining rules
- * depend on nothing else. */
-export const getCellValueCompoundId = (
-    value: NonNullable<SavedVisualization['value']>,
-    visualization: Pick<
-        SavedVisualization,
-        'trackedEntityType' | 'programDimensions'
-    >
-): string =>
-    getCompoundDimensionId(
-        {
-            dimension: value.id,
-            dimensionType: value.dimensionItemType,
-            programStage: value.programStage,
-        },
-        getTetId(visualization)
-    )
+export const getCellValueRef = ({
+    id,
+    programStage,
+}: CellValueRef): CellValueRef => ({
+    id,
+    ...(programStage && { programStage: { id: programStage.id } }),
+})
 
 /* The dimension id analytics reads the cell value by. Only the stage qualifies
  * it: a tracked entity attribute is sent unprefixed, the same way analytics
  * returns its headers. */
-export const getCellValueAnalyticsId = (
-    value: NonNullable<SavedVisualization['value']>
-): string =>
+export const getCellValueAnalyticsId = (value: CellValueRef): string =>
     value.programStage ? `${value.programStage.id}.${value.id}` : value.id
 
 /* Finds the cell value's metadata from what is saved: the id and the stage.
@@ -51,10 +36,7 @@ export const getCellValueAnalyticsId = (
  * tracked entity type, or a program indicator, keyed plain; uids are unique,
  * so whichever key the store holds is the right one. */
 export const getCellValueMetadataItemOrThrow = (
-    value: Pick<
-        NonNullable<SavedVisualization['value']>,
-        'id' | 'programStage'
-    >,
+    value: CellValueRef,
     visualization: Pick<
         SavedVisualization,
         'trackedEntityType' | 'programDimensions'

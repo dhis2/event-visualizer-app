@@ -1,4 +1,5 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { getCellValueRef } from '@modules/dimension/cell-value'
 import { extractPlainDimensionId } from '@modules/dimension/ids'
 import {
     buildAxis,
@@ -57,6 +58,9 @@ export const toCurrentVis = (
             result[key] = savedVis[key]
         }
     }
+    if (savedVis.value) {
+        result.value = getCellValueRef(savedVis.value)
+    }
     return result as CurrentVisualization
 }
 
@@ -76,10 +80,7 @@ const resolveCellValueFields = (
     const item = metadataStore.getDimensionMetadataItem(cellValue.id)
 
     /* The plain id with its stage beside it, the same shape buildAxis gives a
-     * layout dimension. `dimensionItemType` comes along because the compound
-     * id is rebuilt from this value — to derive a ui config from it, and to
-     * find its metadata — and a tracked entity attribute has no stage to
-     * rebuild it from, only its type.
+     * layout dimension.
      *
      * The aggregation type is passed through as the user chose it, `DEFAULT`
      * included: it is resolved against the data item where it is read, not
@@ -89,9 +90,6 @@ const resolveCellValueFields = (
             id: item?.dimensionId ?? extractPlainDimensionId(cellValue.id),
             ...(item?.programStageId && {
                 programStage: { id: item.programStageId },
-            }),
-            ...(item?.dimensionType && {
-                dimensionItemType: item.dimensionType,
             }),
         },
         aggregationType: cellValue.aggregationType,

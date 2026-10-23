@@ -33,7 +33,11 @@ const rebuild = (vis: Partial<CurrentVisualization>) => {
 
     return buildCurrentVisFromVisUiConfig({
         previousCurrentVis: currentVis,
-        visUiConfig: getVisualizationUiConfig(currentVis, DEFAULT_OPTIONS),
+        visUiConfig: getVisualizationUiConfig(
+            currentVis,
+            metadataStore,
+            DEFAULT_OPTIONS
+        ),
         metadataStore,
     })
 }
@@ -48,10 +52,7 @@ describe('buildCurrentVisFromVisUiConfig cell value', () => {
                 aggregationType,
             })
 
-            expect(result.value).toEqual({
-                id: CELL_VALUE_ID,
-                dimensionItemType: 'DATA_ELEMENT',
-            })
+            expect(result.value).toEqual({ id: CELL_VALUE_ID })
             expect(result.aggregationType).toBe(aggregationType)
         }
     )

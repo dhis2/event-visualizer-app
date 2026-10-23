@@ -159,6 +159,13 @@ export type SavedVisualization = Omit<
 >
 
 export type EmptyVisualization = Record<string, never>
+/* All the app keeps of the cell value: the item and the stage it was chosen
+ * from. Anything else about the item is read from the metadata store. */
+export type CellValueRef = Pick<
+    NonNullable<SavedVisualization['value']>,
+    'id' | 'programStage'
+>
+
 export type CurrentVisualization = Pick<
     SavedVisualization,
     | 'type'
@@ -170,11 +177,11 @@ export type CurrentVisualization = Pick<
     | 'attributeDimensions'
     | 'programDimensions'
     | 'sorting'
-    | 'value'
     | 'aggregationType'
 > &
     EventVisualizationOptions & {
         id?: string
+        value?: CellValueRef
     }
 
 export type VisualizationNameDescription = Pick<
