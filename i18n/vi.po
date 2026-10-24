@@ -3,15 +3,15 @@
 # Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
 # Mai Nguyen <thanhmai.jica@gmail.com>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Philip Larsen Donnelly, 2026
 # Em Le <em.hispvietnam@gmail.com>, 2026
+# Philip Larsen Donnelly, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-10-08T14:42:57.891Z\n"
+"POT-Creation-Date: 2026-10-22T12:48:15.232Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Em Le <em.hispvietnam@gmail.com>, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Vietnamese (https://app.transifex.com/hisp-uio/teams/100509/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -29,8 +29,7 @@ msgid ""
 "layoutTetName}} dimensions: {{list}}."
 msgstr ""
 
-msgid ""
-"{{- name}} was not added because it is already used as the custom value."
+msgid "Only numeric data items can be used as the cell value."
 msgstr ""
 
 msgid "Changes not applied"
@@ -38,6 +37,12 @@ msgstr ""
 
 msgid "Retry"
 msgstr "Thử lại"
+
+msgid "Use as value (without filters)"
+msgstr ""
+
+msgid "Use as value"
+msgstr ""
 
 msgid "Add to {{- axisName}}"
 msgstr ""
@@ -225,6 +230,10 @@ msgstr "Bỏ ra"
 msgid "all"
 msgstr "tất cả"
 
+msgid "And {{- count}} other..."
+msgid_plural "And {{- count}} other..."
+msgstr[0] ""
+
 msgid "None selected"
 msgstr "Chưa lựa chọn"
 
@@ -239,27 +248,6 @@ msgstr "Giai đoạn chương trình: {{- stageName}}"
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr ""
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr ""
-
-msgid "Update custom value"
-msgstr ""
-
-msgid "Create custom value table"
-msgstr ""
-
-msgid "Switch to custom value table"
-msgstr ""
-
-msgid "Update custom value table"
-msgstr ""
-
-msgid "Enrollment"
-msgstr "Đăng ký"
 
 msgid "Create {{- enrollmentLabel}} list"
 msgstr ""
@@ -279,9 +267,6 @@ msgstr ""
 msgid "Update {{- enrollmentLabel}} table"
 msgstr ""
 
-msgid "Event"
-msgstr "Sự Kiện"
-
 msgid "Create {{- eventLabel}} list"
 msgstr ""
 
@@ -299,9 +284,6 @@ msgstr ""
 
 msgid "Update {{- eventLabel}} table"
 msgstr ""
-
-msgid "tracked entity"
-msgstr "cá thể"
 
 msgid "Create {{- trackedEntityTypeName}} list"
 msgstr ""
@@ -351,58 +333,23 @@ msgstr ""
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr ""
 
-msgid "Configure custom value"
+msgid "One row for each {{- outputTypeLabel}}"
 msgstr ""
 
-msgid "Choose the numeric data item to show in table cells."
+msgid "Use item default ({{- aggregationType}})"
 msgstr ""
 
-msgid "Search data items"
+msgid "Value"
+msgstr "Giá trị"
+
+msgid "Reset to count"
 msgstr ""
 
-msgid "Loading data"
-msgstr "Đang tải dữ liệu"
-
-msgid "Error loading data"
+msgid "Cells show a count. Drag a numeric data item here to show its value."
 msgstr ""
 
-msgid "Failed to load data items"
-msgstr ""
-
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr ""
-
-msgid "No numeric data items in this program"
-msgstr ""
-
-msgid "This stage does not have any numeric data items available."
-msgstr ""
-
-msgid "This program does not have any numeric data items available."
-msgstr ""
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr ""
-
-msgid "Aggregation"
-msgstr "Tổng hợp"
-
-msgid "Cancel"
-msgstr "Hủy"
-
-msgid "Update"
-msgstr "Cập nhật"
-
-msgid "Select a value before updating"
-msgstr ""
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr ""
+msgid "Count"
+msgstr "Đếm"
 
 msgid "Collapse layout"
 msgstr ""
@@ -424,6 +371,9 @@ msgstr ""
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Hủy"
 
 msgid "Convert"
 msgstr ""
@@ -642,6 +592,9 @@ msgstr "Hiển thị không có bộ lọc"
 msgid "Create a {{- visType}} before updating"
 msgstr ""
 
+msgid "Update"
+msgstr "Cập nhật"
+
 msgid "Metadata"
 msgstr "Siêu dữ liệu"
 
@@ -659,6 +612,9 @@ msgstr "Chỉ Số Chương Trình"
 
 msgid "{{- name}} registration"
 msgstr ""
+
+msgid "Event"
+msgstr "Sự Kiện"
 
 msgid "Choose a data source"
 msgstr ""
@@ -736,6 +692,10 @@ msgstr ""
 
 msgid "Collapse all cards"
 msgstr ""
+
+msgid "Enter at least {{- count}} characters to search"
+msgid_plural "Enter at least {{- count}} characters to search"
+msgstr[0] ""
 
 msgid "Something went wrong while searching."
 msgstr ""
@@ -906,9 +866,6 @@ msgstr ""
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr ""
 
-msgid "Count"
-msgstr "Đếm"
-
 msgid "Standard deviation"
 msgstr "Độ lệch chuẩn"
 
@@ -926,6 +883,12 @@ msgstr ""
 
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
+
+msgid "Enrollment"
+msgstr "Đăng ký"
+
+msgid "tracked entity"
+msgstr "cá thể"
 
 msgid "equal to (=)"
 msgstr "bằng (=)"
@@ -990,9 +953,6 @@ msgstr "Không có giá trị"
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-msgstr ""
-
-msgid "Already used as custom value."
 msgstr ""
 
 msgid "Cannot be used in a {{visType}}."
@@ -1282,9 +1242,6 @@ msgstr "Năm trước"
 msgid "Period"
 msgstr "Thời điểm"
 
-msgid "Organisation unit"
-msgstr "Đơn vị"
-
 msgid "Style"
 msgstr "Kiểu dáng"
 
@@ -1322,7 +1279,7 @@ msgstr ""
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "Biểu đồ Sự kiện"
+msgstr ""
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
