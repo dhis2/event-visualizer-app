@@ -469,6 +469,14 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         valueType: 'NUMBER',
         aggregationType: 'SUM',
     } as unknown as DimensionMetadataItem
+    const noneDimension = {
+        id: 's1.de3',
+        dimensionId: 'de3',
+        name: 'Height in cm',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+        aggregationType: 'NONE',
+    } as unknown as DimensionMetadataItem
     const textDimension = {
         id: 's1.de2',
         dimensionId: 'de2',
@@ -495,6 +503,7 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
                 dimensions: {
                     's1.de1': numericDimension,
                     's1.de2': textDimension,
+                    's1.de3': noneDimension,
                 },
             })
         )
@@ -524,6 +533,28 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
             aggregationType: 'DEFAULT',
         })
         expect(showAlert).not.toHaveBeenCalled()
+    })
+
+    it('sets AVERAGE for a dimension that aggregates by NONE', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+
+        result.current({
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 's1.de3',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                    },
+                },
+            },
+            over: cellValueDropTarget,
+        } as unknown as LayoutDragEndEvent)
+
+        expect(setVisUiConfigCellValue).toHaveBeenCalledWith({
+            id: 's1.de3',
+            aggregationType: 'AVERAGE',
+        })
     })
 
     it('rejects a non-numeric dimension', () => {
