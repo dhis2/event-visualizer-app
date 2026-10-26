@@ -12,11 +12,9 @@ import type {
  * decided separately by the output type buttons, which is the only place that
  * question has an answer — the same selection can be valid for one output type
  * and invalid for another at the same moment. */
-export const isValidCellValueDimension = <
-    T extends Pick<DimensionMetadataItem, 'valueType'>,
->(
-    dimension: T | undefined
-): dimension is T =>
+export const isValidCellValueDimension = (
+    dimension: Pick<DimensionMetadataItem, 'valueType'> | undefined
+): dimension is Pick<DimensionMetadataItem, 'valueType'> =>
     Boolean(dimension?.valueType && isValueTypeNumeric(dimension.valueType))
 
 export const getCellValueRef = ({
