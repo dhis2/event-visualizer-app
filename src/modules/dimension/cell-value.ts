@@ -14,7 +14,7 @@ import type {
  * and invalid for another at the same moment. */
 export const isValidCellValueDimension = (
     dimension: Pick<DimensionMetadataItem, 'valueType'> | undefined
-): boolean =>
+): dimension is Pick<DimensionMetadataItem, 'valueType'> =>
     Boolean(dimension?.valueType && isValueTypeNumeric(dimension.valueType))
 
 export const getCellValueRef = ({
