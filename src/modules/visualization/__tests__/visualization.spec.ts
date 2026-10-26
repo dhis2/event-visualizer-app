@@ -980,6 +980,33 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.aggregationType).toBe('DEFAULT')
     })
 
+    /* ER let users save DEFAULT for an item that aggregates by NONE. */
+    it.each([[undefined], ['DEFAULT' as const]])(
+        'turns a %s aggregation type into AVERAGE when the item aggregates by NONE',
+        (aggregationType) => {
+            const result = normalizeApiSavedVisualization(
+                buildCellValueVis({
+                    aggregationType,
+                    value: { id: UID, aggregationType: 'NONE' },
+                })
+            )
+
+            expect(result.aggregationType).toBe('AVERAGE')
+            expect(result.legacy).toBeUndefined()
+        }
+    )
+
+    it('keeps an explicit aggregation type when the item aggregates by NONE', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'MAX',
+                value: { id: UID, aggregationType: 'NONE' },
+            })
+        )
+
+        expect(result.aggregationType).toBe('MAX')
+    })
+
     it('keeps a saved aggregation type', () => {
         const result = normalizeApiSavedVisualization(
             buildCellValueVis({ aggregationType: 'SUM' })

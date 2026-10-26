@@ -485,10 +485,18 @@ Two fields share the name `aggregationType`:
 
 `DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
 `DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
-one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` for it (E7265), so
-the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
-to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
-aggregation name.
+app resolves `DEFAULT` to a real type (`resolveAggregationType` in
+`@modules/dimension/aggregation-type`) only to show an aggregation name.
+
+An item that aggregates by NONE has no type to follow, and analytics rejects `DEFAULT` for it
+(E7265). `replaceDefaultForNoneItem` turns `DEFAULT` into AVERAGE for such an item in three places:
+
+- **Picking the value**: AVERAGE is stored, not `DEFAULT`, so the visualization keeps showing the
+  same values if the item later gets a real aggregation type.
+- **Loading**: `normalizeApiSavedVisualization` rewrites a saved `DEFAULT` to AVERAGE. ER let users
+  save that combination.
+- **The analytics request** (`getCellValueAnalyticsRequestParams`): a visualization saved with
+  `DEFAULT` can still meet a NONE item when the item's type changed after saving.
 
 ### Cell value identity
 
