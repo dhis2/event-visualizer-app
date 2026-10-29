@@ -1,0 +1,49 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event pivot table, data element value",
+            "regressionType": "NONE",
+            "rawPeriods": ["LAST_12_MONTHS"],
+            "userOrganisationUnit": true,
+            "filterDimensions": ["eBAyeGv0exc.Zj7UnCAulEk.ou"],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "fWIAEtYVEGk"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                }
+            ],
+            "aggregationType": "AVERAGE",
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "dataElementValueDimension": {
+                "id": "vV9UWAZohSf"
+            },
+            "columnDimensions": ["eBAyeGv0exc.Zj7UnCAulEk.fWIAEtYVEGk"],
+            "rowDimensions": ["eBAyeGv0exc.Zj7UnCAulEk.eventDate"],
+            "simpleDimensions": [
+                {
+                    "parent": "ROW",
+                    "dimension": "eventDate",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["LAST_12_MONTHS"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "ou",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["USER_ORGUNIT"]
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "n2ZQVP3taPF"
+        }
+    ]
+}

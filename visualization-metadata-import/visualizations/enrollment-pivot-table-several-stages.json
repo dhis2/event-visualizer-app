@@ -1,0 +1,66 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Enrollment pivot table, several stages",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "userOrganisationUnitChildren": true,
+            "filterDimensions": [
+                "IpHINAT79UW.enrollmentDate",
+                "IpHINAT79UW.ZzYYXq4fJie.FqlgKAG8HOu"
+            ],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "wQLfBvPrXqq"
+                    },
+                    "programStage": {
+                        "id": "A03MvHHogjR"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "FqlgKAG8HOu"
+                    },
+                    "programStage": {
+                        "id": "ZzYYXq4fJie"
+                    },
+                    "filter": "EQ:1"
+                }
+            ],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "colTotals": true,
+            "rowTotals": true,
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "columnDimensions": ["IpHINAT79UW.programStatus"],
+            "rowDimensions": [
+                "IpHINAT79UW.ou",
+                "IpHINAT79UW.A03MvHHogjR.wQLfBvPrXqq"
+            ],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "programStatus",
+                    "program": "IpHINAT79UW",
+                    "values": []
+                },
+                {
+                    "parent": "ROW",
+                    "dimension": "ou",
+                    "program": "IpHINAT79UW",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "enrollmentDate",
+                    "program": "IpHINAT79UW",
+                    "values": ["THIS_YEAR"]
+                }
+            ],
+            "outputType": "ENROLLMENT",
+            "id": "Z2mxfl7gTTA"
+        }
+    ]
+}
