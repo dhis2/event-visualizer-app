@@ -1,0 +1,58 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event pivot table, tracker stage, data element value",
+            "regressionType": "NONE",
+            "rawPeriods": ["LAST_12_MONTHS"],
+            "userOrganisationUnit": true,
+            "filterDimensions": [
+                "IpHINAT79UW.A03MvHHogjR.ou",
+                "IpHINAT79UW.programStatus"
+            ],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "wQLfBvPrXqq"
+                    },
+                    "programStage": {
+                        "id": "A03MvHHogjR"
+                    }
+                }
+            ],
+            "aggregationType": "AVERAGE",
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "dataElementValueDimension": {
+                "id": "UXz7xuGCEhU"
+            },
+            "columnDimensions": ["IpHINAT79UW.A03MvHHogjR.wQLfBvPrXqq"],
+            "rowDimensions": ["IpHINAT79UW.A03MvHHogjR.eventDate"],
+            "simpleDimensions": [
+                {
+                    "parent": "ROW",
+                    "dimension": "eventDate",
+                    "program": "IpHINAT79UW",
+                    "programStage": "A03MvHHogjR",
+                    "values": ["LAST_12_MONTHS"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "ou",
+                    "program": "IpHINAT79UW",
+                    "programStage": "A03MvHHogjR",
+                    "values": ["USER_ORGUNIT"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "programStatus",
+                    "program": "IpHINAT79UW",
+                    "values": ["ACTIVE", "COMPLETED"]
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "q4rwy9jfGCK"
+        }
+    ]
+}

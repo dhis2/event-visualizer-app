@@ -1,0 +1,78 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Tracked entity line list, two programs",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "userOrganisationUnit": true,
+            "attributeDimensions": [
+                {
+                    "attribute": {
+                        "id": "w75KJ2mc4zz"
+                    }
+                },
+                {
+                    "attribute": {
+                        "id": "zDhUuAYrxNC"
+                    }
+                }
+            ],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "hxNafEmvgcH"
+                    },
+                    "programStage": {
+                        "id": "JoM4wEs834o"
+                    },
+                    "filter": "NE:NV"
+                },
+                {
+                    "dataElement": {
+                        "id": "hxNafEmvgcH"
+                    },
+                    "programStage": {
+                        "id": "xA7gNbtMZOb"
+                    },
+                    "filter": "NE:NV"
+                }
+            ],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "LINE_LIST",
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp"
+            },
+            "columnDimensions": [
+                "ou",
+                "w75KJ2mc4zz",
+                "zDhUuAYrxNC",
+                "V4xUtHrsVaK.enrollmentDate",
+                "V4xUtHrsVaK.JoM4wEs834o.hxNafEmvgcH",
+                "kidPUHI4Klv.xA7gNbtMZOb.hxNafEmvgcH",
+                "created"
+            ],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "ou",
+                    "values": ["USER_ORGUNIT"]
+                },
+                {
+                    "parent": "COLUMN",
+                    "dimension": "enrollmentDate",
+                    "program": "V4xUtHrsVaK",
+                    "values": ["THIS_YEAR"]
+                },
+                {
+                    "parent": "COLUMN",
+                    "dimension": "created",
+                    "values": []
+                }
+            ],
+            "outputType": "TRACKED_ENTITY_INSTANCE",
+            "id": "IS74uKRvJvl"
+        }
+    ]
+}

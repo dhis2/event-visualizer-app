@@ -1,0 +1,44 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Enrollment pivot table, attribute value",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "userOrganisationUnitChildren": true,
+            "filterDimensions": ["ur1Edk5Oe2n.enrollmentDate"],
+            "attributeDimensions": [
+                {
+                    "attribute": {
+                        "id": "cejWyOfXge6"
+                    }
+                }
+            ],
+            "aggregationType": "AVERAGE",
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "attributeValueDimension": {
+                "id": "OvY4VVhSDeJ"
+            },
+            "columnDimensions": ["cejWyOfXge6"],
+            "rowDimensions": ["ur1Edk5Oe2n.ou"],
+            "simpleDimensions": [
+                {
+                    "parent": "ROW",
+                    "dimension": "ou",
+                    "program": "ur1Edk5Oe2n",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "enrollmentDate",
+                    "program": "ur1Edk5Oe2n",
+                    "values": ["THIS_YEAR"]
+                }
+            ],
+            "outputType": "ENROLLMENT",
+            "id": "O2sqK93AD4w"
+        }
+    ]
+}
