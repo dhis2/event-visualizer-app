@@ -1,6 +1,6 @@
 # E2E visualization matrix
 
-The type 1 E2E tests run a set of saved visualizations through the same steps: render in the app, create and show an interpretation, render in the plugin host. This document lists the kinds of visualization the app can make, which saved visualizations cover them, and whether the DB (`analytics-with-ever-20261014`) has data to build them.
+The type 1 E2E tests (`saved-visualizations.cy.ts`) run a set of saved visualizations through the same steps: render in the app, render in an interpretation, render in the dashboard plugin. Each render is checked against the headers the visualization should show. This document lists the kinds of visualization the app can make, which saved visualizations cover them, and whether the DB (`analytics-with-ever-20261014`) has data to build them.
 
 ## What a visualization varies by
 
@@ -26,7 +26,7 @@ Secondary features don't need to be crossed with every row. Each one only needs 
 | --- | -------------- | ------------------------------------------------------------ | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | L1  | Event          | Event program                                                | `event-line-list-event-program`; legacy: 6 Event Reports lists | Yes: Inpatient morbidity and mortality, 108k events                                                       |
 | L2  | Event          | One stage of a tracker program                               | `IZJmG9NHTtj`                                                  | Yes: Child Programme, Birth                                                                               |
-| L3  | Event          | Tracker stage + enrollment dimensions + attributes           | `Unf7gi4ShzQ` (no attributes), `C1XaMuNaeDy`                   | Yes: Child Programme                                                                                      |
+| L3  | Event          | Tracker stage + enrollment dimensions + attributes           | `C1XaMuNaeDy`; `Unf7gi4ShzQ` has no data (see below)           | Yes: Child Programme                                                                                      |
 | L4  | Enrollment     | One stage + enrollment dimensions                            | `qSc4vbYPPgk`, `C524QgkjodB`                                   | Yes: Child Programme                                                                                      |
 | L5  | Enrollment     | Several stages of one program                                | `enrollment-line-list-several-stages`                          | Yes: Child Programme (Birth + Baby Postnatal), E2E TE program 1 (3 stages)                                |
 | L6  | Enrollment     | Repeated events                                              | `XCLdIcUmenR` (14 events), `WrIV7ZoYECj`                       | Yes: WHO RMNCH 2nd ANC visit, E2E TE program 1 stage 2                                                    |
@@ -60,7 +60,7 @@ The app blocks these combinations, whatever the data:
 
 ### Legacy
 
-The dump has 31 legacy line lists and pivot tables. Loading them takes a separate code path. That is worth a type 1 test of its own, using a couple of the dump visualizations as they are. The 19 legacy charts can't be opened by the app and are out of scope.
+The dump has 31 legacy line lists and pivot tables. Loading them takes a separate code path. The spec runs two of them as they are: `PRVegIpABeb` (line list) and `aDrb9UMVxt0` (pivot table with a cell value). The 19 legacy charts can't be opened by the app and are out of scope.
 
 ## Secondary features
 
@@ -85,7 +85,8 @@ A start–end date range is left out: its dates are fixed, so the yearly date sh
 
 ## Known problems
 
-- `enrollment-pivot-table-data-element-value` fails with "Value `vANAXwtLwcT` must be a data element prefixed with a program stage". The app saves the value's stage (`value.programStage`), but the backend on idv-e2e-setup (2.44-SNAPSHOT, revision `1a536f8`) does not store it. An event pivot table gets away without the stage; an enrollment pivot table does not.
+- `enrollment-pivot-table-data-element-value` fails with "Value `vANAXwtLwcT` must be a data element prefixed with a program stage". The app saves the value's stage (`value.programStage`), but the backend on idv-e2e-setup (2.44-SNAPSHOT, revision `1a536f8`) does not store it. An event pivot table gets away without the stage; an enrollment pivot table does not. The spec skips it until the backend stores the stage.
+- `Unf7gi4ShzQ` filters on this year's event date and this year's enrollment date. In the DB, this year's Birth events all belong to next year's enrollments, so it never shows data. It is left out of the spec.
 - `event-line-list-event-program` asks for legend colours by data item, but the app makes no `legendSets` request when it loads the line list, so no colours show.
 
 ## Data notes
