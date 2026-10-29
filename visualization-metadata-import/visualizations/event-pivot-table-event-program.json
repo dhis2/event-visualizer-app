@@ -1,0 +1,64 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event pivot table, event program",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "userOrganisationUnitChildren": true,
+            "filterDimensions": ["eBAyeGv0exc.Zj7UnCAulEk.eventDate"],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "oZg33kd9taw"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "qrur9Dvnyt5"
+                    },
+                    "legendSet": {
+                        "id": "Yf6UHoPkdS6"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                }
+            ],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "colTotals": true,
+            "rowTotals": true,
+            "rowSubTotals": true,
+            "colSubTotals": true,
+            "hideSubtitle": true,
+            "showDimensionLabels": true,
+            "type": "PIVOT_TABLE",
+            "columnDimensions": [
+                "eBAyeGv0exc.Zj7UnCAulEk.oZg33kd9taw",
+                "eBAyeGv0exc.Zj7UnCAulEk.qrur9Dvnyt5"
+            ],
+            "rowDimensions": ["eBAyeGv0exc.Zj7UnCAulEk.ou"],
+            "simpleDimensions": [
+                {
+                    "parent": "ROW",
+                    "dimension": "ou",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "eventDate",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["THIS_YEAR"]
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "t6KrUiPqcd0"
+        }
+    ]
+}

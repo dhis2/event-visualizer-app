@@ -1,0 +1,94 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event line list, event program",
+            "regressionType": "NONE",
+            "rawPeriods": ["LAST_12_MONTHS"],
+            "userOrganisationUnit": true,
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "oZg33kd9taw"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "qrur9Dvnyt5"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    },
+                    "filter": "GE:18"
+                },
+                {
+                    "dataElement": {
+                        "id": "vV9UWAZohSf"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "fWIAEtYVEGk"
+                    },
+                    "programStage": {
+                        "id": "Zj7UnCAulEk"
+                    }
+                }
+            ],
+            "programIndicatorDimensions": [
+                {
+                    "programIndicator": {
+                        "id": "HS8QXAJtuKV"
+                    }
+                }
+            ],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "LINE_LIST",
+            "columnDimensions": [
+                "eBAyeGv0exc.Zj7UnCAulEk.ou",
+                "eBAyeGv0exc.Zj7UnCAulEk.eventDate",
+                "eBAyeGv0exc.Zj7UnCAulEk.oZg33kd9taw",
+                "eBAyeGv0exc.Zj7UnCAulEk.qrur9Dvnyt5",
+                "eBAyeGv0exc.Zj7UnCAulEk.vV9UWAZohSf",
+                "eBAyeGv0exc.Zj7UnCAulEk.fWIAEtYVEGk",
+                "eBAyeGv0exc.HS8QXAJtuKV",
+                "lastUpdated"
+            ],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "ou",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["USER_ORGUNIT"]
+                },
+                {
+                    "parent": "COLUMN",
+                    "dimension": "eventDate",
+                    "program": "eBAyeGv0exc",
+                    "programStage": "Zj7UnCAulEk",
+                    "values": ["LAST_12_MONTHS"]
+                },
+                {
+                    "parent": "COLUMN",
+                    "dimension": "lastUpdated",
+                    "values": []
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "t6SxiQdVPVs",
+            "legend": {
+                "showKey": true,
+                "style": "FILL",
+                "strategy": "BY_DATA_ITEM"
+            }
+        }
+    ]
+}
