@@ -83,7 +83,13 @@ export const CellValueAxis: FC = () => {
             })}
             data-test="axis-value"
         >
-            {isDropBlocked && <LayoutBlockedOverlay />}
+            {isDropBlocked && (
+                <LayoutBlockedOverlay
+                    message={i18n.t(
+                        'Only numeric data items can be used as the cell value.'
+                    )}
+                />
+            )}
             <div className={axisClasses.label}>{i18n.t('Value')}</div>
             <div className={classes.content} data-test="axis-content-value">
                 {cellValue ? (
