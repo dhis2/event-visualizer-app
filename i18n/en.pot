@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-22T12:48:15.232Z\n"
-"PO-Revision-Date: 2026-10-22T12:48:15.232Z\n"
+"POT-Creation-Date: 2026-10-30T13:52:04.142Z\n"
+"PO-Revision-Date: 2026-10-30T13:52:04.151Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -21,9 +21,6 @@ msgid ""
 msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
-
-msgid "Only numeric data items can be used as the cell value."
-msgstr "Only numeric data items can be used as the cell value."
 
 msgid "Changes not applied"
 msgstr "Changes not applied"
@@ -332,6 +329,9 @@ msgstr "One row for each {{- outputTypeLabel}}"
 
 msgid "Use item default ({{- aggregationType}})"
 msgstr "Use item default ({{- aggregationType}})"
+
+msgid "Only numeric data items can be used as the cell value."
+msgstr "Only numeric data items can be used as the cell value."
 
 msgid "Value"
 msgstr "Value"
