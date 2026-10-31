@@ -30,7 +30,7 @@ msgid ""
 msgstr "某些维度未被添加，因为它们无法与{{- layoutTetName}} 的维度结合使用：{{list}} 。"
 
 msgid "Only numeric data items can be used as the cell value."
-msgstr ""
+msgstr "只有数值型数据项才能用作单元格值。"
 
 msgid "Changes not applied"
 msgstr "更改未应用"
@@ -39,10 +39,10 @@ msgid "Retry"
 msgstr "重试"
 
 msgid "Use as value (without filters)"
-msgstr ""
+msgstr "用作值（不带过滤条件）"
 
 msgid "Use as value"
-msgstr ""
+msgstr "用作值"
 
 msgid "Add to {{- axisName}}"
 msgstr "添加到{{- axisName}}"
@@ -232,7 +232,7 @@ msgstr "全部"
 
 msgid "And {{- count}} other..."
 msgid_plural "And {{- count}} other..."
-msgstr[0] ""
+msgstr[0] "还有{{- count}} 等……"
 
 msgid "None selected"
 msgstr "没有选择"
@@ -334,19 +334,19 @@ msgid "Nothing selected. Add items to the layout to get started."
 msgstr "尚未选择任何内容。请将项目添加到布局中以开始操作。"
 
 msgid "One row for each {{- outputTypeLabel}}"
-msgstr ""
+msgstr "每项占一行{{- outputTypeLabel}}"
 
 msgid "Use item default ({{- aggregationType}})"
-msgstr ""
+msgstr "使用项目默认值（{{- aggregationType}} ）"
 
 msgid "Value"
 msgstr "数值"
 
 msgid "Reset to count"
-msgstr ""
+msgstr "重置计数"
 
 msgid "Cells show a count. Drag a numeric data item here to show its value."
-msgstr ""
+msgstr "单元格显示计数。将数值数据项拖放到此处即可显示其值。"
 
 msgid "Count"
 msgstr "计数"
@@ -693,7 +693,7 @@ msgstr "折叠所有卡片"
 
 msgid "Enter at least {{- count}} characters to search"
 msgid_plural "Enter at least {{- count}} characters to search"
-msgstr[0] ""
+msgstr[0] "请输入至少{{- count}} 个字符进行搜索"
 
 msgid "Something went wrong while searching."
 msgstr "搜索过程中出现了一些问题。"
@@ -744,15 +744,15 @@ msgid "Delete"
 msgstr "删除"
 
 msgid "Save as a new visualization?"
-msgstr ""
+msgstr "保存为新的可视化效果？"
 
 msgid ""
 "This visualization was made in an older app. Renaming it here would stop "
 "that app from editing it."
-msgstr ""
+msgstr "该可视化图是在一个较旧的应用程序中创建的。如果在此处重命名它，该应用程序将无法再对其进行编辑。"
 
 msgid "Save a copy with the new name instead?"
-msgstr ""
+msgstr "要改用新名称保存一份吗？"
 
 msgid "Save as new"
 msgstr "另存为新"
@@ -1275,8 +1275,8 @@ msgstr "在可交互表格中查看数据和指标。（按“EVER”调整）"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr ""
+msgstr "个人数据可视化工具"
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr ""
+msgstr "独立的数据可视化应用和插件"
