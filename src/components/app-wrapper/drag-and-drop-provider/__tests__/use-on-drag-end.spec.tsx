@@ -1,4 +1,3 @@
-import { useAlert } from '@dhis2/app-runtime'
 import {
     useAppDispatch,
     useAppSelector,
@@ -480,14 +479,7 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
     const cellValueDropTarget = {
         data: { current: { isCellValueDroppable: true } },
     }
-    const showAlert = vi.fn()
-    const hideAlert = vi.fn()
-
     beforeEach(() => {
-        vi.mocked(useAlert).mockReturnValue({
-            show: showAlert,
-            hide: hideAlert,
-        })
         vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
         vi.mocked(useAppSelector).mockReturnValue([])
         vi.mocked(useMetadataStore).mockReturnValue(
@@ -523,7 +515,6 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
             id: 's1.de1',
             aggregationType: 'DEFAULT',
         })
-        expect(showAlert).not.toHaveBeenCalled()
     })
 
     it('rejects a non-numeric dimension', () => {
@@ -543,7 +534,6 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         } as unknown as LayoutDragEndEvent)
 
         expect(setVisUiConfigCellValue).not.toHaveBeenCalled()
-        expect(showAlert).toHaveBeenCalled()
     })
 
     /* The drop is a clone: without the guard this path falls through to the

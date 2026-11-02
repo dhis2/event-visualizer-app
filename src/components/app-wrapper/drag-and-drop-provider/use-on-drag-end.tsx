@@ -28,7 +28,7 @@ import {
     setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import type { Axis } from '@types'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
@@ -47,10 +47,6 @@ type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
 /* Skipped-dimension alerts can be long, so give the user 10 seconds to read. */
 const SKIPPED_DIMENSIONS_ALERT_OPTIONS = { duration: 10000 }
-
-/* Hoisted for a stable reference: `useAlert` keys its `show` callback on the
- * options object. */
-const INVALID_CELL_VALUE_ALERT_OPTIONS = { warning: true }
 
 type SkippedByReason = Record<DimensionBlockReason, string[]>
 
@@ -120,22 +116,6 @@ export const useOnDragEnd = (): OnDragEndFn => {
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
-    /* `AlertBar` never auto-hides a warning — `duration` only applies when
-     * `!(permanent || warning || critical)`. Hiding it by hand takes the
-     * `hidden` path instead, which animates out regardless of the variant. */
-    const { show: showAlert, hide: hideAlert } = useAlert(
-        i18n.t('Only numeric data items can be used as the cell value.'),
-        INVALID_CELL_VALUE_ALERT_OPTIONS
-    )
-    const invalidCellValueTimeout = useRef<ReturnType<typeof setTimeout>>()
-
-    useEffect(() => () => clearTimeout(invalidCellValueTimeout.current), [])
-
-    const showInvalidCellValueAlert = useCallback(() => {
-        showAlert()
-        clearTimeout(invalidCellValueTimeout.current)
-        invalidCellValueTimeout.current = setTimeout(hideAlert, 5000)
-    }, [showAlert, hideAlert])
     const metadataStore = useMetadataStore()
     const store = useAppStore()
     const listFormatter = useListFormatter({ type: 'conjunction' })
@@ -186,11 +166,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         aggregationType: 'DEFAULT',
                     })
                 )
-            } else {
-                showInvalidCellValueAlert()
             }
         },
-        [dispatch, metadataStore, showInvalidCellValueAlert]
+        [dispatch, metadataStore]
     )
 
     const handleSidebarDrop = useCallback(
