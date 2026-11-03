@@ -1,0 +1,76 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "No time dimension",
+            "regressionType": "NONE",
+            "rawPeriods": [],
+            "sortOrder": 0,
+            "topLimit": 0,
+            "hideEmptyRows": false,
+            "showHierarchy": false,
+            "userOrganisationUnit": true,
+            "userOrganisationUnitChildren": false,
+            "userOrganisationUnitGrandChildren": false,
+            "completedOnly": false,
+            "skipRounding": false,
+            "filterDimensions": [],
+            "organisationUnits": [],
+            "organisationUnitGroupSetDimensions": [],
+            "organisationUnitLevels": [],
+            "categoryDimensions": [],
+            "categoryOptionGroupSetDimensions": [],
+            "attributeDimensions": [],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "sWoqcoByYmD"
+                    }
+                }
+            ],
+            "programIndicatorDimensions": [],
+            "itemOrganisationUnitGroups": [],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideLegend": false,
+            "noSpaceBetweenColumns": false,
+            "cumulativeValues": false,
+            "percentStackedValues": false,
+            "showData": false,
+            "colTotals": false,
+            "rowTotals": false,
+            "rowSubTotals": false,
+            "colSubTotals": false,
+            "hideTitle": false,
+            "hideSubtitle": false,
+            "showDimensionLabels": false,
+            "type": "LINE_LIST",
+            "program": {
+                "id": "lxAQ7Zs9VYR"
+            },
+            "programStage": {
+                "id": "dBwrot7S420"
+            },
+            "columnDimensions": ["ou", "sWoqcoByYmD"],
+            "rowDimensions": [],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "ou",
+                    "values": ["USER_ORGUNIT"]
+                }
+            ],
+            "outputType": "EVENT",
+            "collapseDataDimensions": false,
+            "hideNaData": false,
+            "hideEmptyColumns": false,
+            "fixColumnHeaders": false,
+            "fixRowHeaders": false,
+            "legacy": false,
+            "id": "ETJXkMmCGsK",
+            "attributeValues": [],
+            "sorting": [],
+            "repetitions": [],
+            "periods": []
+        }
+    ]
+}

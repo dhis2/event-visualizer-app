@@ -1,6 +1,6 @@
 # Visualization metadata import
 
-The E2E instances are built from the `analytics-with-ever-20261014` DB dump. The visualizations the E2E suite needs on top of that dump live in `visualizations/`, one metadata payload per file. Once the set has settled, they become part of a new DB dump and this folder goes away.
+The E2E instances are built from the `analytics-with-ever-20261014` DB dump. The visualizations the E2E suite and the line list fixture capture (`pnpm cy:capture-fixtures`) need on top of that dump live in `visualizations/`, one metadata payload per file. Once the set has settled, they become part of a new DB dump and this folder goes away.
 
 `db-dump-visualizations.json` lists the IDs and names of the event visualizations in the DB dump. These must not be added to `visualizations/`.
 

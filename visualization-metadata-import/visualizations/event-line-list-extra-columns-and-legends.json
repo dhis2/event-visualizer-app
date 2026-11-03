@@ -1,0 +1,176 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+            "regressionType": "NONE",
+            "displayDensity": "NORMAL",
+            "fontSize": "NORMAL",
+            "rawPeriods": ["THIS_YEAR"],
+            "sortOrder": 0,
+            "topLimit": 0,
+            "hideEmptyRows": false,
+            "showHierarchy": false,
+            "userOrganisationUnit": false,
+            "userOrganisationUnitChildren": false,
+            "userOrganisationUnitGrandChildren": false,
+            "completedOnly": false,
+            "skipRounding": false,
+            "filterDimensions": [],
+            "organisationUnits": [
+                {
+                    "id": "ImspTQPwCqd"
+                }
+            ],
+            "organisationUnitGroupSetDimensions": [],
+            "organisationUnitLevels": [],
+            "categoryDimensions": [],
+            "categoryOptionGroupSetDimensions": [],
+            "attributeDimensions": [],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "vV9UWAZohSf"
+                    },
+                    "legendSet": {
+                        "id": "OrkEzxZEH4X"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "eMyVanycQSC"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "qrur9Dvnyt5"
+                    },
+                    "filter": "LE:5"
+                },
+                {
+                    "dataElement": {
+                        "id": "K6uUAvq500H"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "msodh3rEMJa"
+                    }
+                },
+                {
+                    "dataElement": {
+                        "id": "oZg33kd9taw"
+                    },
+                    "filter": "IN:Female"
+                },
+                {
+                    "dataElement": {
+                        "id": "fWIAEtYVEGk"
+                    }
+                }
+            ],
+            "programIndicatorDimensions": [
+                {
+                    "programIndicator": {
+                        "id": "x7PaHGvgWY2"
+                    }
+                },
+                {
+                    "programIndicator": {
+                        "id": "hlPt8H4bUOQ"
+                    }
+                },
+                {
+                    "programIndicator": {
+                        "id": "b8hd33dWjR6"
+                    }
+                },
+                {
+                    "programIndicator": {
+                        "id": "vDdRoZYybP2"
+                    }
+                },
+                {
+                    "programIndicator": {
+                        "id": "gWxh7DiRmG7"
+                    },
+                    "legendSet": {
+                        "id": "TBxGTceyzwy"
+                    }
+                },
+                {
+                    "programIndicator": {
+                        "id": "ReQEl5V3z6p"
+                    }
+                }
+            ],
+            "itemOrganisationUnitGroups": [],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideLegend": false,
+            "noSpaceBetweenColumns": false,
+            "cumulativeValues": false,
+            "percentStackedValues": false,
+            "showData": false,
+            "colTotals": false,
+            "rowTotals": false,
+            "rowSubTotals": false,
+            "colSubTotals": false,
+            "hideTitle": false,
+            "hideSubtitle": false,
+            "showDimensionLabels": false,
+            "type": "LINE_LIST",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "columnDimensions": [
+                "pe",
+                "vV9UWAZohSf",
+                "ou",
+                "eMyVanycQSC",
+                "qrur9Dvnyt5",
+                "K6uUAvq500H",
+                "msodh3rEMJa",
+                "oZg33kd9taw",
+                "fWIAEtYVEGk",
+                "x7PaHGvgWY2",
+                "hlPt8H4bUOQ",
+                "b8hd33dWjR6",
+                "vDdRoZYybP2",
+                "gWxh7DiRmG7",
+                "ReQEl5V3z6p"
+            ],
+            "rowDimensions": [],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "ou",
+                    "values": ["ImspTQPwCqd"]
+                }
+            ],
+            "outputType": "EVENT",
+            "collapseDataDimensions": false,
+            "hideNaData": false,
+            "hideEmptyColumns": false,
+            "fixColumnHeaders": false,
+            "fixRowHeaders": false,
+            "legacy": false,
+            "dataType": "EVENTS",
+            "id": "Rq4ppYwc4r8",
+            "attributeValues": [],
+            "legend": {
+                "showKey": true,
+                "style": "FILL",
+                "set": {
+                    "id": "OrkEzxZEH4X"
+                },
+                "strategy": "BY_DATA_ITEM"
+            },
+            "sorting": [],
+            "repetitions": [],
+            "periods": []
+        }
+    ]
+}
