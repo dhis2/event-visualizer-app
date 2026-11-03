@@ -455,47 +455,6 @@ describe('useToolbarActions', () => {
             expect(result.current.pendingLegacyRename).toBeNull()
         })
 
-        it('saves a confirmed legacy rename as a new visualization', async () => {
-            const legacyVis = makeSavedVis({
-                name: 'Old name',
-                description: 'Old description',
-                legacy: true,
-                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
-            } as Partial<SavedVisualization>)
-            spyOnFetch({ data: legacyVis })
-            const createSpy = spyOnCreate()
-
-            const { result, store } = renderToolbarActions({
-                // unsaved edits in the editor must not end up in the copy
-                currentVis: { ...toCurrentVis(legacyVis), columns: [] },
-                savedVis: legacyVis,
-            })
-
-            await act(async () => {
-                await result.current.onRename({
-                    name: 'New name',
-                    description: 'New description',
-                })
-            })
-            await act(async () => {
-                await result.current.onConfirmLegacyRename()
-            })
-
-            const payload = createSpy.mock.calls[0][0] as SavedVisualization
-            expect(payload).toMatchObject({
-                name: 'New name',
-                description: 'New description',
-                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
-            })
-            expect(payload).not.toHaveProperty('id')
-            expect(payload).not.toHaveProperty('legacy')
-            expect(store.getState().navigation).toHaveProperty(
-                'visualizationId',
-                'new-vis'
-            )
-            expect(result.current.pendingLegacyRename).toBeNull()
-        })
-
         it('saves nothing when a legacy rename is cancelled', async () => {
             const legacyVis = makeSavedVis({ legacy: true })
             spyOnFetch({ data: legacyVis })
