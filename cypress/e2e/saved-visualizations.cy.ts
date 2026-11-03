@@ -1,6 +1,7 @@
 import { expectVisTitleToEqual } from '../helpers'
 import { deleteInterpretations } from '../support/api'
 import { pluginBody } from '../support/dashboard-plugin'
+import { testObjectName } from '../support/names'
 import type { ExpectedRendering } from '../support/rendering'
 import { expectVisualizationToRender } from '../support/rendering'
 import { getApiBaseUrl } from '../support/utils'
@@ -299,15 +300,13 @@ const VISUALIZATIONS: SavedVisualization[] = [
     },
 ]
 
-const INTERPRETATION_TEXT = 'E2E saved visualization interpretation'
-
-const createInterpretation = (visualizationId: string) =>
+const createInterpretation = (visualizationId: string, text: string) =>
     cy
         .request({
             method: 'POST',
             url: `${getApiBaseUrl()}/interpretations/eventVisualization/${visualizationId}`,
             headers: { 'Content-Type': 'text/plain' },
-            body: INTERPRETATION_TEXT,
+            body: text,
         })
         .then(({ headers }) => String(headers.location).split('/').pop())
 
@@ -317,18 +316,33 @@ describe('saved visualizations', () => {
         const describeVisualization = skip ? describe.skip : describe
 
         describeVisualization(`${row}: ${name}`, () => {
+            const interpretationTexts: string[] = []
+
+            /* afterEach, because a retry starts the test again and posts
+             * another */
+            afterEach(() => {
+                interpretationTexts
+                    .splice(0)
+                    .forEach((text) => deleteInterpretations(id, text))
+            })
+
             it('renders in the app and in an interpretation', () => {
+                const interpretationText = testObjectName('interpretation')
+                interpretationTexts.push(interpretationText)
                 cy.visit(`/#/${id}`)
 
                 expectVisTitleToEqual(name)
                 expectVisualizationToRender(visualization)
 
-                createInterpretation(id).then((interpretationId) =>
-                    cy.visit(`/#/${id}?interpretationId=${interpretationId}`)
+                createInterpretation(id, interpretationText).then(
+                    (interpretationId) =>
+                        cy.visit(
+                            `/#/${id}?interpretationId=${interpretationId}`
+                        )
                 )
 
                 cy.getByDataTest('interpretation-modal').contains(
-                    INTERPRETATION_TEXT
+                    interpretationText
                 )
                 expectVisualizationToRender(visualization, () =>
                     cy.getByDataTest('interpretation-modal')
@@ -341,8 +355,6 @@ describe('saved visualizations', () => {
 
                 expectVisualizationToRender(visualization, pluginBody)
             })
-
-            after(() => deleteInterpretations(id, INTERPRETATION_TEXT))
         })
     })
 })

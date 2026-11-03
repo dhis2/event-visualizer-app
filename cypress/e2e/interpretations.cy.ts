@@ -51,11 +51,18 @@ describe('interpretations', () => {
     })
 
     describe('an interpretation', () => {
-        const text = testObjectName('interpretation')
+        const texts: string[] = []
 
-        after(() => deleteInterpretations(PIVOT_TABLE_ID, text))
+        /* afterEach, because a retry starts the test again and may post another */
+        afterEach(() => {
+            texts
+                .splice(0)
+                .forEach((text) => deleteInterpretations(PIVOT_TABLE_ID, text))
+        })
 
         it('writes, opens, replies to and deletes an interpretation', () => {
+            const text = testObjectName('interpretation')
+            texts.push(text)
             const reply = 'E2E-IDV reply'
             cy.visit(`/#/${PIVOT_TABLE_ID}`)
             clickToolbarInterpretationsButton()
