@@ -1,5 +1,7 @@
 import {
     deleteVisualization,
+    expectColumnToBeSorted,
+    sortColumn,
     expectStartScreenToBeVisible,
     expectVisTitleToEqual,
     renameVisualization,
@@ -61,9 +63,7 @@ describe('file menu', () => {
                     .should('be.visible')
                 expectSubscriber(id, userId)
 
-                cy.getByDataTest('data-table-header')
-                    .find('button[title*="Age in years"]')
-                    .click()
+                sortColumn('Age in years', 'asc')
                 cy.getByDataTest('title-bar').should('contain', 'Edited')
 
                 resaveVisualization()
@@ -74,9 +74,7 @@ describe('file menu', () => {
                     'have.length.greaterThan',
                     0
                 )
-                getVisualization(id, 'sorting')
-                    .its('sorting')
-                    .should('have.length', 1)
+                expectColumnToBeSorted('Age in years', 'asc')
                 expectSubscriber(id, userId)
             })
         })
