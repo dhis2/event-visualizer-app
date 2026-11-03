@@ -7,8 +7,7 @@ import { expectVisualizationToRender } from '../support/rendering'
 import { getApiBaseUrl } from '../support/utils'
 
 type SavedVisualization = ExpectedRendering & {
-    /* The row in visualization-matrix.md this visualization covers */
-    row: string
+    covers: string
     id: string
     name: string
     skip?: boolean
@@ -16,7 +15,7 @@ type SavedVisualization = ExpectedRendering & {
 
 const VISUALIZATIONS: SavedVisualization[] = [
     {
-        row: 'L1',
+        covers: 'Event line list, event program',
         id: 't6SxiQdVPVs',
         name: 'E2E: Event line list, event program',
         type: 'LINE_LIST',
@@ -32,7 +31,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L2',
+        covers: 'Event line list, one stage of a tracker program',
         id: 'IZJmG9NHTtj',
         name: 'EVER [Line list] [Event] Basic',
         type: 'LINE_LIST',
@@ -44,7 +43,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L3',
+        covers: 'Event line list, tracker stage with enrollment dimensions and attributes',
         id: 'C1XaMuNaeDy',
         name: 'Test option set options labels',
         type: 'LINE_LIST',
@@ -58,7 +57,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L4',
+        covers: 'Enrollment line list, one stage with enrollment dimensions',
         id: 'qSc4vbYPPgk',
         name: 'EVER [Line list] [Enrollment] Basic',
         type: 'LINE_LIST',
@@ -69,7 +68,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L4',
+        covers: 'Enrollment line list, one stage with enrollment dimensions',
         id: 'C524QgkjodB',
         name: 'EVER [Line list] [Enrollment] Stage and enrollment dimensions',
         type: 'LINE_LIST',
@@ -82,7 +81,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L5',
+        covers: 'Enrollment line list, several stages of one program',
         id: 'kUbNtOy0T12',
         name: 'E2E: Enrollment line list, several stages',
         type: 'LINE_LIST',
@@ -100,7 +99,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L6',
+        covers: 'Enrollment line list, repeated events',
         id: 'XCLdIcUmenR',
         name: 'E2E: Enrollment - Percentage (repeated)',
         type: 'LINE_LIST',
@@ -114,7 +113,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L6',
+        covers: 'Enrollment line list, repeated events',
         id: 'WrIV7ZoYECj',
         name: 'E2E: Enrollment - Hemoglobin (repeated)',
         type: 'LINE_LIST',
@@ -127,21 +126,21 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L7',
+        covers: 'Tracked entity line list, tracked entity type only',
         id: 'cRuVDbe3Lga',
         name: 'EVER [Line list] [TE] Basic',
         type: 'LINE_LIST',
         headers: ['Registration org. unit', 'Created on', 'Gender'],
     },
     {
-        row: 'L7',
+        covers: 'Tracked entity line list, tracked entity type only',
         id: 'qTd4CrFQ4hz',
         name: 'EVER Person List',
         type: 'LINE_LIST',
         headers: ['Registration org. unit', 'First name'],
     },
     {
-        row: 'L8',
+        covers: 'Tracked entity line list, tracked entity type and one program',
         id: 'cHhlOdJqqox',
         name: 'EVER Person List - LL breaking',
         type: 'LINE_LIST',
@@ -152,7 +151,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L8',
+        covers: 'Tracked entity line list, tracked entity type and one program',
         id: 'GOIpY8GFUJp',
         name: 'EVER [Line list] [TE] Stage and enrollment dimension',
         type: 'LINE_LIST',
@@ -164,7 +163,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'L9',
+        covers: 'Tracked entity line list, two programs',
         id: 'IS74uKRvJvl',
         name: 'E2E: Tracked entity line list, two programs',
         type: 'LINE_LIST',
@@ -179,7 +178,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'P1',
+        covers: 'Event pivot table, event program',
         id: 't6KrUiPqcd0',
         name: 'E2E: Event pivot table, event program',
         type: 'PIVOT_TABLE',
@@ -187,7 +186,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: ['Bo', 'Western Area', 'Total'],
     },
     {
-        row: 'P2',
+        covers: 'Event pivot table, data element value',
         id: 'n2ZQVP3taPF',
         name: 'E2E: Event pivot table, data element value',
         type: 'PIVOT_TABLE',
@@ -195,7 +194,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: [],
     },
     {
-        row: 'P3',
+        covers: 'Event pivot table, categories and category option group sets',
         id: 'EidT2M2SzAo',
         name: 'E2E: Event pivot table, categories',
         type: 'PIVOT_TABLE',
@@ -203,7 +202,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: ['DOD', 'CDC', 'Positive', 'Negative', 'Mixed'],
     },
     {
-        row: 'P4',
+        covers: 'Event pivot table, tracker stage with enrollment dimensions',
         id: 'pb8yapu3EVC',
         name: 'EVER [Pivot table] [Event] Basic',
         type: 'PIVOT_TABLE',
@@ -211,7 +210,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: [],
     },
     {
-        row: 'P4',
+        covers: 'Event pivot table, tracker stage with enrollment dimensions',
         id: 'TKrpEtzneOk',
         name: 'EVER [Pivot table] [Event] Stage and enrollment dimensions',
         type: 'PIVOT_TABLE',
@@ -219,7 +218,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: [],
     },
     {
-        row: 'P5',
+        covers: 'Event pivot table, tracker stage with attributes and registration org unit',
         id: 'D648CB4jn8G',
         name: 'E2E: Event pivot table, attributes and registration org unit',
         type: 'PIVOT_TABLE',
@@ -227,7 +226,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: ['Bo', 'Western Area'],
     },
     {
-        row: 'P6',
+        covers: 'Event pivot table, tracker stage, data element value',
         id: 'q4rwy9jfGCK',
         name: 'E2E: Event pivot table, tracker stage, data element value',
         type: 'PIVOT_TABLE',
@@ -235,7 +234,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: [],
     },
     {
-        row: 'P7',
+        covers: 'Enrollment pivot table, several stages with enrollment dimensions',
         id: 'Z2mxfl7gTTA',
         name: 'E2E: Enrollment pivot table, several stages',
         type: 'PIVOT_TABLE',
@@ -243,7 +242,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: ['Bo', 'NVP only', 'Others'],
     },
     {
-        row: 'P8',
+        covers: 'Enrollment pivot table, data element value',
         id: 'unFRccFpt4V',
         name: 'E2E: Enrollment pivot table, data element value',
         type: 'PIVOT_TABLE',
@@ -254,7 +253,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         skip: true,
     },
     {
-        row: 'P9',
+        covers: 'Enrollment pivot table, attribute value',
         id: 'O2sqK93AD4w',
         name: 'E2E: Enrollment pivot table, attribute value',
         type: 'PIVOT_TABLE',
@@ -262,7 +261,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         rowHeaders: ['Bo', 'Western Area'],
     },
     {
-        row: 'Legacy',
+        covers: 'Legacy line list',
         id: 'PRVegIpABeb',
         name: 'Inpatient: Visit overview this year Bo',
         type: 'LINE_LIST',
@@ -291,7 +290,7 @@ const VISUALIZATIONS: SavedVisualization[] = [
         ],
     },
     {
-        row: 'Legacy',
+        covers: 'Legacy pivot table, data element value',
         id: 'aDrb9UMVxt0',
         name: 'Inpatient: Average weight by mode of discharge and gender last 4 q',
         type: 'PIVOT_TABLE',
@@ -312,10 +311,10 @@ const createInterpretation = (visualizationId: string, text: string) =>
 
 describe('saved visualizations', () => {
     VISUALIZATIONS.forEach((visualization) => {
-        const { row, id, name, skip } = visualization
+        const { covers, id, name, skip } = visualization
         const describeVisualization = skip ? describe.skip : describe
 
-        describeVisualization(`${row}: ${name}`, () => {
+        describeVisualization(`${covers}: ${name}`, () => {
             const interpretationTexts: string[] = []
 
             /* afterEach, because a retry starts the test again and posts
