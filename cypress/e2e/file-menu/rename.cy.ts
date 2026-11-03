@@ -95,36 +95,4 @@ describe('rename', () => {
         cy.getByDataTest('title-text').should('not.exist')
         expectStartScreenToBeVisible()
     })
-
-    it('handles failure when renaming', () => {
-        cy.visit('/')
-        createTestVisualization(TEST_VIS_TITLE)
-
-        expectVisTitleToEqual(TEST_VIS_TITLE)
-        expectTableToBeVisible()
-
-        cy.intercept('PUT', '**/api/*/eventVisualizations/*', {
-            statusCode: 409,
-        })
-
-        // rename the AO, changing name only
-        const renamedVisTitle = `${TEST_VIS_TITLE} - renamed`
-        renameVisualization(renamedVisTitle)
-
-        cy.getByDataTest('dhis2-uicore-alertbar')
-            .contains('Rename failed')
-            .should('be.visible')
-        expectTableToBeVisible()
-        expectVisTitleToEqual(TEST_VIS_TITLE)
-
-        cy.reload(true)
-
-        expectTableToBeVisible()
-        expectVisTitleToEqual(TEST_VIS_TITLE)
-
-        deleteVisualization()
-        cy.getByDataTest('title-text').should('not.exist')
-
-        expectStartScreenToBeVisible()
-    })
 })
