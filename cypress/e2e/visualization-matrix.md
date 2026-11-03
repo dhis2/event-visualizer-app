@@ -85,7 +85,7 @@ A start–end date range is left out: its dates are fixed, so the yearly date sh
 
 ## Known problems
 
-- `enrollment-pivot-table-data-element-value` fails with "Value `vANAXwtLwcT` must be a data element prefixed with a program stage". The app saves the value's stage (`value.programStage`), but the backend on idv-e2e-setup (2.44-SNAPSHOT, revision `1a536f8`) does not store it. An event pivot table gets away without the stage; an enrollment pivot table does not. The spec skips it until the backend stores the stage.
+- `enrollment-pivot-table-data-element-value` fails with "Value `vANAXwtLwcT` must be a data element prefixed with a program stage". The app saves the value's stage (`value.programStage`), but the backend (2.44-SNAPSHOT, up to revision `de0c8ea` at least) does not store it. An event pivot table gets away without the stage; an enrollment pivot table does not. The spec skips it until the backend stores the stage.
 - `Unf7gi4ShzQ` filters on this year's event date and this year's enrollment date. In the DB, this year's Birth events all belong to next year's enrollments, so it never shows data. It is left out of the spec.
 - `event-line-list-event-program` asks for legend colours by data item, but the app makes no `legendSets` request when it loads the line list, so no colours show.
 
