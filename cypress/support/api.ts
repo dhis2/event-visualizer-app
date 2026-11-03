@@ -60,3 +60,8 @@ export const deleteInterpretations = (visualizationId: string, text: string) =>
                 })
             )
         )
+
+export const getCurrentUserId = () =>
+    cy
+        .request(`${getApiBaseUrl()}/me?fields=id`)
+        .then(({ body }) => body.id as string)
