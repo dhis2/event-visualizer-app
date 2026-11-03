@@ -1,6 +1,5 @@
 import fs from 'node:fs'
 import path from 'node:path'
-// eslint-disable-next-line no-restricted-imports
 import dump from '../../visualization-metadata-import/db-dump-visualizations.json'
 
 type VisualizationNames = Record<string, string>

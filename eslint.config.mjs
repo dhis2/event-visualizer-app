@@ -208,7 +208,7 @@ export default defineConfig([
 
     // Override: all Cypress files
     {
-        files: ['**/*.cy.ts', '**/*.cy.tsx'],
+        files: ['**/*.cy.ts', '**/*.cy.tsx', 'cypress/**/*.ts'],
         rules: {
             'no-restricted-imports': 'off',
         },
