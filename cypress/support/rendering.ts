@@ -8,7 +8,7 @@ export type ExpectedRendering =
 
 export type Container = () => Cypress.Chainable<JQuery<HTMLElement>>
 
-const getHeaderTexts = ($headers: JQuery<HTMLElement>) =>
+export const getHeaderTexts = ($headers: JQuery<HTMLElement>) =>
     [...$headers].map((header) => header.innerText.replace(/\s+/g, ' ').trim())
 
 const expectLineListToRender = (headers: string[], container: Container) => {

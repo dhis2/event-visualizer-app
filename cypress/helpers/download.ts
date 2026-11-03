@@ -12,6 +12,7 @@ const clickDownloadMenu = () =>
         .click()
 
 export const downloadUrlFor = (menuPath: string[]) => {
+    cy.get<sinon.SinonStub>('@windowOpen').invoke('resetHistory')
     /* After a download the menu bar still counts as open, so a click on
      * Download closes it: click again if the list didn't open. */
     clickDownloadMenu()
@@ -31,5 +32,9 @@ export const downloadUrlFor = (menuPath: string[]) => {
             .click()
     })
 
-    return cy.get('@windowOpen').its('lastCall.args.0').then(String)
+    return cy
+        .get<sinon.SinonStub>('@windowOpen')
+        .should('have.been.calledOnce')
+        .its('firstCall.args.0')
+        .then(String)
 }

@@ -26,5 +26,10 @@ describe('change a visualization', () => {
             rowHeaders: ['Active', 'Completed'],
         })
         cy.getByDataTest('title-bar').should('contain', 'Edited')
+        cy.contains(
+            '[data-test="layout-dimension-chip"]',
+            'Enrollment status'
+        ).should('not.exist')
+        cy.getByDataTest('axis-rows').should('contain', 'Event status')
     })
 })

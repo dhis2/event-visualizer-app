@@ -1,5 +1,4 @@
 import { applyOptions, openOptions } from '../helpers'
-import { expectVisualizationToRender } from '../support/rendering'
 
 const getPivotTableHeaders = () =>
     cy.get(
@@ -22,7 +21,7 @@ describe('options', () => {
             .should('be.visible')
     })
 
-    it('applies totals and hides empty rows in a pivot table', () => {
+    it('turns off the totals of a pivot table', () => {
         cy.visit('/#/t6KrUiPqcd0')
         getPivotTableHeaders().should('contain', 'Total')
 
@@ -36,17 +35,5 @@ describe('options', () => {
         applyOptions()
 
         getPivotTableHeaders().should('not.contain', 'Total')
-
-        openOptions('Data')
-        cy.getByDataTest('options-modal-content')
-            .contains('label', 'Hide empty rows')
-            .click()
-        applyOptions()
-
-        expectVisualizationToRender({
-            type: 'PIVOT_TABLE',
-            columnHeaders: ['Male', '0 - 10', '10 - 20'],
-            rowHeaders: ['Bo', 'Western Area'],
-        })
     })
 })

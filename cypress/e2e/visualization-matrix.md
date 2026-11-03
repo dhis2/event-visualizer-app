@@ -115,4 +115,6 @@ The type 2 tests run one primary user journey each, through the UI. They start f
 | E10 | Downloads                              | `download.cy.ts`                       |
 | E11 | Share, translate, get link             | `file-menu/share-translate-link.cy.ts` |
 
+`options.cy.ts` doesn't test hide empty rows: a dimension with all its items only returns the items that have data, so none of these visualizations has an empty row to show.
+
 Objects a test creates are named `E2E-IDV <label> <timestamp>`, so leftovers on a shared instance are easy to spot. `visualization-metadata-import/check.sh` lists leftover visualizations.

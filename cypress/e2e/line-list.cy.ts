@@ -2,26 +2,28 @@ const EVENT_LINE_LIST_ID = 't6SxiQdVPVs'
 
 const getRows = () => cy.getByDataTest('table-row')
 
-const getFirstRowAge = () =>
+const readAges = ($rows: JQuery<HTMLElement>, ageColumn: number) =>
+    [...$rows]
+        .slice(0, 5)
+        .map((row) => Number(row.children[ageColumn].textContent))
+
+const getAgeColumn = () =>
     cy
         .getByDataTest('data-table-header')
         .contains('Age in years')
         .parents('th')
         .invoke('index')
-        .then((ageColumn) =>
-            getRows()
-                .first()
-                .children()
-                .eq(ageColumn)
-                .invoke('text')
-                .then(Number)
-        )
 
-const sortByAge = () => {
+/* Waits for the request with the new sort order, so the rows read afterwards
+ * are the sorted ones. */
+const sortByAge = (direction: 'asc' | 'desc') => {
+    cy.intercept({ method: 'GET', url: /\/analytics\/events\/query\// }).as(
+        'analytics'
+    )
     cy.getByDataTest('data-table-header')
         .find('button[title*="Age in years"]')
         .click()
-    cy.getByDataTest('fetch-overlay').should('not.exist')
+    cy.wait('@analytics').its('request.url').should('contain', `${direction}=`)
 }
 
 describe('line list', () => {
@@ -31,10 +33,22 @@ describe('line list', () => {
     })
 
     it('sorts by a column', () => {
-        sortByAge()
-        getFirstRowAge().then((lowestAge) => {
-            sortByAge()
-            getFirstRowAge().should('be.gte', lowestAge)
+        getAgeColumn().then((ageColumn) => {
+            sortByAge('asc')
+            getRows().should(($rows) => {
+                const ages = readAges($rows, ageColumn)
+                expect(ages).to.deep.equal([...ages].sort((a, b) => a - b))
+            })
+            getRows().then(($rows) => {
+                const [lowestAge] = readAges($rows, ageColumn)
+
+                sortByAge('desc')
+                getRows().should(($sortedRows) => {
+                    const ages = readAges($sortedRows, ageColumn)
+                    expect(ages).to.deep.equal([...ages].sort((a, b) => b - a))
+                    expect(ages[0]).to.be.greaterThan(lowestAge)
+                })
+            })
         })
     })
 
