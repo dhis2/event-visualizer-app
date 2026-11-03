@@ -36,4 +36,23 @@ describe('options', () => {
 
         getPivotTableHeaders().should('not.contain', 'Total')
     })
+
+    it('hides the empty rows of a pivot table', () => {
+        const getBodyRows = () =>
+            cy.get('[data-test="visualization-container"] tbody tr')
+        cy.visit('/#/tYb2sr7TCmP')
+        getBodyRows().should('have.length.greaterThan', 0)
+
+        getBodyRows()
+            .its('length')
+            .then((rowCount) => {
+                openOptions('Data')
+                cy.getByDataTest('options-modal-content')
+                    .contains('label', 'Hide empty rows')
+                    .click()
+                applyOptions()
+
+                getBodyRows().should('have.length.lessThan', rowCount)
+            })
+    })
 })
