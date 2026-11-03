@@ -8,7 +8,7 @@ import {
 } from '../../helpers'
 import {
     copyVisualization,
-    deleteVisualizationViaApi,
+    deleteVisualizationsByName,
     getCurrentUserId,
     getVisualization,
 } from '../../support/api'
@@ -35,20 +35,19 @@ const expectSubscriber = (visualizationId: string, userId: string) =>
         .should('include', userId)
 
 describe('file menu', () => {
-    const createdIds: string[] = []
+    const names: string[] = []
 
-    after(() => {
-        createdIds.forEach(deleteVisualizationViaApi)
+    /* afterEach, because a retry starts the test again and may save another */
+    afterEach(() => {
+        names.splice(0).forEach(deleteVisualizationsByName)
     })
 
     it('saves, saves as, renames and deletes', () => {
-        copyVisualization(
-            SOURCE_VISUALIZATION_ID,
-            testObjectName('file menu')
-        ).then((id) => {
-            createdIds.push(id)
+        const name = testObjectName('file menu')
+        names.push(name)
+        copyVisualization(SOURCE_VISUALIZATION_ID, name).then((id) =>
             cy.visit(`/#/${id}`)
-        })
+        )
         cy.getByDataTest('table-row').should('have.length.greaterThan', 0)
 
         getIdFromHash().then((id) => {
@@ -83,6 +82,8 @@ describe('file menu', () => {
         })
 
         const copyName = testObjectName('file menu copy')
+        const renamedName = `${copyName} renamed`
+        names.push(copyName, renamedName)
         getIdFromHash().then((originalId) => {
             saveVisualizationAs(copyName)
 
@@ -91,9 +92,6 @@ describe('file menu', () => {
         expectVisTitleToEqual(copyName)
 
         getIdFromHash().then((copyId) => {
-            createdIds.push(copyId)
-
-            const renamedName = `${copyName} renamed`
             const description = 'E2E-IDV description'
             renameVisualization(renamedName, description)
 

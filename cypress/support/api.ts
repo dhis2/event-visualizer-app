@@ -6,7 +6,9 @@ const getNewUid = () =>
         .then(({ body }) => body.codes[0] as string)
 
 /* Goes through the metadata export and import, like
- * visualization-metadata-import/, so the copy holds exactly what was saved. */
+ * visualization-metadata-import/, so the copy holds exactly what was saved.
+ * What people did with the source (subscribing, favouriting, translating) is
+ * left behind, so the copy starts clean. */
 export const copyVisualization = (id: string, name: string) =>
     cy
         .request(
@@ -24,6 +26,9 @@ export const copyVisualization = (id: string, name: string) =>
                                     ...body.eventVisualizations[0],
                                     id: newId,
                                     name,
+                                    subscribers: [],
+                                    favorites: [],
+                                    translations: [],
                                 },
                             ],
                         },
@@ -38,6 +43,19 @@ export const deleteVisualizationViaApi = (id: string) =>
         url: `${getApiBaseUrl()}/eventVisualizations/${id}`,
         failOnStatusCode: false,
     })
+
+/* Deletes by the unique test name, so cleanup also finds a visualization the
+ * test saved but failed before it could read the id. */
+export const deleteVisualizationsByName = (name: string) =>
+    cy
+        .request(
+            `${getApiBaseUrl()}/eventVisualizations?fields=id&paging=false&filter=name:eq:${encodeURIComponent(name)}`
+        )
+        .then(({ body }) =>
+            body.eventVisualizations.forEach(({ id }: { id: string }) =>
+                deleteVisualizationViaApi(id)
+            )
+        )
 
 export const getVisualization = (id: string, fields: string) =>
     cy

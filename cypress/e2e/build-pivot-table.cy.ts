@@ -6,7 +6,7 @@ import {
     selectDataSource,
     switchVisualizationType,
 } from '../helpers'
-import { deleteVisualizationViaApi } from '../support/api'
+import { deleteVisualizationsByName } from '../support/api'
 import { testObjectName } from '../support/names'
 import type { ExpectedRendering } from '../support/rendering'
 import { expectVisualizationToRender } from '../support/rendering'
@@ -20,12 +20,11 @@ const EXPECTED: ExpectedRendering = {
 }
 
 describe('build a pivot table', () => {
-    let visualizationId: string | undefined
+    const names: string[] = []
 
-    after(() => {
-        if (visualizationId) {
-            deleteVisualizationViaApi(visualizationId)
-        }
+    /* afterEach, because a retry starts the test again and may save another */
+    afterEach(() => {
+        names.splice(0).forEach(deleteVisualizationsByName)
     })
 
     it('builds, saves and reloads an event pivot table with a cell value', () => {
@@ -66,13 +65,10 @@ describe('build a pivot table', () => {
         cy.getByDataTest('cell-value-label').should('contain', 'MCH Weight (g)')
 
         const name = testObjectName('pivot table')
+        names.push(name)
         saveVisualization(name)
         expectVisTitleToEqual(name)
-        cy.location('hash')
-            .should('match', /^#\/[A-Za-z0-9]{11}$/)
-            .then((hash) => {
-                visualizationId = hash.slice(2)
-            })
+        cy.location('hash').should('match', /^#\/[A-Za-z0-9]{11}$/)
 
         cy.reload()
 
