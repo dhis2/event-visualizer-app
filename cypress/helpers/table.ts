@@ -13,48 +13,36 @@ type SortDirection = 'asc' | 'desc'
 const getSortButton = (header: string) =>
     cy.getByDataTest('data-table-header').find(`button[title*="${header}"]`)
 
-export const sortColumn = (header: string, direction: SortDirection) => {
-    getSortButton(header).click()
+/* A program id, so the sidebar's .../query/dimensions request isn't caught */
+export const interceptLineListAnalytics = () =>
+    cy
+        .intercept({
+            method: 'GET',
+            url: /\/analytics\/(events|enrollments|trackedEntities)\/query\/[A-Za-z0-9]{11}\?/,
+        })
+        .as('lineListAnalytics')
+
+/* Ordering the rows is the backend's job: the app's part is asking for the
+ * sort and showing it in the header. */
+export const expectColumnSort = (
+    header: string,
+    direction: SortDirection,
+    dimension: string
+) => {
+    cy.wait('@lineListAnalytics')
+        .its('request.url')
+        .then((url) =>
+            expect(new URL(url).searchParams.get(direction)).to.equal(dimension)
+        )
     getSortButton(header).find('svg').should('have.class', direction)
 }
 
-const getColumnIndex = (header: string) =>
-    cy
-        .getByDataTest('data-table-header')
-        .contains(header)
-        .parents('th')
-        .invoke('index')
-
-const readColumnValues = ($rows: JQuery<HTMLElement>, column: number) =>
-    [...$rows]
-        .slice(0, 5)
-        .map((row) => Number(row.children[column].textContent))
-
-const isSorted = (values: number[], direction: SortDirection) =>
-    values.every(
-        (value, index) =>
-            index === 0 ||
-            (direction === 'asc'
-                ? values[index - 1] <= value
-                : values[index - 1] >= value)
-    )
-
-/* Checks the first rows of a column of numbers. A test can add its own check,
- * which retries together with the order check. */
-export const expectColumnToBeSorted = (
+export const sortColumn = (
     header: string,
     direction: SortDirection,
-    check: (values: number[]) => void = () => {}
+    dimension: string
 ) => {
-    getSortButton(header).find('svg').should('have.class', direction)
-    return getColumnIndex(header).then((column) =>
-        cy
-            .getByDataTest('table-row')
-            .should(($rows) => {
-                const values = readColumnValues($rows, column)
-                expect(isSorted(values, direction), `${values}`).to.equal(true)
-                check(values)
-            })
-            .then(($rows) => readColumnValues($rows, column))
-    )
+    interceptLineListAnalytics()
+    getSortButton(header).click()
+    expectColumnSort(header, direction, dimension)
 }

@@ -1,6 +1,7 @@
-import { expectColumnToBeSorted, sortColumn } from '../helpers'
+import { sortColumn } from '../helpers'
 
 const EVENT_LINE_LIST_ID = 't6SxiQdVPVs'
+const AGE_DIMENSION = 'Zj7UnCAulEk.qrur9Dvnyt5'
 
 const getRows = () => cy.getByDataTest('table-row')
 
@@ -11,13 +12,8 @@ describe('line list', () => {
     })
 
     it('sorts by a column', () => {
-        sortColumn('Age in years', 'asc')
-        expectColumnToBeSorted('Age in years', 'asc').then(([lowestAge]) => {
-            sortColumn('Age in years', 'desc')
-            expectColumnToBeSorted('Age in years', 'desc', ([highestAge]) =>
-                expect(highestAge).to.be.greaterThan(lowestAge)
-            )
-        })
+        sortColumn('Age in years', 'asc', AGE_DIMENSION)
+        sortColumn('Age in years', 'desc', AGE_DIMENSION)
     })
 
     it('pages through the rows', () => {

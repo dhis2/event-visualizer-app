@@ -1,6 +1,7 @@
 import {
     deleteVisualization,
-    expectColumnToBeSorted,
+    expectColumnSort,
+    interceptLineListAnalytics,
     sortColumn,
     expectStartScreenToBeVisible,
     expectVisTitleToEqual,
@@ -18,6 +19,7 @@ import { testObjectName } from '../../support/names'
 import { getApiBaseUrl } from '../../support/utils'
 
 const SOURCE_VISUALIZATION_ID = 't6SxiQdVPVs'
+const AGE_DIMENSION = 'Zj7UnCAulEk.qrur9Dvnyt5'
 
 const getIdFromHash = () =>
     cy
@@ -63,18 +65,19 @@ describe('file menu', () => {
                     .should('be.visible')
                 expectSubscriber(id, userId)
 
-                sortColumn('Age in years', 'asc')
+                sortColumn('Age in years', 'asc', AGE_DIMENSION)
                 cy.getByDataTest('title-bar').should('contain', 'Edited')
 
                 resaveVisualization()
 
                 cy.getByDataTest('title-bar').should('not.contain', 'Edited')
+                interceptLineListAnalytics()
                 cy.reload()
                 cy.getByDataTest('table-row').should(
                     'have.length.greaterThan',
                     0
                 )
-                expectColumnToBeSorted('Age in years', 'asc')
+                expectColumnSort('Age in years', 'asc', AGE_DIMENSION)
                 expectSubscriber(id, userId)
             })
         })
