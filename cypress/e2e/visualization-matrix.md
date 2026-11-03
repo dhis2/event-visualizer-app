@@ -1,6 +1,6 @@
 # E2E visualization matrix
 
-The type 1 E2E tests (`saved-visualizations.cy.ts`) run a set of saved visualizations through the same steps: render in the app, render in an interpretation, render in the dashboard plugin. Each render is checked against the headers the visualization should show. This document lists the kinds of visualization the app can make, which saved visualizations cover them, and whether the DB (`analytics-with-ever-20261014`) has data to build them.
+The type 1 E2E tests (`saved-visualizations.cy.ts`) run a set of saved visualizations through the same steps: render in the app, render in an interpretation, render in the dashboard plugin. Each render is checked against the headers the visualization should show. This document lists the kinds of visualization the app can make, which saved visualizations cover them, and whether the DB (`analytics-with-ever-20261014`) has data to build them. The type 2 tests are listed at the end.
 
 ## What a visualization varies by
 
@@ -85,6 +85,7 @@ A start–end date range is left out: its dates are fixed, so the yearly date sh
 
 ## Known problems
 
+- Download → Advanced → Data value set fails on an event pivot table with E7125: the app sends the stage-prefixed dimensions to `analytics/dataValueSet`, which doesn't know them. `download.cy.ts` skips it.
 - `enrollment-pivot-table-data-element-value` fails with "Value `vANAXwtLwcT` must be a data element prefixed with a program stage". The app saves the value's stage (`value.programStage`), but the backend (2.44-SNAPSHOT, up to revision `de0c8ea` at least) does not store it. An event pivot table gets away without the stage; an enrollment pivot table does not. The spec skips it until the backend stores the stage.
 - `Unf7gi4ShzQ` filters on this year's event date and this year's enrollment date. In the DB, this year's Birth events all belong to next year's enrollments, so it never shows data. It is left out of the spec.
 - `event-line-list-event-program` asks for legend colours by data item, but the app makes no `legendSets` request when it loads the line list, so no colours show.
@@ -95,3 +96,23 @@ A start–end date range is left out: its dates are fixed, so the yearly date sh
 - Some programs are too small to be useful: Antenatal care visit (3 events), Information Campaign (6), Provider Follow-up (6), MNCH / PNC (11), XX MAL RDT (0). TB program has 50k enrollments but only 46 events, so it suits enrollment and tracked entity output only.
 - Gaps that need **metadata only** (easy to add): a legend set on a tracked entity attribute or a program indicator.
 - Gaps that need **case data** (no way to add yet): richer cross-program data than E2E TE program 1 + 2, and values for LETTER, UNIT_INTERVAL, URL, USERNAME and DATETIME.
+
+## Type 2 scenarios
+
+The type 2 tests run one primary user journey each, through the UI. They start from the visualizations above, or build their own, and delete what they create.
+
+| #   | Journey                                | Spec                                   |
+| --- | -------------------------------------- | -------------------------------------- |
+| E1  | Open a visualization                   | `open-visualization.cy.ts`             |
+| E2  | Build, save and reload a line list     | `build-line-list.cy.ts`                |
+| E3  | Build, save and reload a pivot table   | `build-pivot-table.cy.ts`              |
+| E4  | Change vis type, chips and output type | `change-visualization.cy.ts`           |
+| E5  | Change options                         | `options.cy.ts`                        |
+| E6  | Sort, page and open a header's modal   | `line-list.cy.ts`                      |
+| E7  | Save, save as, rename, delete          | `file-menu/file-menu.cy.ts`            |
+| E8  | Rename a legacy visualization          | `file-menu/legacy-rename.cy.ts`        |
+| E9  | Interpretations                        | `interpretations.cy.ts`                |
+| E10 | Downloads                              | `download.cy.ts`                       |
+| E11 | Share, translate, get link             | `file-menu/share-translate-link.cy.ts` |
+
+Objects a test creates are named `E2E-IDV <label> <timestamp>`, so leftovers on a shared instance are easy to spot. `visualization-metadata-import/check.sh` lists leftover visualizations.
