@@ -16,7 +16,15 @@ const STAGE = 'Birth'
 const EXPECTED: ExpectedRendering = {
     type: 'PIVOT_TABLE',
     columnHeaders: ['NVP only', 'Others'],
-    rowHeaders: ['Exclusive'],
+    rowHeaders: ['Exclusive', 'Replacement', 'Mixed'],
+}
+
+const expectAverageWeightAsValue = () => {
+    cy.getByDataTest('cell-value-label').should('contain', 'MCH Weight (g)')
+    cy.getByDataTest('cell-value-aggregation-trigger').should(
+        'contain',
+        'Average'
+    )
 }
 
 describe('build a pivot table', () => {
@@ -62,7 +70,7 @@ describe('build a pivot table', () => {
         cy.getByDataTest('update-button-event').click()
 
         expectVisualizationToRender(EXPECTED)
-        cy.getByDataTest('cell-value-label').should('contain', 'MCH Weight (g)')
+        expectAverageWeightAsValue()
 
         const name = testObjectName('pivot table')
         names.push(name)
@@ -74,5 +82,6 @@ describe('build a pivot table', () => {
 
         expectVisTitleToEqual(name)
         expectVisualizationToRender(EXPECTED)
+        expectAverageWeightAsValue()
     })
 })
