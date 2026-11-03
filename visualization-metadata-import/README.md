@@ -4,13 +4,14 @@ The E2E instances are built from the `analytics-with-ever-20261014` DB dump. The
 
 `db-dump-visualizations.json` lists the IDs and names of the event visualizations in the DB dump. These must not be added to `visualizations/`.
 
+Before every E2E run, Cypress checks that the instance has every visualization from both lists (`cypress/plugins/check-instance-visualizations.ts`). If one is missing, the run stops and names it.
+
 ## Recreating an instance
 
 1. Reset the instance in the Instance Manager.
 2. Run `./visualization-metadata-import/import.sh [url]`.
-3. Run `./visualization-metadata-import/check.sh [url]` to confirm that the instance holds the DB dump, and no visualizations other than those in `visualizations/`.
 
-The URL defaults to `https://e2e.im.dhis2.org/idv-playground`. The credentials come from `cypress.env.json`. Both scripts need `jq`.
+The URL defaults to `https://e2e.im.dhis2.org/idv-playground`. The credentials come from `cypress.env.json`. The script needs `jq`.
 
 The import is atomic and idempotent: if one object fails, nothing is imported, and importing again updates the objects instead of creating duplicates.
 
