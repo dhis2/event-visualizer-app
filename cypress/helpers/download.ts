@@ -5,24 +5,17 @@ export const stubWindowOpen = () =>
         cy.stub(win, 'open').as('windowOpen')
     })
 
-const clickDownloadMenu = () =>
-    cy
-        .getByDataTest('dhis2-analytics-hovermenubar')
-        .contains('Download')
-        .click()
-
 export const downloadUrlFor = (menuPath: string[]) => {
     cy.get<sinon.SinonStub>('@windowOpen').invoke('resetHistory')
-    /* After a download the menu bar still counts as open, so a click on
-     * Download closes it: click again if the list didn't open. */
-    clickDownloadMenu()
-    cy.get('body').then(($body) => {
-        if (
-            !$body.find('[data-test="dhis2-uicore-hovermenulistitem"]').length
-        ) {
-            clickDownloadMenu()
-        }
+    /* A download from a submenu leaves the menu bar in a state where clicking
+     * Download closes it. Escape always resets it to closed. */
+    cy.getByDataTest('dhis2-analytics-hovermenubar').trigger('keydown', {
+        keyCode: 27,
     })
+    cy.getByDataTest('dhis2-analytics-hovermenubar')
+        .contains('Download')
+        .click()
+    cy.getByDataTest('dhis2-analytics-hovermenulist').should('be.visible')
     /* A label like JSON is in several submenus, so each step looks in the
      * submenu the previous step opened. */
     menuPath.forEach((label) => {

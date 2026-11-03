@@ -1,6 +1,6 @@
 import {
     copyVisualization,
-    deleteVisualizationViaApi,
+    deleteVisualizationsByName,
     getVisualization,
 } from '../../support/api'
 import { testObjectName } from '../../support/names'
@@ -13,26 +13,22 @@ const openFileMenuItem = (dataTest: string) => {
 }
 
 describe('share, translate and get link', () => {
-    let copyId: string | undefined
+    const names: string[] = []
+    let copyId: string
 
-    before(() => {
-        copyVisualization(
-            SOURCE_VISUALIZATION_ID,
-            testObjectName('share')
-        ).then((id) => {
-            copyId = id
-        })
-    })
-
-    after(() => {
-        if (copyId) {
-            deleteVisualizationViaApi(copyId)
-        }
-    })
-
+    /* Each test, and each retry of it, gets a fresh copy */
     beforeEach(() => {
-        cy.visit(`/#/${copyId}`)
+        const name = testObjectName('share')
+        names.push(name)
+        copyVisualization(SOURCE_VISUALIZATION_ID, name).then((id) => {
+            copyId = id
+            cy.visit(`/#/${id}`)
+        })
         cy.getByDataTest('table-row').should('have.length.greaterThan', 0)
+    })
+
+    afterEach(() => {
+        names.splice(0).forEach(deleteVisualizationsByName)
     })
 
     it('translates the name', () => {
@@ -56,7 +52,7 @@ describe('share, translate and get link', () => {
             'not.exist'
         )
 
-        getVisualization(String(copyId), 'translations')
+        getVisualization(copyId, 'translations')
             .its('translations')
             .should('deep.include', {
                 property: 'NAME',
@@ -74,7 +70,7 @@ describe('share, translate and get link', () => {
         cy.contains('View only').click()
         cy.contains('button', 'Close').click()
 
-        getVisualization(String(copyId), 'sharing[public]')
+        getVisualization(copyId, 'sharing[public]')
             .its('sharing.public')
             .should('equal', 'r-------')
     })

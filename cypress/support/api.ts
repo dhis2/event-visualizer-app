@@ -37,7 +37,7 @@ export const copyVisualization = (id: string, name: string) =>
             )
         )
 
-export const deleteVisualizationViaApi = (id: string) =>
+const deleteVisualizationViaApi = (id: string) =>
     cy.request({
         method: 'DELETE',
         url: `${getApiBaseUrl()}/eventVisualizations/${id}`,

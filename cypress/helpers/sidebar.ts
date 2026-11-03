@@ -1,10 +1,7 @@
 export const selectDataSource = (name: string) => {
     cy.get('[role="combobox"]').click()
-    cy.get('body').then(($body) => {
-        if ($body.find('input[aria-label="Filter data sources"]').length) {
-            cy.get('input[aria-label="Filter data sources"]').type(name)
-        }
-    })
+    /* The filter shows with more than 10 data sources, as on the E2E instances */
+    cy.get('input[placeholder="Filter data sources"]').type(name)
     cy.contains('[role="option"]', name).click()
 }
 

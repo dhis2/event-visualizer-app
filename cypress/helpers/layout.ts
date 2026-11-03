@@ -1,14 +1,18 @@
-export const switchVisualizationType = (name: 'Line list' | 'Pivot table') => {
+/* Switching asks for confirmation when the new type can't keep every
+ * dimension in the layout */
+export const switchVisualizationType = (
+    name: 'Line list' | 'Pivot table',
+    { confirmConversion = false } = {}
+) => {
     cy.getByDataTest('visualization-type-selector-button').click()
     cy.getByDataTest('visualization-type-selector-list').contains(name).click()
-    cy.get('body').then(($body) => {
-        if ($body.find('[data-test="conversion-confirmation-modal"]').length) {
-            cy.getByDataTest('conversion-confirmation-modal')
-                .find('button')
-                .last()
-                .click()
-        }
-    })
+    if (confirmConversion) {
+        cy.getByDataTest('conversion-confirmation-modal')
+            .find('button')
+            .last()
+            .click()
+    }
+    cy.getByDataTest('conversion-confirmation-modal').should('not.exist')
     cy.getByDataTest(
         'visualization-type-selector-currently-selected-text'
     ).should('contain', name)
