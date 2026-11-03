@@ -8,16 +8,26 @@ export const selectDataSource = (name: string) => {
     cy.contains('[role="option"]', name).click()
 }
 
-const getDimensionItem = (name: string) =>
-    cy.contains('[data-test="dimension-item"]', new RegExp(`^${name}$`))
+/* A data element can be in several stages of a tracker program, so an item can
+ * be looked up within one stage's section. */
+const getDimensionItem = (name: string, stage?: string) => {
+    const item = new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`)
 
-export const openDimensionModal = (name: string) => {
-    getDimensionItem(name).click()
+    return stage
+        ? cy
+              .contains('[data-test="dimension-card-subsection-title"]', stage)
+              .closest('[data-test="dimension-card-subsection"]')
+              .contains('[data-test="dimension-item"]', item)
+        : cy.contains('[data-test="dimension-item"]', item)
+}
+
+export const openDimensionModal = (name: string, stage?: string) => {
+    getDimensionItem(name, stage).click()
     cy.getByDataTest('dimension-modal').should('be.visible')
 }
 
-export const addDimensionToColumns = (name: string) =>
-    getDimensionItem(name)
+export const addDimensionToColumns = (name: string, stage?: string) =>
+    getDimensionItem(name, stage)
         .closest('[aria-roledescription="draggable item"]')
         .find('[data-test^="add-button-"]')
         .click({ force: true })
