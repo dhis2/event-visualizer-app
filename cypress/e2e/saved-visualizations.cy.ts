@@ -1,14 +1,9 @@
 import { expectVisTitleToEqual } from '../helpers'
+import { deleteInterpretations } from '../support/api'
 import { pluginBody } from '../support/dashboard-plugin'
+import type { ExpectedRendering } from '../support/rendering'
+import { expectVisualizationToRender } from '../support/rendering'
 import { getApiBaseUrl } from '../support/utils'
-
-/* Line lists list every header, in order. Pivot tables list a few column and
- * row headers that don't depend on the data: period headers move with the
- * yearly date shift, and items without data drop out. A wide pivot table only
- * renders the columns in view, so the column headers are the leftmost ones. */
-type ExpectedRendering =
-    | { type: 'LINE_LIST'; headers: string[] }
-    | { type: 'PIVOT_TABLE'; columnHeaders: string[]; rowHeaders: string[] }
 
 type SavedVisualization = ExpectedRendering & {
     /* The row in visualization-matrix.md this visualization covers */
@@ -306,61 +301,6 @@ const VISUALIZATIONS: SavedVisualization[] = [
 
 const INTERPRETATION_TEXT = 'E2E saved visualization interpretation'
 
-type Container = () => Cypress.Chainable<JQuery<HTMLElement>>
-
-const getHeaderTexts = ($headers: JQuery<HTMLElement>) =>
-    [...$headers].map((header) => header.innerText.replace(/\s+/g, ' ').trim())
-
-const expectLineListToRender = (headers: string[], container: Container) => {
-    container()
-        .find('[data-test="data-table-header"]')
-        .should(($headers) => {
-            expect(getHeaderTexts($headers)).to.deep.equal(headers)
-        })
-    container()
-        .find('[data-test="table-row"]')
-        .should('have.length.greaterThan', 0)
-}
-
-const expectPivotTableToRender = (
-    columnHeaders: string[],
-    rowHeaders: string[],
-    container: Container
-) => {
-    container()
-        .find('[data-test="visualization-column-header"]')
-        .should(($headers) => {
-            expect(getHeaderTexts($headers)).to.include.members(columnHeaders)
-        })
-    container()
-        .find('[data-test="visualization-row-header"]')
-        .should(($headers) => {
-            expect(getHeaderTexts($headers)).to.include.members(rowHeaders)
-        })
-    container()
-        .find('[data-test="visualization-container"] tbody tr')
-        .should('have.length.greaterThan', 0)
-}
-
-const expectVisualizationToRender = (
-    expected: ExpectedRendering,
-    container: Container
-) => {
-    switch (expected.type) {
-        case 'LINE_LIST':
-            expectLineListToRender(expected.headers, container)
-            break
-        case 'PIVOT_TABLE':
-            expectPivotTableToRender(
-                expected.columnHeaders,
-                expected.rowHeaders,
-                container
-            )
-            break
-    }
-    container().find('[data-test="canvas-error"]').should('not.exist')
-}
-
 const createInterpretation = (visualizationId: string) =>
     cy
         .request({
@@ -370,21 +310,6 @@ const createInterpretation = (visualizationId: string) =>
             body: INTERPRETATION_TEXT,
         })
         .then(({ headers }) => String(headers.location).split('/').pop())
-
-const deleteTestInterpretations = (visualizationId: string) =>
-    cy
-        .request(
-            `${getApiBaseUrl()}/interpretations?fields=id&paging=false&filter=eventVisualization.id:eq:${visualizationId}&filter=text:eq:${INTERPRETATION_TEXT}`
-        )
-        .then(({ body }) =>
-            body.interpretations.forEach(({ id }: { id: string }) =>
-                cy.request({
-                    method: 'DELETE',
-                    url: `${getApiBaseUrl()}/interpretations/${id}`,
-                    failOnStatusCode: false,
-                })
-            )
-        )
 
 describe('saved visualizations', () => {
     VISUALIZATIONS.forEach((visualization) => {
@@ -396,9 +321,7 @@ describe('saved visualizations', () => {
                 cy.visit(`/#/${id}`)
 
                 expectVisTitleToEqual(name)
-                expectVisualizationToRender(visualization, () =>
-                    cy.get<HTMLElement>('body')
-                )
+                expectVisualizationToRender(visualization)
 
                 createInterpretation(id).then((interpretationId) =>
                     cy.visit(`/#/${id}?interpretationId=${interpretationId}`)
@@ -419,7 +342,7 @@ describe('saved visualizations', () => {
                 expectVisualizationToRender(visualization, pluginBody)
             })
 
-            after(() => deleteTestInterpretations(id))
+            after(() => deleteInterpretations(id, INTERPRETATION_TEXT))
         })
     })
 })
