@@ -1,0 +1,60 @@
+import { describeSavedVisualizations } from '../support/saved-visualizations'
+
+describeSavedVisualizations('event pivot tables', [
+    {
+        covers: 'Event pivot table, event program',
+        id: 't6KrUiPqcd0',
+        name: 'E2E: Event pivot table, event program',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Male', '0 - 10', '10 - 20'],
+        rowHeaders: ['Bo', 'Western Area', 'Total'],
+    },
+    {
+        covers: 'Event pivot table, data element value',
+        id: 'n2ZQVP3taPF',
+        name: 'E2E: Event pivot table, data element value',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Discharged', 'Died', 'Transferred', 'Absconded'],
+        rowHeaders: [],
+    },
+    {
+        covers: 'Event pivot table, categories and category option group sets',
+        id: 'EidT2M2SzAo',
+        name: 'E2E: Event pivot table, categories',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['APHIAplus', 'African Medical and Research Foundation'],
+        rowHeaders: ['DOD', 'CDC', 'Positive', 'Negative', 'Mixed'],
+    },
+    {
+        covers: 'Event pivot table, tracker stage with enrollment dimensions',
+        id: 'pb8yapu3EVC',
+        name: 'EVER [Pivot table] [Event] Basic',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Sierra Leone', 'Active', 'Completed'],
+        rowHeaders: [],
+    },
+    {
+        covers: 'Event pivot table, tracker stage with enrollment dimensions',
+        id: 'TKrpEtzneOk',
+        name: 'EVER [Pivot table] [Event] Stage and enrollment dimensions',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Active', 'Completed'],
+        rowHeaders: [],
+    },
+    {
+        covers: 'Event pivot table, tracker stage with attributes and registration org unit',
+        id: 'D648CB4jn8G',
+        name: 'E2E: Event pivot table, attributes and registration org unit',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Male', 'Female'],
+        rowHeaders: ['Bo', 'Western Area'],
+    },
+    {
+        covers: 'Event pivot table, tracker stage, data element value',
+        id: 'q4rwy9jfGCK',
+        name: 'E2E: Event pivot table, tracker stage, data element value',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['NVP only', 'Others'],
+        rowHeaders: [],
+    },
+])
