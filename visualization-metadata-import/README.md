@@ -1,8 +1,8 @@
 # Visualization metadata import
 
-The E2E instances are built from the `analytics-with-ever-20261014` DB dump. The visualizations the E2E suite and the line list fixture capture (`pnpm cy:capture-fixtures`) need on top of that dump live in `visualizations/`, one metadata payload per file. Once the set has settled, they become part of a new DB dump and this folder goes away.
+The E2E instances are built from the `analytics-with-ever-20261014` DB dump. The visualizations the E2E suite and the line list fixture capture (`pnpm cy:capture-fixtures`) need on top of that dump live in `visualizations/`, one metadata payload per file.
 
-`db-dump-visualizations.json` lists the IDs and names of the event visualizations in the DB dump. These must not be added to `visualizations/`.
+`db-dump-visualizations.json` lists the IDs and names of the event visualizations in the DB dump. Don't put any of them in `visualizations/`: the dump is shared with other apps' E2E suites, and `import.sh` would overwrite their copy.
 
 Before every E2E run, Cypress checks that the instance has every visualization from both lists (`cypress/plugins/check-instance-visualizations.ts`). If one is missing, the run stops and names it.
 
@@ -27,8 +27,5 @@ Give it a fresh UID from `<url>/api/system/id`. Fields left out get their defaul
 
 ## The data in the DB dump
 
-- Data runs from 2025 into 2027 (Child Programme and WHO RMNCH have 2027 events). A yearly SQL script moves all dates in the DB forward, so use relative periods (`THIS_YEAR`, `LAST_12_MONTHS`): fixed periods would end up outside the data.
-- Some programs are too small to be useful: Antenatal care visit (3 events), Information Campaign (6), Provider Follow-up (6), MNCH / PNC (11), XX MAL RDT (0). TB program has 50k enrollments but only 46 events, so it suits enrollment and tracked entity output only.
-- Data is dense: in the large programs nearly every combination of options, org units and periods has data. A pivot table with empty rows needs a combination the metadata rules out, such as a funding agency with an implementing partner it doesn't cover (`event-pivot-table-empty-rows`).
-- Gaps that need **metadata only** (easy to add): a legend set on a tracked entity attribute or a program indicator.
-- Gaps that need **case data** (no way to add yet): richer cross-program data than E2E TE program 1 + 2, and values for LETTER, UNIT_INTERVAL, URL, USERNAME and DATETIME.
+- A yearly SQL script moves all dates in the DB forward, so use relative periods (`THIS_YEAR`, `LAST_12_MONTHS`). Fixed periods would end up outside the data.
+- In the large programs nearly every combination of options, org units and periods has data. A pivot table with empty rows needs a combination the metadata rules out, as in `event-pivot-table-empty-rows`: a funding agency only covers some implementing partners.
