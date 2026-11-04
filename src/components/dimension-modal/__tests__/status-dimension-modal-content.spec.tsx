@@ -12,20 +12,30 @@ import { describe, it, expect } from 'vitest'
 import { StatusDimensionModalContent } from '../status-dimension-modal-content'
 
 const eventStatusDimension: DimensionMetadataItem = {
-    id: 'eventStatus',
+    id: 'stage1.eventStatus',
     dimensionId: 'eventStatus',
     dimensionType: 'STATUS',
     name: 'Event status',
 }
 
-const setup = (itemsByDimension: Record<string, string[]> = {}) => {
+const programStatusDimension: DimensionMetadataItem = {
+    id: 'program1.programStatus',
+    dimensionId: 'programStatus',
+    dimensionType: 'STATUS',
+    name: 'Enrollment status',
+}
+
+const setup = (
+    itemsByDimension: Record<string, string[]> = {},
+    dimension: DimensionMetadataItem = eventStatusDimension
+) => {
     const store = setupStore(
         { visUiConfig: visUiConfigSlice.reducer },
         { visUiConfig: { ...initialState, itemsByDimension } }
     )
 
     renderWithReduxStoreProvider(
-        <StatusDimensionModalContent dimension={eventStatusDimension} />,
+        <StatusDimensionModalContent dimension={dimension} />,
         store
     )
 
@@ -46,7 +56,7 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
     })
 
     it('opens on "Filter" when a status is already selected', () => {
-        setup({ eventStatus: ['ACTIVE'] })
+        setup({ 'stage1.eventStatus': ['ACTIVE'] })
 
         expect(screen.getByRole('radio', { name: 'Filter' })).toBeChecked()
         expect(screen.getByRole('checkbox', { name: 'Active' })).toBeChecked()
@@ -54,12 +64,15 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
 
     it('discards the selection on save under "Show all" but restores it on toggle back', async () => {
         const user = userEvent.setup()
-        const store = setup({ eventStatus: ['ACTIVE'] })
+        const store = setup({ 'stage1.eventStatus': ['ACTIVE'] })
 
         await user.click(screen.getByRole('radio', { name: 'Show all values' }))
 
         expect(
-            getVisUiConfigItemsByDimension(store.getState(), 'eventStatus')
+            getVisUiConfigItemsByDimension(
+                store.getState(),
+                'stage1.eventStatus'
+            )
         ).toEqual([])
         expect(
             screen.queryByRole('checkbox', { name: 'Active' })
@@ -68,7 +81,10 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
         await user.click(screen.getByRole('radio', { name: 'Filter' }))
 
         expect(
-            getVisUiConfigItemsByDimension(store.getState(), 'eventStatus')
+            getVisUiConfigItemsByDimension(
+                store.getState(),
+                'stage1.eventStatus'
+            )
         ).toEqual(['ACTIVE'])
         expect(screen.getByRole('checkbox', { name: 'Active' })).toBeChecked()
     })
@@ -80,7 +96,34 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
         await user.click(screen.getByRole('radio', { name: 'Filter' }))
 
         expect(
-            getVisUiConfigItemsByDimension(store.getState(), 'eventStatus')
+            getVisUiConfigItemsByDimension(
+                store.getState(),
+                'stage1.eventStatus'
+            )
         ).toEqual([])
+    })
+})
+
+describe('StatusDimensionModalContent — status options', () => {
+    it('offers Scheduled, not Cancelled, for event status', () => {
+        setup({ 'stage1.eventStatus': ['ACTIVE'] })
+
+        expect(
+            screen.getByRole('checkbox', { name: 'Scheduled' })
+        ).toBeInTheDocument()
+        expect(
+            screen.queryByRole('checkbox', { name: 'Cancelled' })
+        ).not.toBeInTheDocument()
+    })
+
+    it('offers Cancelled, not Scheduled, for enrollment status', () => {
+        setup({ 'program1.programStatus': ['ACTIVE'] }, programStatusDimension)
+
+        expect(
+            screen.getByRole('checkbox', { name: 'Cancelled' })
+        ).toBeInTheDocument()
+        expect(
+            screen.queryByRole('checkbox', { name: 'Scheduled' })
+        ).not.toBeInTheDocument()
     })
 })

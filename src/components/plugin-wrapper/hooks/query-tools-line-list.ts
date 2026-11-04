@@ -6,7 +6,11 @@ import type {
     DimensionRecord,
     OutputType,
 } from '@types'
-import { adaptDimensions, getRequestOptions } from './query-tools-common'
+import {
+    adaptDimensions,
+    getRequestOptions,
+    isRequestedAsDimension,
+} from './query-tools-common'
 
 const buildHeaderNames = (
     dim: DimensionRecord,
@@ -34,16 +38,6 @@ const buildHeaderNames = (
     })
 }
 
-/* A dimension reaches `dimension=` only when it constrains the query; one that
- * simply displays a value is requested through `headers=` alone. A legend set
- * counts as constraining, because it changes the response from raw values to
- * legend IDs. */
-const isRequestedAsDimension = (dim: DimensionRecord): boolean =>
-    dim.dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
-    Boolean(dim.filter) ||
-    Boolean(dim.items?.length) ||
-    Boolean(dim.legendSet?.id)
-
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
@@ -63,6 +57,7 @@ export const getAdaptedVisualization = (
         .filter((dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension))
         .map((dim) => buildHeaderNames(dim, visualization))
 
+    /* A column that only displays a value is requested through `headers=`. */
     return {
         adaptedVisualization: {
             columns: adaptDimensions(

@@ -470,6 +470,62 @@ describe('getAdaptedVisualization (pivot table)', () => {
             getAdaptedPivotTableVisualization(vis).adaptedVisualization.columns
         ).toEqual([expect.objectContaining({ dimension: `${SID}.${UID}` })])
     })
+
+    it('omits a filter that constrains nothing', () => {
+        const vis = {
+            ...basePivotTable,
+            filters: [
+                { dimension: 'programStatus', program: { id: 'p1' } },
+                { dimension: 'eventStatus', programStage: { id: SID } },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.filters
+        ).toEqual([])
+    })
+
+    it('sends a filter that has items or a condition', () => {
+        const vis = {
+            ...basePivotTable,
+            filters: [
+                {
+                    dimension: 'programStatus',
+                    program: { id: 'p1' },
+                    items: [{ id: 'CANCELLED' }],
+                },
+                {
+                    dimension: UID,
+                    programStage: { id: SID },
+                    filter: 'GT:5',
+                },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.filters
+        ).toEqual([
+            expect.objectContaining({
+                dimension: 'PROGRAM_STATUS',
+                items: [{ id: 'CANCELLED' }],
+            }),
+            expect.objectContaining({
+                dimension: `${SID}.${UID}`,
+                filter: 'GT:5',
+            }),
+        ])
+    })
+
+    it('keeps a row that constrains nothing', () => {
+        const vis = {
+            ...basePivotTable,
+            rows: [{ dimension: 'programStatus', program: { id: 'p1' } }],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.rows
+        ).toEqual([expect.objectContaining({ dimension: 'PROGRAM_STATUS' })])
+    })
 })
 
 describe('getCellValueAnalyticsRequestParams', () => {

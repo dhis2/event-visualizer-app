@@ -12,7 +12,11 @@ import type {
     MetadataStore,
     OutputType,
 } from '@types'
-import { adaptDimensions, getRequestOptions } from './query-tools-common'
+import {
+    adaptDimensions,
+    getRequestOptions,
+    isRequestedAsDimension,
+} from './query-tools-common'
 
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
@@ -33,11 +37,17 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
+    /* A bare dimension on rows or columns splits the table by every value, so
+     * it stays. A bare filter narrows nothing, and analytics rejects some, such
+     * as a bare PROGRAM_STATUS (E7222). */
     return {
         adaptedVisualization: {
             columns: adaptDimensions(columns, visualization),
             rows: adaptDimensions(rows, visualization),
-            filters: adaptDimensions(filters, visualization),
+            filters: adaptDimensions(
+                filters.filter(isRequestedAsDimension),
+                visualization
+            ),
             outputType: visualization.outputType,
         },
         parameters,
