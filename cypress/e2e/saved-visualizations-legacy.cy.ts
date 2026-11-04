@@ -38,4 +38,12 @@ describeSavedVisualizations('legacy visualizations', [
         columnHeaders: ['Sierra Leone', 'Total'],
         rowHeaders: ['Discharged', 'Male', 'Female', 'Died', 'Total'],
     },
+    {
+        covers: 'Legacy pivot table, count with an option set filter',
+        id: 'eVOBLm70gUd',
+        name: 'Inpatient: Gender and mode of discharge by admission date',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Bo', 'Bombali'],
+        rowHeaders: ['Female', 'Discharged', 'Died'],
+    },
 ])
