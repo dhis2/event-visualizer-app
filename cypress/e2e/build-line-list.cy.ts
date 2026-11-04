@@ -22,6 +22,30 @@ const EXPECTED: ExpectedRendering = {
     ],
 }
 
+const expectEveryValueInColumn = (
+    header: string,
+    check: (value: string) => void
+) =>
+    cy
+        .getByDataTest('data-table-header')
+        .contains(header)
+        .parents('th')
+        .invoke('index')
+        .then((column) =>
+            cy.getByDataTest('table-row').each(($row) => {
+                check($row.children().eq(column).text())
+            })
+        )
+
+const expectFiltersToApply = () => {
+    expectEveryValueInColumn('Age in years', (age) =>
+        expect(Number(age)).to.be.at.least(18)
+    )
+    expectEveryValueInColumn('Mode of Discharge', (mode) =>
+        expect(mode).to.equal('Died')
+    )
+}
+
 describe('build a line list', () => {
     const names: string[] = []
 
@@ -30,7 +54,7 @@ describe('build a line list', () => {
         names.splice(0).forEach(deleteVisualizationsByName)
     })
 
-    it('builds, saves and reloads an event line list', () => {
+    it('builds, saves and reloads an event line list with filters', () => {
         cy.visit('/#/new')
 
         selectDataSource('Inpatient morbidity and mortality')
@@ -48,7 +72,13 @@ describe('build a line list', () => {
             .type('18')
         addDimensionFromModal('columns')
 
-        addDimensionToColumns('Mode of Discharge')
+        openDimensionModal('Mode of Discharge')
+        cy.get('[data-test$="-filter-radio-filter"]').click()
+        cy.contains(
+            '[data-test="option-set-transfer-option"]',
+            'Died'
+        ).dblclick()
+        addDimensionFromModal('columns')
 
         openDimensionModal('Report date')
         cy.getByDataTest('period-dimension-transfer')
@@ -72,16 +102,7 @@ describe('build a line list', () => {
         cy.getByDataTest('update-button-event').click()
 
         expectVisualizationToRender(EXPECTED)
-        cy.getByDataTest('data-table-header')
-            .contains('Age in years')
-            .parents('th')
-            .invoke('index')
-            .then((ageColumn) =>
-                cy.getByDataTest('table-row').each(($row) => {
-                    const age = Number($row.children().eq(ageColumn).text())
-                    expect(age).to.be.at.least(18)
-                })
-            )
+        expectFiltersToApply()
 
         const name = testObjectName('line list')
         names.push(name)
@@ -93,5 +114,6 @@ describe('build a line list', () => {
 
         expectVisTitleToEqual(name)
         expectVisualizationToRender(EXPECTED)
+        expectFiltersToApply()
     })
 })
