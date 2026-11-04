@@ -50,6 +50,14 @@ describeSavedVisualizations('event pivot tables', [
         rowHeaders: ['Bo', 'Western Area'],
     },
     {
+        covers: 'Event pivot table, event, enrollment and registration org units',
+        id: 'weuGCf22CVS',
+        name: 'E2E: Event pivot table, event, enrollment and registration org units',
+        type: 'PIVOT_TABLE',
+        columnHeaders: ['Sierra Leone'],
+        rowHeaders: ['Bo', 'Bombali'],
+    },
+    {
         covers: 'Event pivot table, tracker stage, data element value',
         id: 'q4rwy9jfGCK',
         name: 'E2E: Event pivot table, tracker stage, data element value',
