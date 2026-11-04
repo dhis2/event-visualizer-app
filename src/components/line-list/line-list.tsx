@@ -22,6 +22,7 @@ import { HeaderCell } from './header-cell'
 import { HeadingRow } from './heading-row'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { hasTotals } from './pagination-bar/pager'
 import { ScrollBox } from './scroll-box'
 import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
@@ -213,6 +214,11 @@ const LineListInternal: FC<LineListProps> = ({
                             <DataTableRow>
                                 <StickyPagination
                                     {...pager}
+                                    isLastPage={
+                                        hasTotals(pager)
+                                            ? pager.page >= pager.pageCount
+                                            : pager.isLastPage
+                                    }
                                     isDisconnected={isDisconnected}
                                     isFetching={isFetching}
                                     colSpan={colSpan}
