@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-11-04T13:51:00.077Z\n"
-"PO-Revision-Date: 2026-11-04T13:51:00.077Z\n"
+"POT-Creation-Date: 2026-11-04T14:02:37.241Z\n"
+"PO-Revision-Date: 2026-11-04T14:02:37.241Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -400,6 +400,24 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
+msgid "Page number"
+msgstr "Page number"
+
+msgid "Pagination options"
+msgstr "Pagination options"
+
+msgid "Rows per page (view only)"
+msgstr "Rows per page (view only)"
+
+msgid "Not available offline"
+msgstr "Not available offline"
+
+msgid "Previous page"
+msgstr "Previous page"
+
+msgid "Next page"
+msgstr "Next page"
+
 msgid "{{- formattedCount}} enrollment"
 msgid_plural "{{- formattedCount}} enrollment"
 msgstr[0] "{{- formattedCount}} enrollment"
@@ -414,15 +432,6 @@ msgid "{{- formattedCount}} event"
 msgid_plural "{{- formattedCount}} event"
 msgstr[0] "{{- formattedCount}} event"
 msgstr[1] "{{- formattedCount}} events"
-
-msgid "Rows per page"
-msgstr "Rows per page"
-
-msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-
-msgid "Not available offline"
-msgstr "Not available offline"
 
 msgid "most recent"
 msgstr "most recent"
