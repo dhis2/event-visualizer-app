@@ -1,0 +1,100 @@
+/* The bar spans the table's width, so a narrow table would squeeze it. It
+ * widens the table to fit, but never past the space the line list has. */
+.container {
+    container: pagination-bar / inline-size;
+    min-inline-size: min(320px, 100cqi);
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp12);
+    color: var(--colors-grey800);
+}
+
+:global(table.font-size-large) .bar {
+    font-size: 14px;
+}
+
+:global(table.font-size-normal) .bar {
+    font-size: 12px;
+}
+
+:global(table.font-size-small) .bar {
+    font-size: 11px;
+}
+
+.rowCount {
+    color: var(--colors-grey800);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.navGroup {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp4);
+}
+
+.pageSlot {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp4);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    line-height: 28px;
+}
+
+/* Matches the height of the small prev/next buttons beside it */
+.pageInput,
+.pageCount {
+    box-sizing: content-box;
+    block-size: 28px;
+    padding: 0 4px;
+}
+
+.pageInput {
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+}
+
+.pageInput.alignEnd {
+    text-align: end;
+}
+
+.pageInput:hover:not(:disabled) {
+    background: var(--colors-grey100);
+}
+
+.pageInput:focus {
+    outline: 2px solid var(--colors-blue600);
+    outline-offset: 0;
+    background: var(--colors-white);
+}
+
+.slash {
+    color: var(--colors-grey500);
+}
+
+.pageCount {
+    display: inline-block;
+}
+
+.menuAnchor {
+    margin-inline-start: auto;
+}
+
+.pageSizePopover {
+    inline-size: 200px;
+    padding: var(--spacers-dp12);
+}
+
+@container pagination-bar (max-width: 240px) {
+    .rowCount {
+        display: none;
+    }
+}
