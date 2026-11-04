@@ -24,7 +24,13 @@ const readClientWidthFromEntries = (entries: ResizeObserverEntry[]): number => {
     return contentNode.parentElement.clientWidth
 }
 
-export const ScrollBox: FC<{ children?: ReactNode }> = ({ children }) => {
+type ScrollBoxProps = {
+    children?: ReactNode
+    /* Covers the visible part of the box, whatever its scroll position. */
+    overlay?: ReactNode
+}
+
+export const ScrollBox: FC<ScrollBoxProps> = ({ children, overlay }) => {
     const [width, setWidth] = useState(0)
     const debouncedSetWidth = useDebounceCallback(setWidth, 80)
     const [resizeObserver] = useState(
@@ -52,14 +58,20 @@ export const ScrollBox: FC<{ children?: ReactNode }> = ({ children }) => {
 
     return (
         <ScrollBoxContext.Provider value={width}>
-            <div
-                ref={containerCallbackRef}
-                className={classes.container}
-                data-test="scroll-box-container"
-            >
-                <div className={classes.content} data-test="scroll-box-content">
-                    {children}
+            <div className={classes.frame}>
+                <div
+                    ref={containerCallbackRef}
+                    className={classes.container}
+                    data-test="scroll-box-container"
+                >
+                    <div
+                        className={classes.content}
+                        data-test="scroll-box-content"
+                    >
+                        {children}
+                    </div>
                 </div>
+                {overlay}
             </div>
         </ScrollBoxContext.Provider>
     )

@@ -139,8 +139,7 @@ const LineListInternal: FC<LineListProps> = ({
                 className={classes.startColumnBottom}
                 data-test="start-column-bottom"
             >
-                <ScrollBox>
-                    {isFetching && <FetchOverlay />}
+                <ScrollBox overlay={isFetching && <FetchOverlay />}>
                     <DataTable
                         width="auto"
                         className={cx(
