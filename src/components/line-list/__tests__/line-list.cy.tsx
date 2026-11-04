@@ -235,12 +235,6 @@ describe(
                     .find('button')
                     .click()
                 cy.getByDataTest('fetch-overlay').should('be.visible')
-                /* Clicking the header may scroll the container; reset so the
-                 * geometry assertions run against the resting position. */
-                cy.getByDataTest('scroll-box-container').scrollTo(0, 0, {
-                    duration: 0,
-                    ensureScrollable: false,
-                })
             }
 
             const expectOverlayToCoverScrollBox = () => {
@@ -267,14 +261,10 @@ describe(
                     expect(scrollBox).to.have.property('getBoundingClientRect')
                     const scrollBoxRect = scrollBox!.getBoundingClientRect()
 
-                    expect(overlayRect.left).to.equal(scrollBoxRect.left + 1)
-                    expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
-                    expect(overlayRect.right).to.equal(
-                        scrollBoxRect.left + (scrollBox?.clientWidth ?? 0) + 1
-                    )
-                    expect(overlayRect.bottom).to.equal(
-                        scrollBoxRect.top + (scrollBox?.clientHeight ?? 0) + 1
-                    )
+                    expect(overlayRect.left).to.equal(scrollBoxRect.left)
+                    expect(overlayRect.top).to.equal(scrollBoxRect.top)
+                    expect(overlayRect.right).to.equal(scrollBoxRect.right)
+                    expect(overlayRect.bottom).to.equal(scrollBoxRect.bottom)
                 })
             }
 
@@ -293,6 +283,20 @@ describe(
                 cy.getByDataTest('visualization-legend-key').click({
                     force: false,
                 })
+            })
+
+            it('while refetching a scrolled table, the overlay still covers the scroll container', () => {
+                mountLineList(largeLineListWithLegend, {
+                    analytics: analyticsWithPendingRefetch(
+                        largeLineListWithLegend
+                    ),
+                })
+                cy.getByDataTest('scroll-box-container').scrollTo(500, 1000, {
+                    duration: 0,
+                })
+
+                triggerPendingRefetch()
+                expectOverlayToCoverScrollBox()
             })
 
             it('while refetching a small table, the overlay covers only the scroll container', () => {
