@@ -264,7 +264,7 @@ describe('PluginWrapper', () => {
         await loadFirstVisualization(store)
 
         // simulate pagination
-        await user.click(screen.getByRole('button', { name: 'Next' }))
+        await user.click(screen.getByRole('button', { name: 'Next page' }))
 
         // Visualisation loading state remains false and current vis remains the same
         await waitFor(() => {

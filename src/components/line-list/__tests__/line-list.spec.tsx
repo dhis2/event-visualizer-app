@@ -114,42 +114,7 @@ describe('LineList', () => {
     })
 
     describe('Pagination', () => {
-        it('displays pagination information correctly', async () => {
-            await renderLineList(largeLineListWithLegend)
-
-            // Verify the correct page size is displayed (default 100 from fixture)
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/rows per page/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
-
-            expect(screen.getByText(/page 1, row 1-100/i)).toBeInTheDocument()
-        })
-
-        it('shows correct pagination state for first page', async () => {
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
-        })
-
-        it('shows correct pagination state for middle page', async () => {
+        it('shows the page without totals', async () => {
             await renderLineList(largeLineListWithLegend, {
                 analytics: analyticsWithPager(largeLineListWithLegend, {
                     page: 2,
@@ -158,38 +123,36 @@ describe('LineList', () => {
                 }),
             })
 
-            expect(screen.getByText(/page 2/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 101-200/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).not.toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
+            expect(screen.getByLabelText('Page number')).toHaveValue('2')
+            expect(
+                screen.getByRole('button', { name: 'Previous page' })
+            ).toBeEnabled()
+            expect(
+                screen.getByRole('button', { name: 'Next page' })
+            ).toBeEnabled()
+            expect(
+                screen.queryByTestId('pagination-row-count')
+            ).not.toBeInTheDocument()
         })
 
-        it('shows correct pagination state for last page', async () => {
+        it('shows the page count and total with totals', async () => {
             await renderLineList(largeLineListWithLegend, {
                 analytics: analyticsWithPager(largeLineListWithLegend, {
-                    page: 3,
+                    page: 1,
                     pageSize: 100,
-                    isLastPage: true,
+                    total: 1234,
+                    pageCount: 13,
                 }),
             })
 
-            expect(screen.getByText(/page 3/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 201-300/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).not.toBeDisabled()
-            expect(nextButton).toBeDisabled()
+            expect(screen.getByLabelText('Page number')).toHaveValue('1')
+            expect(screen.getByText('13')).toBeInTheDocument()
+            expect(
+                screen.getByTestId('pagination-row-count')
+            ).toHaveTextContent(/^1 234 /)
         })
 
-        it('shows correct pagination state for single page', async () => {
+        it('shows only the row count on a single page', async () => {
             await renderLineList(simpleLineList, {
                 analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
@@ -198,14 +161,12 @@ describe('LineList', () => {
                 }),
             })
 
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).toBeDisabled()
+            expect(
+                screen.queryByRole('button', { name: 'Next page' })
+            ).not.toBeInTheDocument()
+            expect(
+                screen.getByTestId('pagination-row-count')
+            ).toBeInTheDocument()
         })
     })
 
@@ -468,19 +429,16 @@ describe('LineList', () => {
                 }),
             })
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-            const pageSizeSelect = screen.getByTestId(
-                'dhis2-uicore-select-input'
-            )
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).toBeDisabled()
-            expect(pageSizeSelect).toHaveClass('disabled')
-
-            // Page size should show current value but be non-interactive
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText('Rows per page')).toBeInTheDocument()
+            expect(
+                screen.getByRole('button', { name: 'Previous page' })
+            ).toBeDisabled()
+            expect(
+                screen.getByRole('button', { name: 'Next page' })
+            ).toBeDisabled()
+            expect(screen.getByLabelText('Page number')).toBeDisabled()
+            expect(
+                screen.getByRole('button', { name: 'Pagination options' })
+            ).toBeDisabled()
         })
 
         it('shows tooltip on hover when pagination is disabled due to disconnection', async () => {
