@@ -18,7 +18,9 @@ describe('change a visualization', () => {
         switchVisualizationType('Pivot table')
         moveChipToAxis('Event status', 'rows')
         removeChip('Enrollment status')
-        cy.getByDataTest('update-button-event').click()
+        cy.getByDataTest('update-button-event')
+            .should('contain', 'Switch to Event table')
+            .click()
 
         expectVisualizationToRender({
             type: 'PIVOT_TABLE',
@@ -31,5 +33,13 @@ describe('change a visualization', () => {
             'Enrollment status'
         ).should('not.exist')
         cy.getByDataTest('axis-rows').should('contain', 'Event status')
+        cy.getByDataTest('update-button-event').should(
+            'contain',
+            'Update Event table'
+        )
+        cy.getByDataTest('update-button-enrollment').should(
+            'contain',
+            'Switch to Enrollment table'
+        )
     })
 })
