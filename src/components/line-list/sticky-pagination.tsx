@@ -3,9 +3,9 @@ import { Tooltip, Pagination } from '@dhis2/ui'
 import { useCallback } from 'react'
 import { useScrollBoxWidth } from './scroll-box'
 import classes from './styles/sticky-navigation.module.css'
-import type { LineListPager, PaginateFn } from './types'
+import type { PagerWithoutTotals, PaginateFn } from './types'
 
-type StickyPaginationWithConditionalTooltipProps = LineListPager & {
+type StickyPaginationWithConditionalTooltipProps = PagerWithoutTotals & {
     colSpan: number
     isDisconnected: boolean
     isFetching: boolean
@@ -34,9 +34,9 @@ const StickyPagination = ({
     const scrollboxWidth = useScrollBoxWidth()
     const onPageChange = useCallback(
         (page: number) => {
-            onPaginate({ page })
+            onPaginate({ page, pageSize })
         },
-        [onPaginate]
+        [onPaginate, pageSize]
     )
     const onPageSizeChange = useCallback(
         (pageSize: number) => {
