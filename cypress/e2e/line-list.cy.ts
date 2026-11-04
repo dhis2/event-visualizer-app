@@ -21,15 +21,18 @@ describe('line list', () => {
             .first()
             .invoke('text')
             .then((firstRowText) => {
-                cy.getByDataTest('dhis2-uiwidgets-pagination-page-next').click()
-                cy.getByDataTest('dhis2-uiwidgets-pagination-summary').should(
-                    'contain',
-                    'Page 2'
+                cy.getByDataTest('pagination-next').click()
+                cy.getByDataTest('pagination-page-input').should(
+                    'have.value',
+                    '2'
                 )
                 getRows().first().should('not.have.text', firstRowText)
             })
 
-        cy.getByDataTest('dhis2-uiwidgets-pagination-pagesize-select').click()
+        cy.getByDataTest('pagination-options').click()
+        cy.getByDataTest('pagination-page-size-select')
+            .findByDataTest('dhis2-uicore-select-input')
+            .click()
         cy.getByDataTest('dhis2-uicore-singleselectoption')
             .contains(/^50$/)
             .click()
