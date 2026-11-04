@@ -1,182 +1,107 @@
 import {
-    typeTextarea,
     clickToolbarInterpretationsButton,
     clickToolbarViewButton,
-    expectInterpretationsButtonToBeEnabled,
     expectInterpretationFormToBeVisible,
-    expectInterpretationThreadToBeVisible,
-    expectTableToBeVisible,
-    openVisByName,
-    deleteVisualization,
-    saveVisualizationAs,
-    expectVisTitleToEqual,
+    typeTextarea,
 } from '../helpers'
+import { deleteInterpretations } from '../support/api'
+import { testObjectName } from '../support/names'
+import { expectVisualizationToRender } from '../support/rendering'
 
-const TEST_CANCEL_LABEL = 'Cancel'
-const TEST_POST_INTERPRETATION_LABEL = 'Post interpretation'
-const TEST_WRITE_INTERPRETATION_LABEL = 'Write an interpretation'
-const TEST_INTERPRETATION_TEXT = 'Test interpretation'
+const PIVOT_TABLE_ID = 't6KrUiPqcd0'
+
+const clickViewMenuItem = (label: string) => {
+    clickToolbarViewButton()
+    cy.getByDataTest('dhis2-uicore-hovermenulistitem').contains(label).click()
+}
+
+/* Other runs may post interpretations on the same visualization, so the test
+ * only looks at its own. */
+const getInterpretation = (text: string) =>
+    cy.getByDataTest('interpretations-list').contains('li', text)
 
 describe('interpretations', () => {
-    beforeEach(() => {
-        cy.visit('/')
-    })
+    it('disables the interpretations panel without a saved visualization', () => {
+        cy.visit('/#/new')
 
-    it('the interpretations button and item in View menu are disabled without a saved visualization', () => {
         cy.getByDataTest('interpretations-and-details-toggler').should(
             'be.disabled'
         )
-
         clickToolbarViewButton()
-
         cy.getByDataTest('dhis2-uicore-hovermenulistitem')
             .contains('Show interpretations and details')
             .parent()
             .should('have.class', 'disabled')
     })
 
-    it('the interpretations and details panel can be toggled by clicking the button in the toolbar', () => {
-        openVisByName('Inpatient: Cases last quarter (case)')
-
-        expectInterpretationsButtonToBeEnabled()
-
+    it('toggles the panel from the toolbar and the View menu', () => {
+        cy.visit(`/#/${PIVOT_TABLE_ID}`)
         cy.getByDataTest('details-panel').should('not.exist')
 
         clickToolbarInterpretationsButton()
-
         cy.getByDataTest('details-panel').should('be.visible')
-
-        cy.getByDataTest('details-panel').contains('Interpretations')
         expectInterpretationFormToBeVisible()
-
         clickToolbarInterpretationsButton()
+        cy.getByDataTest('details-panel').should('not.exist')
 
+        clickViewMenuItem('Show interpretations and details')
+        cy.getByDataTest('details-panel').should('be.visible')
+        clickViewMenuItem('Hide interpretations and details')
         cy.getByDataTest('details-panel').should('not.exist')
     })
 
-    it('the interpretations and details panel can be toggled by clicking the option in the view menu', () => {
-        openVisByName('Inpatient: Cases last quarter (case)')
+    describe('an interpretation', () => {
+        const texts: string[] = []
 
-        cy.getByDataTest('details-panel').should('not.exist')
+        /* afterEach, because a retry starts the test again and may post another */
+        afterEach(() => {
+            texts
+                .splice(0)
+                .forEach((text) => deleteInterpretations(PIVOT_TABLE_ID, text))
+        })
 
-        clickToolbarViewButton()
+        it('writes, opens, replies to and deletes an interpretation', () => {
+            const text = testObjectName('interpretation')
+            texts.push(text)
+            const reply = 'E2E-IDV reply'
+            cy.visit(`/#/${PIVOT_TABLE_ID}`)
+            clickToolbarInterpretationsButton()
 
-        cy.getByDataTest('dhis2-uicore-hovermenulistitem')
-            .contains('Show interpretations and details')
-            .should('be.visible')
-            .click()
+            cy.getByDataTest('interpretation-form')
+                .find('input[placeholder="Write an interpretation"]')
+                .click()
+            typeTextarea('interpretation-form', text)
+            cy.getByDataTest('interpretation-form')
+                .contains('Post interpretation')
+                .click()
 
-        cy.getByDataTest('details-panel').should('be.visible')
+            getInterpretation(text).contains('See interpretation').click()
+            cy.getByDataTest('interpretation-modal').should('contain', text)
+            expectVisualizationToRender(
+                {
+                    type: 'PIVOT_TABLE',
+                    columnHeaders: ['Male', '0 - 10', '10 - 20'],
+                    rowHeaders: ['Bo', 'Western Area', 'Total'],
+                },
+                () => cy.getByDataTest('interpretation-modal')
+            )
 
-        cy.getByDataTest('details-panel').contains('Interpretations')
-        expectInterpretationFormToBeVisible()
+            cy.getByDataTest('interpretation-modal')
+                .find('input[placeholder="Write a reply"]')
+                .click()
+            typeTextarea('interpretation-modal', reply)
+            cy.getByDataTest('interpretation-modal')
+                .contains('button', 'Post reply')
+                .click()
+            cy.getByDataTest('interpretation-modal').should('contain', reply)
 
-        clickToolbarViewButton()
+            cy.contains('Hide interpretation').click()
+            cy.getByDataTest('interpretation-modal').should('not.exist')
 
-        cy.getByDataTest('dhis2-uicore-hovermenulistitem')
-            .contains('Hide interpretations and details')
-            .should('be.visible')
-            .click()
-
-        cy.getByDataTest('details-panel').should('not.exist')
-    })
-
-    it('a new interpretation can be added, viewed and deleted', () => {
-        openVisByName('Inpatient: Cases last quarter (case)')
-
-        // Make a copy of the visualization
-        const visTitle = `INTERPRETATIONS TEST ${new Date().toLocaleString()}`
-        saveVisualizationAs(visTitle)
-
-        expectVisTitleToEqual(visTitle)
-        expectTableToBeVisible()
-
-        clickToolbarInterpretationsButton()
-
-        // the rich text editor shows when clicking the input
-        cy.getByDataTest('interpretation-form')
-            .find(`input[placeholder="${TEST_WRITE_INTERPRETATION_LABEL}"]`)
-            .click()
-
-        cy.getByDataTest('interpretation-form').contains(
-            TEST_POST_INTERPRETATION_LABEL
-        )
-        cy.getByDataTest('interpretation-form').contains(TEST_CANCEL_LABEL)
-
-        // the rich text editor is removed when clicking Cancel
-        cy.getByDataTest('interpretation-form')
-            .contains(TEST_CANCEL_LABEL)
-            .click()
-
-        cy.getByDataTest('interpretation-form').should(
-            'not.contain',
-            TEST_POST_INTERPRETATION_LABEL
-        )
-        cy.getByDataTest('interpretation-form').should(
-            'not.contain',
-            TEST_CANCEL_LABEL
-        )
-
-        // it's possible to write a new interpretation text
-        cy.getByDataTest('interpretation-form')
-            .find(`input[placeholder="${TEST_WRITE_INTERPRETATION_LABEL}"]`)
-            .click()
-
-        typeTextarea('interpretation-form', TEST_INTERPRETATION_TEXT)
-
-        // the new interpretation can be saved and shows up in the list
-        cy.getByDataTest('interpretation-form')
-            .contains(TEST_POST_INTERPRETATION_LABEL)
-            .click()
-
-        cy.getByDataTest('interpretations-list').contains(
-            TEST_INTERPRETATION_TEXT
-        )
-
-        // The interpretation can be opened in the modal
-        cy.getByDataTest('interpretations-list')
-            .contains('See interpretation')
-            .click()
-        cy.getByDataTest('interpretation-modal').contains(
-            'Viewing interpretation:'
-        )
-        cy.getByDataTest('interpretation-modal').contains(
-            TEST_INTERPRETATION_TEXT
-        )
-
-        // it's possible to add a comment to the new interpretation
-        expectInterpretationThreadToBeVisible()
-
-        // the interpretation modal can be closed
-        cy.contains('Hide interpretation').click()
-
-        // the interpretation modal can be opened with the reply form focused
-        cy.getByDataTest('interpretation-reply-button').click()
-        cy.getByDataTest('interpretation-modal').contains(
-            'Viewing interpretation:'
-        )
-        cy.getByDataTest('interpretation-modal').contains(
-            TEST_INTERPRETATION_TEXT
-        )
-
-        expectInterpretationThreadToBeVisible()
-
-        // this should test the initialFocus feature where when clicking the Reply button
-        // the modal is opened with the reply form focused
-        cy.getByDataTest('interpretation-modal').contains('Post reply')
-
-        cy.contains('Hide interpretation').click()
-
-        // the interpretation can be removed
-        cy.getByDataTest('interpretation-delete-button').click()
-
-        expectInterpretationFormToBeVisible()
-
-        cy.getByDataTest('details-panel').should(
-            'not.contain',
-            TEST_INTERPRETATION_TEXT
-        )
-
-        deleteVisualization()
+            getInterpretation(text)
+                .find('[data-test="interpretation-delete-button"]')
+                .click()
+            cy.getByDataTest('interpretations-list').should('not.contain', text)
+        })
     })
 })

@@ -1,0 +1,50 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event pivot table, event, enrollment and registration org units",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "columnDimensions": ["IpHINAT79UW.registrationOu"],
+            "rowDimensions": ["IpHINAT79UW.A03MvHHogjR.ou"],
+            "filterDimensions": [
+                "IpHINAT79UW.ou",
+                "IpHINAT79UW.A03MvHHogjR.eventDate"
+            ],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "registrationOu",
+                    "program": "IpHINAT79UW",
+                    "values": ["USER_ORGUNIT"]
+                },
+                {
+                    "parent": "ROW",
+                    "dimension": "ou",
+                    "program": "IpHINAT79UW",
+                    "programStage": "A03MvHHogjR",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "ou",
+                    "program": "IpHINAT79UW",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "eventDate",
+                    "program": "IpHINAT79UW",
+                    "programStage": "A03MvHHogjR",
+                    "values": ["THIS_YEAR"]
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "weuGCf22CVS",
+            "userOrganisationUnitChildren": true
+        }
+    ]
+}

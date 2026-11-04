@@ -1,5 +1,5 @@
 ls:
-    '{cypress,scripts,src,types}':
+    '{cypress,scripts,src,types,visualization-metadata-import}':
         .dir: kebab-case | regex:__tests__ | regex:__snapshots__ | regex:__fixtures__
         .ts: kebab-case
         .spec.ts: kebab-case

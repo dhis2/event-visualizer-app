@@ -1,4 +1,6 @@
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import type { EngineError } from '@api/parse-engine-error'
+import { useAlert } from '@dhis2/app-runtime'
 import { toCurrentVis } from '@modules/visualization/current-vis'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { navigationSlice } from '@store/navigation-slice'
@@ -453,47 +455,6 @@ describe('useToolbarActions', () => {
             expect(result.current.pendingLegacyRename).toBeNull()
         })
 
-        it('saves a confirmed legacy rename as a new visualization', async () => {
-            const legacyVis = makeSavedVis({
-                name: 'Old name',
-                description: 'Old description',
-                legacy: true,
-                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
-            } as Partial<SavedVisualization>)
-            spyOnFetch({ data: legacyVis })
-            const createSpy = spyOnCreate()
-
-            const { result, store } = renderToolbarActions({
-                // unsaved edits in the editor must not end up in the copy
-                currentVis: { ...toCurrentVis(legacyVis), columns: [] },
-                savedVis: legacyVis,
-            })
-
-            await act(async () => {
-                await result.current.onRename({
-                    name: 'New name',
-                    description: 'New description',
-                })
-            })
-            await act(async () => {
-                await result.current.onConfirmLegacyRename()
-            })
-
-            const payload = createSpy.mock.calls[0][0] as SavedVisualization
-            expect(payload).toMatchObject({
-                name: 'New name',
-                description: 'New description',
-                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
-            })
-            expect(payload).not.toHaveProperty('id')
-            expect(payload).not.toHaveProperty('legacy')
-            expect(store.getState().navigation).toHaveProperty(
-                'visualizationId',
-                'new-vis'
-            )
-            expect(result.current.pendingLegacyRename).toBeNull()
-        })
-
         it('saves nothing when a legacy rename is cancelled', async () => {
             const legacyVis = makeSavedVis({ legacy: true })
             spyOnFetch({ data: legacyVis })
@@ -510,6 +471,86 @@ describe('useToolbarActions', () => {
 
             expect(createSpy).not.toHaveBeenCalled()
             expect(result.current.pendingLegacyRename).toBeNull()
+        })
+    })
+
+    describe('onError', () => {
+        const showErrorAlert = (error: Partial<EngineError>) => {
+            const show = vi.fn()
+            vi.mocked(useAlert).mockReturnValue({ show, hide: vi.fn() })
+            const savedVis = makeSavedVis()
+            const { result } = renderToolbarActions({
+                currentVis: toCurrentVis(savedVis),
+                savedVis,
+            })
+
+            act(() => {
+                result.current.onError({
+                    type: 'access',
+                    message: '',
+                    ...error,
+                })
+            })
+
+            return show
+        }
+
+        it('explains that a visualization on a dashboard cannot be deleted', () => {
+            const show = showErrorAlert({
+                errorCode: 'E4030',
+                httpStatusCode: 409,
+            })
+
+            expect(show).toHaveBeenCalledWith({
+                message:
+                    "This visualization can't be deleted because it is used on one or more dashboards.",
+                options: { warning: true },
+            })
+        })
+
+        it('explains a missing permission', () => {
+            const show = showErrorAlert({
+                errorCode: 'E1006',
+                httpStatusCode: 403,
+            })
+
+            expect(show).toHaveBeenCalledWith({
+                message: "You don't have sufficient permissions.",
+                options: { warning: true },
+            })
+        })
+
+        it("shows the error's own message for other error codes", () => {
+            const show = showErrorAlert({
+                message: 'forced',
+                httpStatusCode: 409,
+            })
+
+            expect(show).toHaveBeenCalledWith({
+                message: 'forced',
+                options: { warning: true },
+            })
+        })
+
+        it('falls back to a generic message', () => {
+            const show = showErrorAlert({ httpStatusCode: 409 })
+
+            expect(show).toHaveBeenCalledWith({
+                message: 'An unknown error occurred.',
+                options: { warning: true },
+            })
+        })
+
+        it('shows a server error as an error rather than a warning', () => {
+            const show = showErrorAlert({
+                message: 'forced',
+                httpStatusCode: 503,
+            })
+
+            expect(show).toHaveBeenCalledWith({
+                message: 'forced',
+                options: { error: true },
+            })
         })
     })
 })

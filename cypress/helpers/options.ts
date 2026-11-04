@@ -1,17 +1,9 @@
-export const clickOptionsButton = () =>
-    cy.getByDataTest('dhis2-analytics-hovermenubar').contains('Options').click()
-
-export const openDataOptionsModal = () => {
-    clickOptionsButton()
-    cy.getByDataTest('options-menu-list').contains('Data').click()
+export const openOptions = (tab: 'Data' | 'Style') => {
+    cy.getByDataTest('visualization-options-button').click()
+    cy.getByDataTest('options-modal-tab-bar').contains(tab).click()
 }
 
-export const openStyleOptionsModal = () => {
-    clickOptionsButton()
-    cy.getByDataTest('options-menu-list').contains('Style').click()
-}
-
-export const openLegendOptionsModal = () => {
-    clickOptionsButton()
-    cy.getByDataTest('options-menu-list').contains('Legend').click()
+export const applyOptions = () => {
+    cy.getByDataTest('options-modal-action-confirm').click()
+    cy.getByDataTest('options-modal').should('not.exist')
 }
