@@ -24,6 +24,7 @@ export type {
     RelativePeriodEnum,
     SortDirection,
     Sorting,
+    SystemInfo,
     ValueType,
 } from './dhis2-openapi-schemas'
 export type { DeepPartial } from './deep-partial'

@@ -27,6 +27,7 @@ import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
 } from './query-tools-line-list'
+import { useAnalyticsTotalCounts } from './use-analytics-total-counts'
 import { useInFlightDedup } from './use-in-flight-dedup'
 
 export type AnalyticsResponseMetadataItems = Record<
@@ -79,6 +80,7 @@ type FetchAnalyticsDataForLLParams = {
     sortField: string | undefined
     sortDirection: 'ASC' | 'DESC' | undefined
     displayProperty: CurrentUser['settings']['displayProperty']
+    totalPages: boolean
 }
 
 type FetchAnalyticsDataParams = {
@@ -105,6 +107,7 @@ const fetchAnalyticsDataForLL = async ({
     sortField,
     sortDirection,
     displayProperty,
+    totalPages,
 }: FetchAnalyticsDataForLLParams): Promise<LineListAnalyticsResponse> => {
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
@@ -115,7 +118,7 @@ const fetchAnalyticsDataForLL = async ({
         .fromVisualization(adaptedVisualization)
         .withParameters({
             headers,
-            totalPages: false,
+            totalPages,
             ...(visualization.outputType !== 'EVENT'
                 ? { rowContext: true }
                 : {}),
@@ -271,6 +274,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     })
 
     const { reserve, release } = useInFlightDedup()
+    const totalPages = useAnalyticsTotalCounts()
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
@@ -287,6 +291,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 page,
                 pageSize,
                 displayProperty,
+                totalPages,
             })
 
             if (!reserve(requestSignature)) {
@@ -313,7 +318,18 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     sortField,
                     visualization,
                     displayProperty,
+                    totalPages,
                 })
+
+                /* Without totals the user can go past the last page, which
+                 * comes back empty. Keep showing the current page. */
+                if (analyticsResponse.rows.length === 0 && page > 1) {
+                    setState((prevState) => ({
+                        ...prevState,
+                        isFetching: false,
+                    }))
+                    return
+                }
 
                 if (analyticsResponse.rows.length === 0) {
                     throw new EmptyResponseError()
@@ -366,6 +382,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             reserve,
             release,
             showBoundary,
+            totalPages,
         ]
     )
 
