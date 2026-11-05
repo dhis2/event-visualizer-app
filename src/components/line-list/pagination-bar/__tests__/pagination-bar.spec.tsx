@@ -30,6 +30,13 @@ const PAGE_TWO_OF_MANY: LineListPager = {
     isLastPage: false,
 }
 
+const PAGE_TWO_OF_THIRTEEN: LineListPager = {
+    page: 2,
+    pageSize: 100,
+    total: 1234,
+    pageCount: 13,
+}
+
 type BarProps = Partial<ComponentProps<typeof PaginationBar>>
 
 const renderBar = (props: BarProps = {}) => {
@@ -143,10 +150,23 @@ describe('PaginationBar', () => {
         })
 
         it('keeps the bar enabled while a page loads', () => {
-            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
+            renderBar({
+                pager: PAGE_TWO_OF_THIRTEEN,
+                pageRequest: { page: 3, pageSize: 100 },
+            })
 
             expect(previousButton()).toBeEnabled()
             expect(nextButton()).toBeEnabled()
+            expect(nextButton()).not.toHaveAttribute('aria-disabled')
+            expect(pageInput()).toBeEnabled()
+            expect(screen.getByTestId('pagination-options')).toBeEnabled()
+        })
+
+        it('marks next as disabled while a page loads without totals', () => {
+            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
+
+            expect(nextButton()).toHaveAttribute('aria-disabled', 'true')
+            expect(previousButton()).toBeEnabled()
             expect(pageInput()).toBeEnabled()
             expect(screen.getByTestId('pagination-options')).toBeEnabled()
         })
@@ -246,6 +266,7 @@ describe('PaginationBar', () => {
 
         it('requests the page after the one that is loading', () => {
             const { onPaginate } = renderBar({
+                pager: PAGE_TWO_OF_THIRTEEN,
                 pageRequest: { page: 3, pageSize: 100 },
             })
 
@@ -254,8 +275,29 @@ describe('PaginationBar', () => {
             expect(onPaginate).toHaveBeenCalledWith({ page: 4, pageSize: 100 })
         })
 
+        it('does not request the next page while a page loads without totals', () => {
+            const { onPaginate } = renderBar({
+                pageRequest: { page: 3, pageSize: 100 },
+            })
+
+            fireEvent.click(nextButton())
+
+            expect(onPaginate).not.toHaveBeenCalled()
+        })
+
+        it('requests the previous page while a page loads without totals', () => {
+            const { onPaginate } = renderBar({
+                pageRequest: { page: 3, pageSize: 100 },
+            })
+
+            fireEvent.click(previousButton())
+
+            expect(onPaginate).toHaveBeenCalledWith({ page: 2, pageSize: 100 })
+        })
+
         it('keeps the page size that is loading when paging', () => {
             const { onPaginate } = renderBar({
+                pager: PAGE_TWO_OF_THIRTEEN,
                 pageRequest: { page: 1, pageSize: 50 },
             })
 

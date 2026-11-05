@@ -299,13 +299,28 @@ describe(
                 expectOverlayToCoverScrollBox()
             })
 
-            it('while refetching, the sort buttons and the pager still respond', () => {
+            it('while refetching with totals, the sort buttons and the pager still respond', () => {
                 let requestCount = 0
+                const response = largeLineListWithLegend.response as {
+                    metaData: object
+                }
+                const responseWithTotals = {
+                    ...response,
+                    metaData: {
+                        ...response.metaData,
+                        pager: {
+                            page: 1,
+                            pageSize: 100,
+                            total: 1000,
+                            pageCount: 10,
+                        },
+                    },
+                }
                 mountLineList(largeLineListWithLegend, {
                     analytics: (() => {
                         requestCount += 1
                         return requestCount === 1
-                            ? largeLineListWithLegend.response
+                            ? responseWithTotals
                             : new Promise(() => undefined)
                     }) as QueryData[string],
                 })
@@ -323,6 +338,30 @@ describe(
                     '3'
                 )
                 cy.wrap(null).should(() => expect(requestCount).to.equal(5))
+            })
+
+            it('while a page loads without totals, next keeps its focus but does not respond', () => {
+                let requestCount = 0
+                mountLineList(largeLineListWithLegend, {
+                    analytics: (() => {
+                        requestCount += 1
+                        return requestCount === 1
+                            ? largeLineListWithLegend.response
+                            : new Promise(() => undefined)
+                    }) as QueryData[string],
+                })
+
+                cy.getByDataTest('pagination-next').click()
+                cy.getByDataTest('pagination-next')
+                    .should('have.attr', 'aria-disabled', 'true')
+                    .click()
+
+                cy.focused().should('have.attr', 'data-test', 'pagination-next')
+                cy.getByDataTest('pagination-page-input').should(
+                    'have.value',
+                    '2'
+                )
+                cy.wrap(null).should(() => expect(requestCount).to.equal(2))
             })
 
             it('while refetching a small table, the overlay covers only the scroll container', () => {

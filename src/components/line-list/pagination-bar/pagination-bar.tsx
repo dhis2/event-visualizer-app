@@ -97,6 +97,9 @@ const PaginationBarInternal: FC<PaginationBarInternalProps> = ({
     const isLastPage = hasTotals(pager)
         ? page >= getPageCount(pager, pageRequest)
         : page === pager.page && pager.isLastPage
+    /* Without totals, the page after the loading one may not exist. Next
+     * keeps its focus, so a keyboard user can press it again once it loads. */
+    const isNextBlocked = !hasTotals(pager) && pageRequest !== null
     const singlePage = isSinglePage(pager)
     const rowCount = getRowCount(pager, pageLength)
 
@@ -135,7 +138,8 @@ const PaginationBarInternal: FC<PaginationBarInternalProps> = ({
                             icon={<IconChevronRight16 />}
                             aria-label={i18n.t('Next page')}
                             disabled={disabled || isLastPage}
-                            onClick={() => goToPage(page + 1)}
+                            aria-disabled={isNextBlocked || undefined}
+                            onClick={() => !isNextBlocked && goToPage(page + 1)}
                             dataTest="pagination-next"
                         />
                     </div>
