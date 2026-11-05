@@ -39,7 +39,7 @@ const renderBar = (props: BarProps = {}) => {
         pager: PAGE_TWO_OF_MANY,
         pageLength: 100,
         visualization,
-        isFetching: false,
+        pageRequest: null,
         isDisconnected: false,
         onPaginate,
         ...props,
@@ -142,13 +142,37 @@ describe('PaginationBar', () => {
             expect(screen.getByTestId('pagination-options')).toBeInTheDocument()
         })
 
-        it('disables the bar while a page loads', () => {
-            renderBar({ isFetching: true })
+        it('keeps the bar enabled while a page loads', () => {
+            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
 
-            expect(previousButton()).toBeDisabled()
+            expect(previousButton()).toBeEnabled()
+            expect(nextButton()).toBeEnabled()
+            expect(pageInput()).toBeEnabled()
+            expect(screen.getByTestId('pagination-options')).toBeEnabled()
+        })
+
+        it('shows the page that is loading', () => {
+            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
+
+            expect(pageInput()).toHaveValue('3')
+        })
+
+        it('shows the page count for the page size that is loading', () => {
+            renderBar({
+                pager: { page: 2, pageSize: 100, total: 1234, pageCount: 13 },
+                pageRequest: { page: 1, pageSize: 50 },
+            })
+
+            expect(screen.getByText('25')).toBeInTheDocument()
+        })
+
+        it('disables next when the last page is loading', () => {
+            renderBar({
+                pager: { page: 12, pageSize: 100, total: 1234, pageCount: 13 },
+                pageRequest: { page: 13, pageSize: 100 },
+            })
+
             expect(nextButton()).toBeDisabled()
-            expect(pageInput()).toBeDisabled()
-            expect(screen.getByTestId('pagination-options')).toBeDisabled()
         })
 
         it('disables the bar when offline', () => {
@@ -218,6 +242,26 @@ describe('PaginationBar', () => {
             typePage('2')
 
             expect(onPaginate).not.toHaveBeenCalled()
+        })
+
+        it('requests the page after the one that is loading', () => {
+            const { onPaginate } = renderBar({
+                pageRequest: { page: 3, pageSize: 100 },
+            })
+
+            fireEvent.click(nextButton())
+
+            expect(onPaginate).toHaveBeenCalledWith({ page: 4, pageSize: 100 })
+        })
+
+        it('keeps the page size that is loading when paging', () => {
+            const { onPaginate } = renderBar({
+                pageRequest: { page: 1, pageSize: 50 },
+            })
+
+            fireEvent.click(nextButton())
+
+            expect(onPaginate).toHaveBeenCalledWith({ page: 2, pageSize: 50 })
         })
 
         it('keeps the page size when paging', () => {

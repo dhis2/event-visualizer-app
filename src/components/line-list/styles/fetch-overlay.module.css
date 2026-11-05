@@ -1,0 +1,5 @@
+/* A newer sort or page request replaces the one that is loading, so clicks
+ * go through to the table. */
+.overlay {
+    pointer-events: none;
+}
