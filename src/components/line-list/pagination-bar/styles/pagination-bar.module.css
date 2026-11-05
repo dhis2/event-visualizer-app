@@ -62,6 +62,16 @@
     transform: rotate(180deg);
 }
 
+/* Matches the look of a disabled secondary button */
+.navButton.navButton[aria-disabled='true'] {
+    border-color: rgb(74 87 104 / 25%);
+    background-color: transparent;
+    box-shadow: none;
+    color: var(--colors-grey600);
+    fill: var(--colors-grey600);
+    cursor: not-allowed;
+}
+
 .navGroup {
     display: flex;
     align-items: center;
