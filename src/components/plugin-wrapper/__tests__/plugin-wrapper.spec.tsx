@@ -29,17 +29,23 @@ describe('PluginWrapper', () => {
      * jitter on slow CI runners — the spinner could disappear before
      * `waitFor`'s first poll, causing flakes. */
     const deferredAnalytics = createDeferredQuery()
+    const analyticsPageSizes: number[] = []
     const mockOptions = {
         queryData: {
             /* Dimension strings are stage-prefixed, so match with a substring
              * check, not an exact array `.includes`. */
             analytics: deferredAnalytics.defer(
-                (_: unknown, query: { params: { dimension: string[] } }) =>
-                    query.params.dimension.some((dimension) =>
+                (
+                    _: unknown,
+                    query: { params: { dimension: string[]; pageSize: number } }
+                ) => {
+                    analyticsPageSizes.push(query.params.pageSize)
+                    return query.params.dimension.some((dimension) =>
                         dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
                     )
                         ? analyticsResponse1
                         : analyticsResponse2
+                }
             ),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},
@@ -138,6 +144,7 @@ describe('PluginWrapper', () => {
 
     beforeEach(() => {
         deferredAnalytics.reset()
+        analyticsPageSizes.length = 0
     })
 
     it('should render the loading spinner while loading and switching visualizations', async () => {
@@ -342,5 +349,32 @@ describe('PluginWrapper', () => {
             ).not.toBeInTheDocument()
             expect(mockOnDataSorted).toBeCalledTimes(1)
         })
+    })
+
+    it('keeps the chosen page size when sorting', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <TestComponent />,
+            mockOptions
+        )
+        await loadFirstVisualization(store)
+
+        await user.click(screen.getByTestId('pagination-options'))
+        await user.click(screen.getByTestId('dhis2-uicore-select-input'))
+        await user.click(
+            screen.getByText('50', {
+                selector: '[data-test="dhis2-uicore-singleselectoption"] *',
+            })
+        )
+        await deferredAnalytics.releaseAll()
+        await user.click(
+            screen.getByRole('button', {
+                name: /sort by.*organisation unit/i,
+            })
+        )
+        await deferredAnalytics.releaseAll()
+
+        await waitFor(() => expect(analyticsPageSizes).toHaveLength(3))
+        expect(analyticsPageSizes.at(-1)).toBe(50)
     })
 })

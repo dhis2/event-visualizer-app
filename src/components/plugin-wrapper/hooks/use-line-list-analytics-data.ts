@@ -298,6 +298,9 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
     const { reserve, release } = useInFlightDedup()
     const abortControllerRef = useRef<AbortController | null>(null)
+    /* A ref, so a new page size doesn't recreate fetchAnalyticsData and
+     * refetch through the callers' effects */
+    const pageSizeRef = useRef(100)
     const shownPageRef = useRef(1)
 
     const { show: showEmptyPageAlert } = useAlert(
@@ -312,7 +315,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             visualization,
             relativePeriodDate,
             displayProperty,
-            pageSize = 100,
+            pageSize = pageSizeRef.current,
             page = 1,
             onResponseReceived,
         }) => {
@@ -329,6 +332,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 return
             }
 
+            pageSizeRef.current = pageSize
             abortControllerRef.current?.abort()
             const abortController = new AbortController()
             abortControllerRef.current = abortController
