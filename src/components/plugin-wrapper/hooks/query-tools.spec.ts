@@ -337,6 +337,29 @@ describe('getAdaptedVisualization (line list)', () => {
         expect(headers).toEqual([`${SID}.${UID}`])
     })
 
+    it('sends an org unit group set column with nothing selected', () => {
+        const vis = buildVis({
+            dimension: 'J5jldMd8OHv',
+            dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+            programStage: undefined,
+        })
+
+        expect(dimensionsOf(vis)).toEqual(['J5jldMd8OHv'])
+    })
+
+    it('omits an org unit group set filter with nothing selected', () => {
+        const vis = buildVis(
+            {
+                dimension: 'J5jldMd8OHv',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                programStage: undefined,
+            },
+            'filters'
+        )
+
+        expect(dimensionsOf(vis, 'filters')).toEqual([])
+    })
+
     it('expands repetition indexes without an undefined stage segment', () => {
         const vis = buildVis({
             dimension: UID,
@@ -477,6 +500,10 @@ describe('getAdaptedVisualization (pivot table)', () => {
             filters: [
                 { dimension: 'programStatus', program: { id: 'p1' } },
                 { dimension: 'eventStatus', programStage: { id: SID } },
+                {
+                    dimension: 'J5jldMd8OHv',
+                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                },
             ],
         } as unknown as CurrentVisualization
 

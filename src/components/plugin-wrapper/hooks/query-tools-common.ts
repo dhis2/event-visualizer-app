@@ -5,19 +5,10 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionId,
-    DimensionRecord,
     OutputType,
 } from '@types'
 
 export type ParameterRecord = Record<DimensionId, unknown>
-
-/* Whether a dimension narrows or reshapes the analytics response. A legend set
- * counts, because it changes the response from raw values to legend IDs. */
-export const isRequestedAsDimension = (dim: DimensionRecord): boolean =>
-    dim.dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
-    Boolean(dim.filter) ||
-    Boolean(dim.items?.length) ||
-    Boolean(dim.legendSet?.id)
 
 export const adaptDimensions = (
     dimensions: DimensionArray,

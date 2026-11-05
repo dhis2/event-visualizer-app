@@ -1,4 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
+import { isActiveFilterDimensionRecord } from '@modules/dimension/active-filter'
 import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
 import {
     getCellValueAnalyticsId,
@@ -12,11 +13,7 @@ import type {
     MetadataStore,
     OutputType,
 } from '@types'
-import {
-    adaptDimensions,
-    getRequestOptions,
-    isRequestedAsDimension,
-} from './query-tools-common'
+import { adaptDimensions, getRequestOptions } from './query-tools-common'
 
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
@@ -37,15 +34,14 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    /* A bare dimension on rows or columns splits the table by every value, so
-     * it stays. A bare filter narrows nothing, and analytics rejects some, such
-     * as a bare PROGRAM_STATUS (E7222). */
+    /* Only filters are dropped when nothing is selected on them. On rows or
+     * columns, such a dimension still splits the table by every value. */
     return {
         adaptedVisualization: {
             columns: adaptDimensions(columns, visualization),
             rows: adaptDimensions(rows, visualization),
             filters: adaptDimensions(
-                filters.filter(isRequestedAsDimension),
+                filters.filter(isActiveFilterDimensionRecord),
                 visualization
             ),
             outputType: visualization.outputType,
