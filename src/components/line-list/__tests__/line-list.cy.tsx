@@ -299,6 +299,32 @@ describe(
                 expectOverlayToCoverScrollBox()
             })
 
+            it('while refetching, the sort buttons and the pager still respond', () => {
+                let requestCount = 0
+                mountLineList(largeLineListWithLegend, {
+                    analytics: (() => {
+                        requestCount += 1
+                        return requestCount === 1
+                            ? largeLineListWithLegend.response
+                            : new Promise(() => undefined)
+                    }) as QueryData[string],
+                })
+
+                triggerPendingRefetch()
+                cy.getByDataTest('data-table-header')
+                    .eq(1)
+                    .find('button')
+                    .click()
+                cy.getByDataTest('pagination-next').click()
+                cy.getByDataTest('pagination-next').click()
+
+                cy.getByDataTest('pagination-page-input').should(
+                    'have.value',
+                    '3'
+                )
+                cy.wrap(null).should(() => expect(requestCount).to.equal(5))
+            })
+
             it('while refetching a small table, the overlay covers only the scroll container', () => {
                 mountLineList(simpleLineList, {
                     analytics: analyticsWithPendingRefetch(simpleLineList),

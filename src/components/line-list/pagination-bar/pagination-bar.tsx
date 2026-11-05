@@ -1,6 +1,11 @@
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { useScrollBoxWidth } from '@components/line-list/scroll-box'
-import type { LineListPager, PaginateFn } from '@components/line-list/types'
+import type {
+    LineListPager,
+    PageRequest,
+    PagerWithTotals,
+    PaginateFn,
+} from '@components/line-list/types'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -22,7 +27,8 @@ type PaginationBarProps = {
     pager: LineListPager
     pageLength: number
     visualization: CurrentVisualization
-    isFetching: boolean
+    /* The page being loaded, which the bar shows and pages on from */
+    pageRequest: PageRequest | null
     isDisconnected: boolean
     onPaginate: PaginateFn
 }
@@ -40,9 +46,16 @@ const getRowCount = (
     return isSinglePage(pager) ? pageLength : undefined
 }
 
+const getPageCount = (
+    pager: PagerWithTotals,
+    pageRequest: PageRequest | null
+): number =>
+    pageRequest
+        ? Math.ceil(pager.total / pageRequest.pageSize)
+        : pager.pageCount
+
 export const PaginationBar: FC<PaginationBarProps> = ({
     isDisconnected,
-    isFetching,
     ...props
 }) =>
     isDisconnected ? (
@@ -56,13 +69,10 @@ export const PaginationBar: FC<PaginationBarProps> = ({
             )}
         </Tooltip>
     ) : (
-        <PaginationBarInternal {...props} disabled={isFetching} />
+        <PaginationBarInternal {...props} disabled={false} />
     )
 
-type PaginationBarInternalProps = Omit<
-    PaginationBarProps,
-    'isDisconnected' | 'isFetching'
-> & {
+type PaginationBarInternalProps = Omit<PaginationBarProps, 'isDisconnected'> & {
     disabled: boolean
     tooltipProps?: TooltipTriggerProps
 }
@@ -72,17 +82,21 @@ const PaginationBarInternal: FC<PaginationBarInternalProps> = ({
     pager,
     pageLength,
     visualization,
+    pageRequest,
     onPaginate,
     disabled,
     tooltipProps,
 }) => {
     const scrollBoxWidth = useScrollBoxWidth()
     const metadataStore = useMetadataStore()
-    const { page, pageSize } = pager
-    const pageCount = hasTotals(pager) ? pager.pageCount : undefined
+    const { page, pageSize } = pageRequest ?? pager
+    const pageCount = hasTotals(pager)
+        ? getPageCount(pager, pageRequest)
+        : undefined
+    /* Without totals, only the page in the response is known to be the last */
     const isLastPage = hasTotals(pager)
-        ? page >= pager.pageCount
-        : pager.isLastPage
+        ? page >= getPageCount(pager, pageRequest)
+        : page === pager.page && pager.isLastPage
     const singlePage = isSinglePage(pager)
     const rowCount = getRowCount(pager, pageLength)
 
