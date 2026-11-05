@@ -6,6 +6,7 @@ import {
     useConditionsTexts,
     useLegendSetMetadataItem,
 } from '@hooks'
+import { isActiveFilterDimension } from '@modules/dimension/active-filter'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigItemsByDimension,
@@ -64,18 +65,18 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const openDimensionModal = useCallback(() => {
         dispatch(setUiActiveDimensionModal(dimension.id))
     }, [dispatch, dimension.id])
-    const hasConditions = useMemo(
-        () =>
-            Boolean(conditions?.condition?.length) ||
-            Boolean(conditions?.legendSet),
-        [conditions]
-    )
     const conditionsTexts = useConditionsTexts({
         conditions,
         dimension,
         formatValueOptions: { digitGroupSeparator },
     })
-    const isEmpty = axisId === 'filters' && items.length === 0 && !hasConditions
+    const isEmpty =
+        axisId === 'filters' &&
+        !isActiveFilterDimension({
+            items,
+            condition: conditions?.condition,
+            legendSetId: conditions?.legendSet,
+        })
     const chipItemsText = useMemo(
         () =>
             getChipItemsText({

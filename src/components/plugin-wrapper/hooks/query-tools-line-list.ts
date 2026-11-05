@@ -1,4 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
+import { isActiveFilterDimensionRecord } from '@modules/dimension/active-filter'
 import { DROPPED_LEGACY_DIMENSIONS } from '@modules/dimension/ids'
 import type {
     Axis,
@@ -34,15 +35,12 @@ const buildHeaderNames = (
     })
 }
 
-/* A dimension reaches `dimension=` only when it constrains the query; one that
- * simply displays a value is requested through `headers=` alone. A legend set
- * counts as constraining, because it changes the response from raw values to
- * legend IDs. */
+/* A column that only displays a value is requested through `headers=` alone,
+ * except an org unit group set: analytics fails on its header unless it is
+ * also requested as a dimension. */
 const isRequestedAsDimension = (dim: DimensionRecord): boolean =>
     dim.dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
-    Boolean(dim.filter) ||
-    Boolean(dim.items?.length) ||
-    Boolean(dim.legendSet?.id)
+    isActiveFilterDimensionRecord(dim)
 
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
@@ -74,7 +72,7 @@ export const getAdaptedVisualization = (
                 visualization
             ),
             filters: adaptDimensions(
-                filters.filter(isRequestedAsDimension),
+                filters.filter(isActiveFilterDimensionRecord),
                 visualization
             ),
             outputType: visualization.outputType,
