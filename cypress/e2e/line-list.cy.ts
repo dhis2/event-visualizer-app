@@ -34,7 +34,7 @@ const waitForTotalPagesParam = (expected: string) =>
         return response?.body.metaData.pager
     })
 
-const goToNextPage = () =>
+const goToPageTwo = () =>
     getRows()
         .first()
         .invoke('text')
@@ -83,7 +83,7 @@ describe('line list', () => {
             waitForTotalPagesParam('false')
             cy.getByDataTest('pagination-row-count').should('not.exist')
 
-            goToNextPage()
+            goToPageTwo()
             choosePageSize(50)
         })
 
@@ -110,7 +110,7 @@ describe('line list', () => {
                             `/${pageCount}`
                         )
 
-                        goToNextPage()
+                        goToPageTwo()
                         choosePageSize(50)
                         cy.getByDataTest('pagination-bar').should(
                             'contain.text',
