@@ -26,13 +26,10 @@ export const StatusDimensionModalContent: FC<
 > = ({ dimension }) => {
     const dispatch = useAppDispatch()
 
-    const dataTest = useMemo(
-        () =>
-            dimension.id === 'PROGRAM_STATUS'
-                ? 'program-status-checkbox'
-                : 'event-status-checkbox',
-        [dimension.id]
-    )
+    const isProgramStatus = dimension.dimensionId === 'programStatus'
+    const dataTest = isProgramStatus
+        ? 'program-status-checkbox'
+        : 'event-status-checkbox'
     const statusNames = getStatusNames()
 
     const selectedIds = useAppSelector((state) =>
@@ -42,18 +39,17 @@ export const StatusDimensionModalContent: FC<
     const { mode, onModeChange } = useItemsFilterRadioMode(dimension)
 
     const statuses = useMemo(() => {
-        // XXX: for programStatus the id should be prefixed with program/stage
         const statusList = [
             { id: 'ACTIVE', name: statusNames['ACTIVE'] },
             { id: 'COMPLETED', name: statusNames['COMPLETED'] },
         ]
 
-        if (dimension.id === 'programStatus') {
+        if (isProgramStatus) {
             statusList.push({
                 id: 'CANCELLED',
                 name: statusNames['CANCELLED'],
             })
-        } else if (dimension.id === 'eventStatus') {
+        } else if (dimension.dimensionId === 'eventStatus') {
             statusList.push({
                 id: 'SCHEDULE',
                 name: statusNames['SCHEDULE'],
@@ -61,7 +57,7 @@ export const StatusDimensionModalContent: FC<
         }
 
         return statusList
-    }, [dimension.id, statusNames])
+    }, [isProgramStatus, dimension.dimensionId, statusNames])
 
     const updateStatusDimensionItems = useCallback(
         ({ selectedIds, itemId, checked }: UpdateStatusDimensionItemsArgs) => {

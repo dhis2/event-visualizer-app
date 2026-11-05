@@ -1,4 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
+import { isActiveFilterDimensionRecord } from '@modules/dimension/active-filter'
 import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
 import {
     getCellValueAnalyticsId,
@@ -33,11 +34,16 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
+    /* Only filters are dropped when nothing is selected on them. On rows or
+     * columns, such a dimension still splits the table by every value. */
     return {
         adaptedVisualization: {
             columns: adaptDimensions(columns, visualization),
             rows: adaptDimensions(rows, visualization),
-            filters: adaptDimensions(filters, visualization),
+            filters: adaptDimensions(
+                filters.filter(isActiveFilterDimensionRecord),
+                visualization
+            ),
             outputType: visualization.outputType,
         },
         parameters,
