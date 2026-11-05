@@ -1,42 +1,59 @@
 import { createContext, useContext, useCallback, useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
+import { FetchOverlay, type ClientBox } from './fetch-overlay'
 import classes from './styles/scroll-box.module.css'
 
 const ScrollBoxContext = createContext<number | null>(null)
 
 /* The entries array only contains the entries which have resized, so this
  * could be the container, the content, or both. */
-const readClientWidthFromEntries = (entries: ResizeObserverEntry[]): number => {
+const findContainerInEntries = (entries: ResizeObserverEntry[]): Element => {
     let contentNode: Element | null = null
     for (const entry of entries) {
         if (entry.target.classList.contains(classes.container)) {
-            // Found container node, just return its clientWidth
-            return entry.target.clientWidth
+            return entry.target
         } else if (entry.target.classList.contains(classes.content)) {
             contentNode = entry.target
         }
     }
-    if (typeof contentNode?.parentElement?.clientWidth !== 'number') {
-        throw new Error('Could not read clientWidth from scrollbox container')
+    if (!contentNode?.parentElement) {
+        throw new Error('Could not find the scrollbox container')
     }
 
-    return contentNode.parentElement.clientWidth
+    return contentNode.parentElement
 }
+
+/* The client box is the container without its border and scrollbars */
+const readClientBox = (container: Element): ClientBox => ({
+    left: container.clientLeft,
+    top: container.clientTop,
+    width: container.clientWidth,
+    height: container.clientHeight,
+})
 
 type ScrollBoxProps = {
     children?: ReactNode
-    /* Covers the visible part of the box, whatever its scroll position. */
-    overlay?: ReactNode
+    isFetching?: boolean
 }
 
-export const ScrollBox: FC<ScrollBoxProps> = ({ children, overlay }) => {
-    const [width, setWidth] = useState(0)
-    const debouncedSetWidth = useDebounceCallback(setWidth, 80)
+export const ScrollBox: FC<ScrollBoxProps> = ({
+    children,
+    isFetching = false,
+}) => {
+    const [clientBox, setClientBox] = useState<ClientBox>({
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+    })
+    const debouncedSetClientBox = useDebounceCallback(setClientBox, 80)
     const [resizeObserver] = useState(
         () =>
             new ResizeObserver((entries) => {
-                debouncedSetWidth(readClientWidthFromEntries(entries))
+                debouncedSetClientBox(
+                    readClientBox(findContainerInEntries(entries))
+                )
             })
     )
     const containerCallbackRef = useCallback(
@@ -57,7 +74,7 @@ export const ScrollBox: FC<ScrollBoxProps> = ({ children, overlay }) => {
     )
 
     return (
-        <ScrollBoxContext.Provider value={width}>
+        <ScrollBoxContext.Provider value={clientBox.width}>
             <div className={classes.frame}>
                 <div
                     ref={containerCallbackRef}
@@ -71,7 +88,7 @@ export const ScrollBox: FC<ScrollBoxProps> = ({ children, overlay }) => {
                         {children}
                     </div>
                 </div>
-                {overlay}
+                {isFetching && <FetchOverlay clientBox={clientBox} />}
             </div>
         </ScrollBoxContext.Provider>
     )
