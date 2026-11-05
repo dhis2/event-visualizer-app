@@ -2,7 +2,7 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { LineListPager } from '@components/line-list/types'
+import type { LineListPager, PageRequest } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataEngine } from '@dhis2/app-runtime'
@@ -20,7 +20,7 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
@@ -81,6 +81,7 @@ type FetchAnalyticsDataForLLParams = {
     sortDirection: 'ASC' | 'DESC' | undefined
     displayProperty: CurrentUser['settings']['displayProperty']
     totalPages: boolean
+    signal: AbortSignal
 }
 
 type FetchAnalyticsDataParams = {
@@ -95,6 +96,8 @@ type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
     isFetching: boolean
     data: LineListAnalyticsData | null
+    /* The page the newest request asks for, while it is loading */
+    pageRequest: PageRequest | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
@@ -108,6 +111,7 @@ const fetchAnalyticsDataForLL = async ({
     sortDirection,
     displayProperty,
     totalPages,
+    signal,
 }: FetchAnalyticsDataForLLParams): Promise<LineListAnalyticsResponse> => {
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
@@ -164,8 +168,10 @@ const fetchAnalyticsDataForLL = async ({
 
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
-    const rawResponse =
-        await analyticsEngine[analyticsApiEndpoint].getQuery(req)
+    const rawResponse = await analyticsEngine[analyticsApiEndpoint].getQuery(
+        req,
+        { signal }
+    )
 
     return rawResponse
 }
@@ -182,14 +188,17 @@ const legendSetsQuery = {
 const apiFetchLegendSetsByIds = async ({
     dataEngine,
     ids,
+    signal,
 }: {
     dataEngine: ReturnType<typeof useDataEngine>
     ids: string[]
+    signal: AbortSignal
 }): Promise<LineListLegendSet[]> => {
     const legendSetsData = (await dataEngine.query(
         { legendSets: legendSetsQuery },
         {
             variables: { ids },
+            signal,
         }
     )) as { legendSets: { legendSets: LineListLegendSet[] } }
 
@@ -199,9 +208,11 @@ const apiFetchLegendSetsByIds = async ({
 const fetchLegendSets = async ({
     legendSetIds,
     dataEngine,
+    signal,
 }: {
     legendSetIds: string[]
     dataEngine: ReturnType<typeof useDataEngine>
+    signal: AbortSignal
 }): Promise<LineListLegendSet[]> => {
     if (!legendSetIds.length) {
         return []
@@ -210,6 +221,7 @@ const fetchLegendSets = async ({
     const legendSets = await apiFetchLegendSetsByIds({
         dataEngine,
         ids: legendSetIds,
+        signal,
     })
 
     return legendSets
@@ -271,9 +283,12 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const [state, setState] = useState<AnalyticsDataState>({
         isFetching: false,
         data: null,
+        pageRequest: null,
     })
 
     const { reserve, release } = useInFlightDedup()
+    const abortControllerRef = useRef<AbortController | null>(null)
+
     const totalPages = useAnalyticsTotalCounts()
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
@@ -298,9 +313,15 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 return
             }
 
+            abortControllerRef.current?.abort()
+            const abortController = new AbortController()
+            abortControllerRef.current = abortController
+            const { signal } = abortController
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
+                pageRequest: { page, pageSize },
             }))
 
             const { dimension: sortField, direction: sortDirection } =
@@ -319,7 +340,12 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     visualization,
                     displayProperty,
                     totalPages,
+                    signal,
                 })
+
+                if (signal.aborted) {
+                    return
+                }
 
                 /* Without totals the user can go past the last page, which
                  * comes back empty. Keep showing the current page. */
@@ -327,6 +353,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     setState((prevState) => ({
                         ...prevState,
                         isFetching: false,
+                        pageRequest: null,
                     }))
                     return
                 }
@@ -348,7 +375,12 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const legendSets = await fetchLegendSets({
                     legendSetIds,
                     dataEngine,
+                    signal,
                 })
+
+                if (signal.aborted) {
+                    return
+                }
 
                 const analyticsData: LineListAnalyticsData = {
                     ...dataWithoutLegendSets,
@@ -358,15 +390,20 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 setState({
                     data: analyticsData,
                     isFetching: false,
+                    pageRequest: null,
                 })
 
                 onResponseReceived()
             } catch (error) {
+                if (signal.aborted) {
+                    return
+                }
                 logger.error('fetch LL data error', error)
                 if (isAbortError(error)) {
                     setState((prevState) => ({
-                        data: prevState.data,
+                        ...prevState,
                         isFetching: false,
+                        pageRequest: null,
                     }))
                 } else {
                     showBoundary(error)
