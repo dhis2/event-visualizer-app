@@ -239,19 +239,16 @@ const isValueUndefined = (
 const cellValueShouldNotWrap = (header: TransformedLineListHeader) =>
     NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
 
-/* Time dimensions (event/enrollment/incident/scheduledDate) are typed as
- * DATETIME on the backend but should render as plain date (DHIS2-17855).
- * lastUpdated keeps its DATETIME format. */
+/* Analytics types the time dimensions (event/enrollment/incident/scheduledDate)
+ * as DATETIME, but they only carry a date (DHIS2-17855). */
 const formatDateLikeValue = (
     value: string,
-    header: TransformedLineListHeader
+    header: TransformedLineListHeader,
+    dimensionId: string
 ): string => {
-    const isTimeDimension =
-        header.name !== undefined &&
-        TIME_DIMENSION_HEADER_NAMES.has(header.name)
     const includeTime =
-        !isTimeDimension &&
-        (header.name === headersMap.lastUpdated ||
+        !TIME_DIMENSION_HEADER_NAMES.has(dimensionId) &&
+        (dimensionId === headersMap.lastUpdated ||
             header.valueType === 'DATETIME')
     return moment(value).format(includeTime ? 'yyyy-MM-DD HH:mm' : 'yyyy-MM-DD')
 }
@@ -350,7 +347,8 @@ export const formatCellValue = ({
     if (DATE_VALUE_TYPES.includes(header.valueType)) {
         return {
             value,
-            formattedValue: value && formatDateLikeValue(value, header),
+            formattedValue:
+                value && formatDateLikeValue(value, header, dimensionId),
         }
     }
 
