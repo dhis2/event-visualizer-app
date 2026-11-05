@@ -188,7 +188,10 @@ describe('useLineListAnalyticsData', () => {
         await act(() => fetchPage(9))
 
         expect(shownAlerts).toEqual([
-            { message: 'Page 9 not found, returned to page 1', options: {} },
+            {
+                message: 'Page 9 not found, returned to page 1',
+                options: undefined,
+            },
         ])
     })
 
