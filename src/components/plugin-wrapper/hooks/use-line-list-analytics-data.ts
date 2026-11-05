@@ -2,10 +2,11 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { LineListPager } from '@components/line-list/types'
+import type { LineListPager, PageRequest } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
-import { useDataEngine } from '@dhis2/app-runtime'
+import { useAlert, useDataEngine } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
 import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
@@ -20,13 +21,14 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
 } from './query-tools-line-list'
+import { useAnalyticsTotalCounts } from './use-analytics-total-counts'
 import { useInFlightDedup } from './use-in-flight-dedup'
 
 export type AnalyticsResponseMetadataItems = Record<
@@ -79,6 +81,8 @@ type FetchAnalyticsDataForLLParams = {
     sortField: string | undefined
     sortDirection: 'ASC' | 'DESC' | undefined
     displayProperty: CurrentUser['settings']['displayProperty']
+    totalPages: boolean
+    signal: AbortSignal
 }
 
 type FetchAnalyticsDataParams = {
@@ -93,8 +97,11 @@ type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
     isFetching: boolean
     data: LineListAnalyticsData | null
+    /* The page the newest request asks for, while it is loading */
+    pageRequest: PageRequest | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
+type EmptyPageAlertProps = { page: number; shownPage: number }
 
 const fetchAnalyticsDataForLL = async ({
     analyticsEngine,
@@ -105,6 +112,8 @@ const fetchAnalyticsDataForLL = async ({
     sortField,
     sortDirection,
     displayProperty,
+    totalPages,
+    signal,
 }: FetchAnalyticsDataForLLParams): Promise<LineListAnalyticsResponse> => {
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
@@ -115,7 +124,7 @@ const fetchAnalyticsDataForLL = async ({
         .fromVisualization(adaptedVisualization)
         .withParameters({
             headers,
-            totalPages: false,
+            totalPages,
             ...(visualization.outputType !== 'EVENT'
                 ? { rowContext: true }
                 : {}),
@@ -161,8 +170,10 @@ const fetchAnalyticsDataForLL = async ({
 
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
-    const rawResponse =
-        await analyticsEngine[analyticsApiEndpoint].getQuery(req)
+    const rawResponse = await analyticsEngine[analyticsApiEndpoint].getQuery(
+        req,
+        { signal }
+    )
 
     return rawResponse
 }
@@ -179,14 +190,17 @@ const legendSetsQuery = {
 const apiFetchLegendSetsByIds = async ({
     dataEngine,
     ids,
+    signal,
 }: {
     dataEngine: ReturnType<typeof useDataEngine>
     ids: string[]
+    signal: AbortSignal
 }): Promise<LineListLegendSet[]> => {
     const legendSetsData = (await dataEngine.query(
         { legendSets: legendSetsQuery },
         {
             variables: { ids },
+            signal,
         }
     )) as { legendSets: { legendSets: LineListLegendSet[] } }
 
@@ -196,9 +210,11 @@ const apiFetchLegendSetsByIds = async ({
 const fetchLegendSets = async ({
     legendSetIds,
     dataEngine,
+    signal,
 }: {
     legendSetIds: string[]
     dataEngine: ReturnType<typeof useDataEngine>
+    signal: AbortSignal
 }): Promise<LineListLegendSet[]> => {
     if (!legendSetIds.length) {
         return []
@@ -207,6 +223,7 @@ const fetchLegendSets = async ({
     const legendSets = await apiFetchLegendSetsByIds({
         dataEngine,
         ids: legendSetIds,
+        signal,
     })
 
     return legendSets
@@ -268,16 +285,32 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const [state, setState] = useState<AnalyticsDataState>({
         isFetching: false,
         data: null,
+        pageRequest: null,
     })
 
     const { reserve, release } = useInFlightDedup()
+    const abortControllerRef = useRef<AbortController | null>(null)
+    /* A ref, so a new page size doesn't recreate fetchAnalyticsData and
+     * refetch through the callers' effects */
+    const pageSizeRef = useRef(100)
+    const shownPageRef = useRef(1)
+
+    const { show: showEmptyPageAlert } = useAlert(
+        ({ page, shownPage }: EmptyPageAlertProps) =>
+            i18n.t('Page {{page}} not found, returned to page {{shownPage}}', {
+                page,
+                shownPage,
+            })
+    )
+
+    const totalPages = useAnalyticsTotalCounts()
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
             relativePeriodDate,
             displayProperty,
-            pageSize = 100,
+            pageSize = pageSizeRef.current,
             page = 1,
             onResponseReceived,
         }) => {
@@ -287,15 +320,23 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 page,
                 pageSize,
                 displayProperty,
+                totalPages,
             })
 
             if (!reserve(requestSignature)) {
                 return
             }
 
+            pageSizeRef.current = pageSize
+            abortControllerRef.current?.abort()
+            const abortController = new AbortController()
+            abortControllerRef.current = abortController
+            const { signal } = abortController
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
+                pageRequest: { page, pageSize },
             }))
 
             const { dimension: sortField, direction: sortDirection } =
@@ -313,7 +354,28 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     sortField,
                     visualization,
                     displayProperty,
+                    totalPages,
+                    signal,
                 })
+
+                if (signal.aborted) {
+                    return
+                }
+
+                /* Without totals the user can go past the last page, which
+                 * comes back empty. Keep showing the current page. */
+                if (analyticsResponse.rows.length === 0 && page > 1) {
+                    setState((prevState) => ({
+                        ...prevState,
+                        isFetching: false,
+                        pageRequest: null,
+                    }))
+                    showEmptyPageAlert({
+                        page,
+                        shownPage: shownPageRef.current,
+                    })
+                    return
+                }
 
                 if (analyticsResponse.rows.length === 0) {
                     throw new EmptyResponseError()
@@ -332,7 +394,12 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const legendSets = await fetchLegendSets({
                     legendSetIds,
                     dataEngine,
+                    signal,
                 })
+
+                if (signal.aborted) {
+                    return
+                }
 
                 const analyticsData: LineListAnalyticsData = {
                     ...dataWithoutLegendSets,
@@ -342,15 +409,21 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 setState({
                     data: analyticsData,
                     isFetching: false,
+                    pageRequest: null,
                 })
+                shownPageRef.current = page
 
                 onResponseReceived()
             } catch (error) {
+                if (signal.aborted) {
+                    return
+                }
                 logger.error('fetch LL data error', error)
                 if (isAbortError(error)) {
                     setState((prevState) => ({
-                        data: prevState.data,
+                        ...prevState,
                         isFetching: false,
+                        pageRequest: null,
                     }))
                 } else {
                     showBoundary(error)
@@ -366,6 +439,8 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             reserve,
             release,
             showBoundary,
+            showEmptyPageAlert,
+            totalPages,
         ]
     )
 

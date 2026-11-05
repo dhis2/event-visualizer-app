@@ -17,18 +17,18 @@ import {
     type PropsWithChildren,
 } from 'react'
 import { BodyCell } from './body-cell'
-import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
 import { HeadingRow } from './heading-row'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { PaginationBar } from './pagination-bar/pagination-bar'
 import { ScrollBox } from './scroll-box'
-import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
     DataSortFn,
     DataSortPayload,
+    PageRequest,
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
@@ -59,6 +59,7 @@ type LineListProps = {
     onPaginate: PaginateFn
     visualization: CurrentVisualization
     isFetching?: boolean
+    pageRequest?: PageRequest | null
     isInDashboard?: boolean
     isInModal?: boolean
     onColumnHeaderClick?: ColumnHeaderClickFn
@@ -80,6 +81,7 @@ const LineListInternal: FC<LineListProps> = ({
     onPaginate,
     visualization,
     isFetching = false,
+    pageRequest = null,
     isInDashboard = false,
     isInModal = false,
     onColumnHeaderClick,
@@ -139,8 +141,7 @@ const LineListInternal: FC<LineListProps> = ({
                 className={classes.startColumnBottom}
                 data-test="start-column-bottom"
             >
-                <ScrollBox>
-                    {isFetching && <FetchOverlay />}
+                <ScrollBox isFetching={isFetching}>
                     <DataTable
                         width="auto"
                         className={cx(
@@ -211,13 +212,14 @@ const LineListInternal: FC<LineListProps> = ({
                         </DataTableBody>
                         <DataTableFoot className={classes.fixedFoot}>
                             <DataTableRow>
-                                <StickyPagination
-                                    {...pager}
-                                    isDisconnected={isDisconnected}
-                                    isFetching={isFetching}
+                                <PaginationBar
                                     colSpan={colSpan}
-                                    onPaginate={onPaginate}
+                                    pager={pager}
                                     pageLength={rows.length}
+                                    visualization={visualization}
+                                    pageRequest={pageRequest}
+                                    isDisconnected={isDisconnected}
+                                    onPaginate={onPaginate}
                                 />
                             </DataTableRow>
                         </DataTableFoot>
