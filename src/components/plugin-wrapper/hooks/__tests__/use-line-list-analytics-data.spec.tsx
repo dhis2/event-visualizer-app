@@ -29,8 +29,25 @@ const fixtureResponse = fixture.response as {
 type AnalyticsParams = { page: number; pageSize: number; totalPages: boolean }
 type AnalyticsHandler = (
     type: string,
-    query: { params: AnalyticsParams }
+    query: { params: AnalyticsParams },
+    options: { signal?: AbortSignal }
 ) => unknown
+
+/* Holds back the response for each page until the test releases it. */
+const createSlowAnalytics = () => {
+    const pending = new Map<number, (response: unknown) => void>()
+    const signals = new Map<number, AbortSignal | undefined>()
+    const analytics = vi.fn<AnalyticsHandler>(
+        (_, { params }, { signal }) =>
+            new Promise((resolve) => {
+                pending.set(params.page, resolve)
+                signals.set(params.page, signal)
+            })
+    )
+    const respond = (page: number) =>
+        act(async () => pending.get(page)!(responseForPage(page)))
+    return { analytics, respond, signals }
+}
 
 const responseForPage = (page: number, rows = fixtureResponse.rows) => ({
     ...fixtureResponse,
@@ -92,6 +109,11 @@ const fetchPage = (page: number) =>
         pageSize: 100,
     })
 
+const fetchPagesWithoutWaiting = (...pages: number[]) =>
+    act(() => {
+        pages.forEach((page) => void fetchPage(page))
+    })
+
 describe('useLineListAnalyticsData', () => {
     beforeEach(() => {
         /* Analytics.getAnalytics caches a singleton bound to the first data
@@ -135,5 +157,55 @@ describe('useLineListAnalyticsData', () => {
         expect(hook[1].data!.pager).toEqual(pagerBefore)
         expect(hook[1].isFetching).toBe(false)
         expect(screen.queryByTestId('error-boundary')).not.toBeInTheDocument()
+    })
+
+    it('aborts the request for a page the user moved past', async () => {
+        const { analytics, signals } = createSlowAnalytics()
+        await renderHookProbe(analytics)
+
+        fetchPagesWithoutWaiting(2, 3)
+
+        await waitFor(() => expect(signals.has(3)).toBe(true))
+        expect(signals.get(2)?.aborted).toBe(true)
+        expect(signals.get(3)?.aborted).toBe(false)
+    })
+
+    it('shows the newest page when an older response arrives later', async () => {
+        const { analytics, respond } = createSlowAnalytics()
+        await renderHookProbe(analytics)
+
+        fetchPagesWithoutWaiting(2, 3)
+        await waitFor(() => expect(analytics).toHaveBeenCalledTimes(2))
+
+        await respond(3)
+        await waitFor(() => expect(hook[1].data?.pager.page).toBe(3))
+        await respond(2)
+
+        expect(hook[1].data!.pager.page).toBe(3)
+        expect(hook[1].isFetching).toBe(false)
+    })
+
+    it('keeps loading until the newest request is answered', async () => {
+        const { analytics, respond } = createSlowAnalytics()
+        await renderHookProbe(analytics)
+
+        fetchPagesWithoutWaiting(2, 3)
+        await waitFor(() => expect(analytics).toHaveBeenCalledTimes(2))
+
+        await respond(2)
+
+        expect(hook[1].isFetching).toBe(true)
+        expect(hook[1].data).toBeNull()
+        expect(screen.queryByTestId('error-boundary')).not.toBeInTheDocument()
+    })
+
+    it('reports the page and page size of the newest request while loading', async () => {
+        const { analytics } = createSlowAnalytics()
+        await renderHookProbe(analytics)
+
+        fetchPagesWithoutWaiting(2, 3)
+        await waitFor(() => expect(analytics).toHaveBeenCalledTimes(2))
+
+        expect(hook[1].pageRequest).toEqual({ page: 3, pageSize: 100 })
     })
 })
