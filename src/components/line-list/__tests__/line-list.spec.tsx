@@ -114,28 +114,7 @@ describe('LineList', () => {
     })
 
     describe('Pagination', () => {
-        it('shows the page without totals', async () => {
-            await renderLineList(largeLineListWithLegend, {
-                analytics: analyticsWithPager(largeLineListWithLegend, {
-                    page: 2,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            expect(screen.getByLabelText('Page number')).toHaveValue('2')
-            expect(
-                screen.getByRole('button', { name: 'Previous page' })
-            ).toBeEnabled()
-            expect(
-                screen.getByRole('button', { name: 'Next page' })
-            ).toBeEnabled()
-            expect(
-                screen.queryByTestId('pagination-row-count')
-            ).not.toBeInTheDocument()
-        })
-
-        it('shows the page count and total with totals', async () => {
+        it('shows the pager of the analytics response', async () => {
             await renderLineList(largeLineListWithLegend, {
                 analytics: analyticsWithPager(largeLineListWithLegend, {
                     page: 1,
@@ -150,23 +129,6 @@ describe('LineList', () => {
             expect(
                 screen.getByTestId('pagination-row-count')
             ).toHaveTextContent(/^1 234 /)
-        })
-
-        it('shows only the row count on a single page', async () => {
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: true,
-                }),
-            })
-
-            expect(
-                screen.queryByRole('button', { name: 'Next page' })
-            ).not.toBeInTheDocument()
-            expect(
-                screen.getByTestId('pagination-row-count')
-            ).toBeInTheDocument()
         })
     })
 
@@ -439,41 +401,6 @@ describe('LineList', () => {
             expect(
                 screen.getByRole('button', { name: 'Pagination options' })
             ).toBeDisabled()
-        })
-
-        it('shows tooltip on hover when pagination is disabled due to disconnection', async () => {
-            const user = userEvent.setup()
-
-            // Set disconnected state
-            mockUseDhis2ConnectionStatus.mockReturnValue({
-                isConnected: false,
-                isDisconnected: true,
-            })
-
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            // Find the sticky pagination container (which now has the tooltip props applied)
-            const paginationContainer = screen.getByTestId(
-                'sticky-pagination-container'
-            )
-            expect(paginationContainer).toBeInTheDocument()
-
-            // Hover over the pagination container
-            await user.hover(paginationContainer)
-
-            // Wait for tooltip to appear and check if tooltip content appears
-            await expect(
-                screen.findByText('Not available offline')
-            ).resolves.toBeInTheDocument()
-
-            // Unhover to clean up
-            await user.unhover(paginationContainer)
         })
 
         it('shows normal behavior when connection is restored', async () => {

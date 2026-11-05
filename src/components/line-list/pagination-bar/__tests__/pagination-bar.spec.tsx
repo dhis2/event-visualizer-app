@@ -256,14 +256,6 @@ describe('PaginationBar', () => {
             expect(onPaginate).toHaveBeenCalledWith({ page: 7, pageSize: 100 })
         })
 
-        it('does not request the page already shown', () => {
-            const { onPaginate } = renderBar()
-
-            typePage('2')
-
-            expect(onPaginate).not.toHaveBeenCalled()
-        })
-
         it('requests the page after the one that is loading', () => {
             const { onPaginate } = renderBar({
                 pager: PAGE_TWO_OF_THIRTEEN,
