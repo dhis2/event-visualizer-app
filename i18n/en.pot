@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-11-04T14:02:37.241Z\n"
-"PO-Revision-Date: 2026-11-04T14:02:37.241Z\n"
+"POT-Creation-Date: 2026-11-05T14:54:25.897Z\n"
+"PO-Revision-Date: 2026-11-05T14:54:25.897Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -606,6 +606,9 @@ msgstr "Filters are not applied to Event visualizations"
 
 msgid "Show without filters"
 msgstr "Show without filters"
+
+msgid "Page {{page}} not found, returned to page {{shownPage}}"
+msgstr "Page {{page}} not found, returned to page {{shownPage}}"
 
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
