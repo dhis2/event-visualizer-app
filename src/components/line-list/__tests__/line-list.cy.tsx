@@ -244,12 +244,15 @@ describe(
                     'be.visible'
                 )
 
-                // Overlay has z-index of 2000
-                cy.getByDataTest('fetch-overlay').should(
-                    'have.css',
-                    'z-index',
-                    '2000'
-                )
+                // Overlay is above the sticky table header
+                cy.getByDataTest('line-list-data-table-head').then(($head) => {
+                    const headZIndex = Number($head.css('z-index'))
+                    cy.getByDataTest('fetch-overlay').should(($overlay) =>
+                        expect(
+                            Number($overlay.css('z-index'))
+                        ).to.be.greaterThan(headZIndex)
+                    )
+                })
 
                 // Check that overlay covers the scroll-box-container
                 cy.getByDataTest('fetch-overlay').should(($overlay) => {
@@ -261,10 +264,14 @@ describe(
                     expect(scrollBox).to.have.property('getBoundingClientRect')
                     const scrollBoxRect = scrollBox!.getBoundingClientRect()
 
-                    expect(overlayRect.left).to.equal(scrollBoxRect.left)
-                    expect(overlayRect.top).to.equal(scrollBoxRect.top)
-                    expect(overlayRect.right).to.equal(scrollBoxRect.right)
-                    expect(overlayRect.bottom).to.equal(scrollBoxRect.bottom)
+                    expect(overlayRect.left).to.equal(scrollBoxRect.left + 1)
+                    expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
+                    expect(overlayRect.right).to.equal(
+                        scrollBoxRect.left + (scrollBox?.clientWidth ?? 0) + 1
+                    )
+                    expect(overlayRect.bottom).to.equal(
+                        scrollBoxRect.top + (scrollBox?.clientHeight ?? 0) + 1
+                    )
                 })
             }
 

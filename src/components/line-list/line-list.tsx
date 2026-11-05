@@ -17,7 +17,6 @@ import {
     type PropsWithChildren,
 } from 'react'
 import { BodyCell } from './body-cell'
-import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
 import { HeadingRow } from './heading-row'
 import { LegendKey } from './legend-key'
@@ -142,7 +141,7 @@ const LineListInternal: FC<LineListProps> = ({
                 className={classes.startColumnBottom}
                 data-test="start-column-bottom"
             >
-                <ScrollBox overlay={isFetching && <FetchOverlay />}>
+                <ScrollBox isFetching={isFetching}>
                     <DataTable
                         width="auto"
                         className={cx(
