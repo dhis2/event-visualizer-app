@@ -5,7 +5,8 @@ import {
 import type { LineListPager, PageRequest } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
-import { useDataEngine } from '@dhis2/app-runtime'
+import { useAlert, useDataEngine } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
 import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
@@ -100,6 +101,15 @@ type AnalyticsDataState = {
     pageRequest: PageRequest | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
+type EmptyPageAlertProps = { page: number; shownPage: number }
+
+/* useAlert returns a new show function when its message or options change */
+const getEmptyPageAlertMessage = ({ page, shownPage }: EmptyPageAlertProps) =>
+    i18n.t('Page {{page}} not found, returned to page {{shownPage}}', {
+        page,
+        shownPage,
+    })
+const EMPTY_PAGE_ALERT_OPTIONS = {}
 
 const fetchAnalyticsDataForLL = async ({
     analyticsEngine,
@@ -288,6 +298,12 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
     const { reserve, release } = useInFlightDedup()
     const abortControllerRef = useRef<AbortController | null>(null)
+    const shownPageRef = useRef(1)
+
+    const { show: showEmptyPageAlert } = useAlert(
+        getEmptyPageAlertMessage,
+        EMPTY_PAGE_ALERT_OPTIONS
+    )
 
     const totalPages = useAnalyticsTotalCounts()
 
@@ -355,6 +371,10 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                         isFetching: false,
                         pageRequest: null,
                     }))
+                    showEmptyPageAlert({
+                        page,
+                        shownPage: shownPageRef.current,
+                    })
                     return
                 }
 
@@ -392,6 +412,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                     pageRequest: null,
                 })
+                shownPageRef.current = page
 
                 onResponseReceived()
             } catch (error) {
@@ -419,6 +440,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             reserve,
             release,
             showBoundary,
+            showEmptyPageAlert,
             totalPages,
         ]
     )

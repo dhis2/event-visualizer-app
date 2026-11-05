@@ -20,6 +20,24 @@ vi.mock('@components/plugin-wrapper/hooks/use-analytics-total-counts', () => ({
     useAnalyticsTotalCounts: mockUseAnalyticsTotalCounts,
 }))
 
+type ShownAlert = { message: string; options: unknown }
+const shownAlerts = vi.hoisted(() => [] as ShownAlert[])
+vi.mock('@dhis2/app-runtime', async (importOriginal) => ({
+    ...(await importOriginal<object>()),
+    useAlert: (
+        message: string | ((props: unknown) => string),
+        options?: unknown
+    ) => ({
+        show: (props: unknown) =>
+            shownAlerts.push({
+                message:
+                    typeof message === 'function' ? message(props) : message,
+                options,
+            }),
+        hide: vi.fn(),
+    }),
+}))
+
 const fixture = loadLineListFixture('e2e-enrollment')
 const fixtureResponse = fixture.response as {
     rows: string[][]
@@ -121,6 +139,7 @@ describe('useLineListAnalyticsData', () => {
         ;(
             Analytics.getAnalytics as unknown as { analytics?: unknown }
         ).analytics = undefined
+        shownAlerts.length = 0
     })
 
     it('requests totals when the server can count them', async () => {
@@ -157,6 +176,29 @@ describe('useLineListAnalyticsData', () => {
         expect(hook[1].data!.pager).toEqual(pagerBefore)
         expect(hook[1].isFetching).toBe(false)
         expect(screen.queryByTestId('error-boundary')).not.toBeInTheDocument()
+    })
+
+    it('tells the user when a later page is empty', async () => {
+        const analytics = vi.fn<AnalyticsHandler>((_, { params }) =>
+            params.page === 1 ? responseForPage(1) : responseForPage(9, [])
+        )
+        await renderHookProbe(analytics)
+        await act(() => fetchPage(1))
+
+        await act(() => fetchPage(9))
+
+        expect(shownAlerts).toEqual([
+            { message: 'Page 9 not found, returned to page 1', options: {} },
+        ])
+    })
+
+    it('does not alert when the first page loads', async () => {
+        const analytics = vi.fn<AnalyticsHandler>(() => responseForPage(1))
+        await renderHookProbe(analytics)
+
+        await act(() => fetchPage(1))
+
+        expect(shownAlerts).toEqual([])
     })
 
     it('aborts the request for a page the user moved past', async () => {
