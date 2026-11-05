@@ -103,14 +103,6 @@ type AnalyticsDataState = {
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 type EmptyPageAlertProps = { page: number; shownPage: number }
 
-/* useAlert returns a new show function when its message or options change */
-const getEmptyPageAlertMessage = ({ page, shownPage }: EmptyPageAlertProps) =>
-    i18n.t('Page {{page}} not found, returned to page {{shownPage}}', {
-        page,
-        shownPage,
-    })
-const EMPTY_PAGE_ALERT_OPTIONS = {}
-
 const fetchAnalyticsDataForLL = async ({
     analyticsEngine,
     visualization,
@@ -304,8 +296,11 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const shownPageRef = useRef(1)
 
     const { show: showEmptyPageAlert } = useAlert(
-        getEmptyPageAlertMessage,
-        EMPTY_PAGE_ALERT_OPTIONS
+        ({ page, shownPage }: EmptyPageAlertProps) =>
+            i18n.t('Page {{page}} not found, returned to page {{shownPage}}', {
+                page,
+                shownPage,
+            })
     )
 
     const totalPages = useAnalyticsTotalCounts()
