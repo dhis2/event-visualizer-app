@@ -30,22 +30,33 @@ describe('PluginWrapper', () => {
      * `waitFor`'s first poll, causing flakes. */
     const deferredAnalytics = createDeferredQuery()
     const analyticsPageSizes: number[] = []
+    let analyticsRequestCount = 0
+    const countRequests =
+        <T extends (...args: never[]) => unknown>(handler: T) =>
+        (...args: Parameters<T>) => {
+            analyticsRequestCount += 1
+            return handler(...args)
+        }
     const mockOptions = {
         queryData: {
             /* Dimension strings are stage-prefixed, so match with a substring
              * check, not an exact array `.includes`. */
-            analytics: deferredAnalytics.defer(
-                (
-                    _: unknown,
-                    query: { params: { dimension: string[]; pageSize: number } }
-                ) => {
-                    analyticsPageSizes.push(query.params.pageSize)
-                    return query.params.dimension.some((dimension) =>
-                        dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
-                    )
-                        ? analyticsResponse1
-                        : analyticsResponse2
-                }
+            analytics: countRequests(
+                deferredAnalytics.defer(
+                    (
+                        _: unknown,
+                        query: {
+                            params: { dimension: string[]; pageSize: number }
+                        }
+                    ) => {
+                        analyticsPageSizes.push(query.params.pageSize)
+                        return query.params.dimension.some((dimension) =>
+                            dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
+                        )
+                            ? analyticsResponse1
+                            : analyticsResponse2
+                    }
+                )
             ),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},
@@ -145,6 +156,7 @@ describe('PluginWrapper', () => {
     beforeEach(() => {
         deferredAnalytics.reset()
         analyticsPageSizes.length = 0
+        analyticsRequestCount = 0
     })
 
     it('should render the loading spinner while loading and switching visualizations', async () => {
@@ -376,5 +388,17 @@ describe('PluginWrapper', () => {
 
         await waitFor(() => expect(analyticsPageSizes).toHaveLength(3))
         expect(analyticsPageSizes.at(-1)).toBe(50)
+    })
+
+    it('requests the analytics data once', async () => {
+        const { store } = await renderWithAppWrapper(
+            <TestComponent />,
+            mockOptions
+        )
+        await loadFirstVisualization(store)
+
+        await act(() => new Promise((resolve) => setTimeout(resolve, 100)))
+
+        expect(analyticsRequestCount).toBe(1)
     })
 })
