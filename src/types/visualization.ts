@@ -62,6 +62,14 @@ type DataElementDimensionArray = Array<{
     dataElement: IdNameRecord
 }>
 
+/* `aggregationType` is the item's own default, not the one the visualization
+ * applies to the cell value. */
+export type CellValueItem = IdRecord & {
+    name?: string
+    valueType?: ValueType
+    aggregationType?: EventVisualizationGenerated['aggregationType']
+}
+
 type SavedVisualizationFieldOverrides = {
     id: string
     // API transforms with ~rename or custom structures
@@ -95,17 +103,12 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    /* The API resolves the cell value against the data element or tracked
-     * entity attribute behind it, so the dimension's own properties come back
-     * with it. The backend only stores the id: the aggregation type the
-     * visualization applies is the top-level one. */
-    value?: IdRecord & {
-        name?: string
-        aggregationType?: EventVisualizationGenerated['aggregationType']
-        valueType?: ValueType
-        dimensionItemType?: DimensionType
-        programStage?: IdRecord
-    }
+    /* The item chosen as the cell value and the stage it was chosen from.
+     * Its details are in the data element or attribute field below, whichever
+     * the backend resolved the id to. */
+    value?: IdRecord & { programStage?: IdRecord }
+    dataElementValueDimension?: CellValueItem
+    attributeValueDimension?: CellValueItem
 }
 
 /**
@@ -161,10 +164,7 @@ export type SavedVisualization = Omit<
 export type EmptyVisualization = Record<string, never>
 /* All the app keeps of the cell value: the item and the stage it was chosen
  * from. Anything else about the item is read from the metadata store. */
-export type CellValueRef = Pick<
-    NonNullable<SavedVisualization['value']>,
-    'id' | 'programStage'
->
+export type CellValueRef = NonNullable<SavedVisualization['value']>
 
 export type CurrentVisualization = Pick<
     SavedVisualization,

@@ -86,9 +86,6 @@
         "repeatable": false,
         "name": "Birth"
     },
-    "dataElementValueDimension": {
-        "id": "UXz7xuGCEhU"
-    },
     "programDimensions": [
         {
             "enrollmentDateLabel": "Date of enrollment",
@@ -144,11 +141,7 @@
     "legacy": true,
     "dataType": "AGGREGATED_VALUES",
     "value": {
-        "aggregationType": "AVERAGE",
-        "id": "UXz7xuGCEhU",
-        "name": "MCH Weight (g)",
-        "valueType": "NUMBER",
-        "dimensionItemType": "DATA_ELEMENT"
+        "id": "UXz7xuGCEhU"
     },
     "filters": [
         {
@@ -215,5 +208,11 @@
     },
     "displayFormName": "ES test custom value",
     "id": "COcTr50AFCq",
-    "sorting": []
+    "sorting": [],
+    "dataElementValueDimension": {
+        "id": "UXz7xuGCEhU",
+        "name": "MCH Weight (g)",
+        "valueType": "NUMBER",
+        "aggregationType": "AVERAGE"
+    }
 }

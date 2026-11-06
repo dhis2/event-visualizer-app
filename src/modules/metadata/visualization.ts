@@ -1,3 +1,4 @@
+import { getCellValueItem } from '@modules/dimension/cell-value'
 import { getUiDimensionType } from '@modules/dimension/dimension-type'
 import {
     getEnrollmentFixedDimensions,
@@ -107,36 +108,26 @@ export const extractDimensionMetadata = (
 
 /* Keyed by the compound id, so the cell value resolves to the same item
  * whether it was dragged in or loaded back. The stage prefix is what gives it
- * programStageId and programId, resolved from the stage already in the store,
- * so the raw `programStage` is dropped. The API names the dimension type
- * `dimensionItemType`; the store knows it as `dimensionType`, and that rename
- * is what registers the value as a dimension rather than a bare named item.
- * The type is only in the saved payload, which is why the value is keyed
- * here: a tracked entity attribute has no stage to key it by. */
+ * programStageId and programId, resolved from the stage already in the store.
+ * Setting `dimensionType` is what registers the value as a dimension rather
+ * than a bare named item. The item's type is only in the saved payload, which
+ * is why the value is keyed here: a tracked entity attribute has no stage to
+ * key it by. */
 export const extractValueMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    if (!visualization.value) {
+    const item = getCellValueItem(visualization)
+    if (!visualization.value || !item) {
         return {}
     }
-    const { id, name, aggregationType, valueType, dimensionItemType } =
-        visualization.value
+    const { name, aggregationType, valueType, dimensionType } = item
+    const { id, programStage } = visualization.value
     const compoundId = getCompoundDimensionId(
-        {
-            dimension: id,
-            dimensionType: dimensionItemType,
-            programStage: visualization.value.programStage,
-        },
+        { dimension: id, dimensionType, programStage },
         getTetId(visualization)
     )
     return {
-        [compoundId]: {
-            id,
-            name,
-            aggregationType,
-            valueType,
-            ...(dimensionItemType && { dimensionType: dimensionItemType }),
-        },
+        [compoundId]: { id, name, aggregationType, valueType, dimensionType },
     }
 }
 
