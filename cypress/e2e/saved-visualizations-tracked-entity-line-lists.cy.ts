@@ -4,21 +4,21 @@ describeSavedVisualizations('tracked entity line lists', [
     {
         covers: 'Tracked entity line list, tracked entity type only',
         id: 'cRuVDbe3Lga',
-        name: 'EVER [Line list] [TE] Basic',
+        name: 'IDV [Line list] [TE] Basic',
         type: 'LINE_LIST',
         headers: ['Registration org. unit', 'Created on', 'Gender'],
     },
     {
         covers: 'Tracked entity line list, tracked entity type only',
         id: 'qTd4CrFQ4hz',
-        name: 'EVER Person List',
+        name: 'IDV Person List',
         type: 'LINE_LIST',
         headers: ['Registration org. unit', 'First name'],
     },
     {
         covers: 'Tracked entity line list, tracked entity type and one program',
         id: 'cHhlOdJqqox',
-        name: 'EVER Person List - LL breaking',
+        name: 'IDV Person List - LL breaking',
         type: 'LINE_LIST',
         headers: [
             'Registration org. unit',
@@ -29,7 +29,7 @@ describeSavedVisualizations('tracked entity line lists', [
     {
         covers: 'Tracked entity line list, tracked entity type and one program',
         id: 'GOIpY8GFUJp',
-        name: 'EVER [Line list] [TE] Stage and enrollment dimension',
+        name: 'IDV [Line list] [TE] Stage and enrollment dimension',
         type: 'LINE_LIST',
         headers: [
             'Registration org. unit',

@@ -4,7 +4,7 @@ describeSavedVisualizations('enrollment line lists', [
     {
         covers: 'Enrollment line list, one stage with enrollment dimensions',
         id: 'qSc4vbYPPgk',
-        name: 'EVER [Line list] [Enrollment] Basic',
+        name: 'IDV [Line list] [Enrollment] Basic',
         type: 'LINE_LIST',
         headers: [
             'Enrollment org. unit',
@@ -15,7 +15,7 @@ describeSavedVisualizations('enrollment line lists', [
     {
         covers: 'Enrollment line list, one stage with enrollment dimensions',
         id: 'C524QgkjodB',
-        name: 'EVER [Line list] [Enrollment] Stage and enrollment dimensions',
+        name: 'IDV [Line list] [Enrollment] Stage and enrollment dimensions',
         type: 'LINE_LIST',
         headers: [
             'Enrollment org. unit',
