@@ -55,6 +55,12 @@ describe('getDimensionMetadataFields', () => {
         expect(new Set(listNames).size).toBe(listNames.length)
     })
 
+    it("asks for a data element's and an attribute's own aggregation type", () => {
+        expect(getDimensionMetadataFields('displayName')).toContain(
+            'attributeDimensions[attribute[id,displayName~rename(name),valueType,aggregationType]]'
+        )
+    })
+
     it('names the items by the display property', () => {
         expect(getDimensionMetadataFields('displayShortName')).toContain(
             'programIndicatorDimensions[programIndicator[id,displayShortName~rename(name)]]'
@@ -64,7 +70,7 @@ describe('getDimensionMetadataFields', () => {
     /* A legend set has no shortName. */
     it('asks for the legend set with the data element, by its display name', () => {
         expect(getDimensionMetadataFields('displayShortName')).toContain(
-            'dataElementDimensions[dataElement[id,displayShortName~rename(name)],legendSet[id,displayName~rename(name)]]'
+            'dataElementDimensions[dataElement[id,displayShortName~rename(name),valueType,aggregationType],legendSet[id,displayName~rename(name)]]'
         )
     })
 })

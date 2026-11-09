@@ -511,6 +511,11 @@ when there is no tracked entity type).
   value's metadata must be in the store before the ui config is derived from a visualization.
 - **Legacy**: an ER pivot table keeps its one stage at the root, so on load
   `normalizeApiSavedVisualization` moves it onto a data element value.
+- **Same fields everywhere**: a data element or attribute is fetched with `getAggregatableDimensionFields`
+  (`@modules/query`), whether it comes from the sidebar, the value lists or a loaded layout. The
+  `columns`/`rows`/`filters` objects don't carry the item's name or own aggregation type, so for a
+  layout item these come from `dataElementDimensions` / `attributeDimensions`, the lists the backend
+  builds those layout dimensions from.
 
 ## Grouping values by legend
 

@@ -76,10 +76,12 @@ export const getDimensionMetadataFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string[] => {
     const itemFields = `id,${displayNameProp}~rename(name)`
+    const aggregatableDimensionFields =
+        getAggregatableDimensionFields(displayNameProp)
 
     return [
-        `dataElementDimensions[dataElement[${itemFields}],legendSet[id,displayName~rename(name)]]`,
-        `attributeDimensions[attribute[${itemFields}]]`,
+        `dataElementDimensions[dataElement[${aggregatableDimensionFields}],legendSet[id,displayName~rename(name)]]`,
+        `attributeDimensions[attribute[${aggregatableDimensionFields}]]`,
         `programIndicatorDimensions[programIndicator[${itemFields}]]`,
         `categoryDimensions[category[${itemFields}]]`,
         `categoryOptionGroupSetDimensions[categoryOptionGroupSet[${itemFields}]]`,

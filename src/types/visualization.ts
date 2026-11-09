@@ -57,11 +57,6 @@ export type DimensionArray = Array<DimensionRecord>
 
 type ProgramDimensionArray = Array<Program>
 
-type DataElementDimensionArray = Array<{
-    legendSet: IdNameRecord
-    dataElement: IdNameRecord
-}>
-
 /* A data element or attribute as `getAggregatableDimensionFields` fetches it.
  * `aggregationType` is the item's own default, not the one the visualization
  * applies to the cell value. */
@@ -70,6 +65,11 @@ export type AggregatableDimension = IdRecord & {
     valueType?: ValueType
     aggregationType?: EventVisualizationGenerated['aggregationType']
 }
+
+type DataElementDimensionArray = Array<{
+    legendSet: IdNameRecord
+    dataElement: IdNameRecord & AggregatableDimension
+}>
 
 type SavedVisualizationFieldOverrides = {
     id: string
@@ -89,7 +89,9 @@ type SavedVisualizationFieldOverrides = {
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
-    attributeDimensions?: MetadataRecordArray<'attribute'>
+    attributeDimensions?: Array<{
+        attribute: IdNameRecord & AggregatableDimension
+    }>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
     categoryDimensions: MetadataRecordArray<'category'>
     categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
