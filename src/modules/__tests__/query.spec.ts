@@ -1,5 +1,5 @@
 import {
-    getCellValueItemFields,
+    getAggregatableDimensionFields,
     getProgramFields,
     getTrackedEntityTypeFields,
 } from '@modules/query'
@@ -30,9 +30,11 @@ describe('getTrackedEntityTypeFields', () => {
     })
 })
 
-describe('getCellValueItemFields', () => {
+describe('getAggregatableDimensionFields', () => {
     it('requests what the cell value axis reads, named by the display property', () => {
-        expect(getCellValueItemFields('displayShortName').split(',')).toEqual([
+        expect(
+            getAggregatableDimensionFields('displayShortName').split(',')
+        ).toEqual([
             'id',
             'displayShortName~rename(name)',
             'valueType',

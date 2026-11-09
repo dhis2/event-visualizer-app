@@ -55,10 +55,12 @@ export const getTrackedEntityTypeFields = (
         'displayTrackedEntityTypesLabel',
     ].join(',')
 
-/* What the cell value axis reads from a data item: its name, whether it is
- * numeric, and its own aggregation type. Every query that lists items which
- * can become the cell value includes these. */
-export const getCellValueItemFields = (
+/* The fields that decide whether a data element or attribute can be
+ * aggregated as the cell value, and how: whether it is numeric and its own
+ * aggregation type, plus its name. Every query for an item that might become
+ * the cell value asks for them, so its metadata is the same whether it comes
+ * from the sidebar, the layout or the cell value of a saved visualization. */
+export const getAggregatableDimensionFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string =>
     [

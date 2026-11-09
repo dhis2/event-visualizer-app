@@ -62,9 +62,10 @@ type DataElementDimensionArray = Array<{
     dataElement: IdNameRecord
 }>
 
-/* `aggregationType` is the item's own default, not the one the visualization
+/* A data element or attribute as `getAggregatableDimensionFields` fetches it.
+ * `aggregationType` is the item's own default, not the one the visualization
  * applies to the cell value. */
-export type CellValueItem = IdRecord & {
+export type AggregatableDimension = IdRecord & {
     name?: string
     valueType?: ValueType
     aggregationType?: EventVisualizationGenerated['aggregationType']
@@ -108,8 +109,8 @@ type SavedVisualizationFieldOverrides = {
      * Its details are in the data element or attribute field below, whichever
      * the backend resolved the id to. */
     value?: IdRecord & { programStage?: IdRecord }
-    dataElementValueDimension?: CellValueItem
-    attributeValueDimension?: CellValueItem
+    dataElementValueDimension?: AggregatableDimension
+    attributeValueDimension?: AggregatableDimension
 }
 
 /**

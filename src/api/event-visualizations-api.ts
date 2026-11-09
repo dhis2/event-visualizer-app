@@ -5,7 +5,7 @@ import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
     dimensionFields,
-    getCellValueItemFields,
+    getAggregatableDimensionFields,
     getProgramFields,
     getTrackedEntityTypeFields,
     programStageFields,
@@ -38,8 +38,8 @@ export const getVisualizationQueryFields = (
     `rows[${dimensionFields}]`,
     `filters[${dimensionFields}]`,
     'value[id,programStage[id]]',
-    `dataElementValueDimension[${getCellValueItemFields(displayNameProp)}]`,
-    `attributeValueDimension[${getCellValueItemFields(displayNameProp)}]`,
+    `dataElementValueDimension[${getAggregatableDimensionFields(displayNameProp)}]`,
+    `attributeValueDimension[${getAggregatableDimensionFields(displayNameProp)}]`,
     `program[${getProgramFields(displayNameProp)}]`,
     `programStage[${programStageFields}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,
