@@ -50,7 +50,6 @@ const setupNodeEvents = async (
         ...config.expose,
         dhis2BaseUrl: config.env.dhis2BaseUrl,
         dhis2InstanceVersion: config.env.dhis2InstanceVersion,
-        dhis2DatatestPrefix: config.env.dhis2DatatestPrefix,
         hideRequestsFromLog: config.env.hideRequestsFromLog,
     }
 
@@ -81,9 +80,6 @@ module.exports = defineConfig({
         defaultCommandTimeout: 30000,
     },
     allowCypressEnv: false,
-    expose: {
-        dhis2DatatestPrefix: 'dhis2-eventvisualizer',
-    },
     component: {
         specPattern: 'src/**/*.cy.tsx',
         devServer: {
