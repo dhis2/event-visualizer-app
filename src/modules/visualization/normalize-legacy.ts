@@ -174,11 +174,10 @@ type CellValue = NonNullable<SavedVisualization['value']>
  * the data element across every stage it belongs to. */
 const normalizeLegacyValue = (
     value: CellValue,
+    vis: SavedVisualization,
     stageRef: LegacyDimensionContext['stageRef']
 ): CellValue =>
-    stageRef &&
-    !value.programStage &&
-    value.dimensionItemType === 'DATA_ELEMENT'
+    stageRef && !value.programStage && vis.dataElementValueDimension
         ? { ...value, programStage: stageRef }
         : value
 
@@ -333,6 +332,7 @@ export const normalizeApiSavedVisualization = (
     } else {
         normalizedVis.value = normalizeLegacyValue(
             normalizedVis.value,
+            normalizedVis,
             context.stageRef
         )
         normalizedVis.aggregationType ??= 'DEFAULT'

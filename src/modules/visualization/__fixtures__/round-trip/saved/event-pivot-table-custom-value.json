@@ -202,12 +202,14 @@
     "aggregationType": "AVERAGE",
     "value": {
         "id": "UXz7xuGCEhU",
-        "name": "MCH Weight (g)",
-        "aggregationType": "AVERAGE",
-        "valueType": "NUMBER",
-        "dimensionItemType": "DATA_ELEMENT",
         "programStage": {
             "id": "A03MvHHogjR"
         }
+    },
+    "dataElementValueDimension": {
+        "id": "UXz7xuGCEhU",
+        "name": "MCH Weight (g)",
+        "valueType": "NUMBER",
+        "aggregationType": "AVERAGE"
     }
 }
