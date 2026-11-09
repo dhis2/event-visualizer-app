@@ -1,8 +1,8 @@
-# Event Visualizer App - Agent Guidelines
+# Individual Data Visualizer (IDV) App - Agent Guidelines
 
 ## Project Overview
 
-This is a DHIS2 Event Visualizer application built with React, TypeScript, Vite, Redux Toolkit, and DHIS2 UI components. The application provides event data visualization capabilities within the DHIS2 ecosystem.
+This is the DHIS2 Individual Data Visualizer (IDV) application built with React, TypeScript, Vite, Redux Toolkit, and DHIS2 UI components. The application visualizes individual (event, enrollment and tracked entity) data within the DHIS2 ecosystem.
 
 ### Project Stage
 
