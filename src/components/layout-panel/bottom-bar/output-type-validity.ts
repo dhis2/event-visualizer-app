@@ -54,6 +54,7 @@ type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsSelected: boolean
     hasMultipleProgramStagesSelected: boolean
+    hasTrackedEntityDimensionWithEventProgram: boolean
     isRegistrationOuInLineList: boolean
     visualizationType: string
 }
@@ -62,6 +63,7 @@ const getEventTooltipConfig = ({
     hasNoProgramInLayout,
     hasMultipleProgramsSelected,
     hasMultipleProgramStagesSelected,
+    hasTrackedEntityDimensionWithEventProgram,
     isRegistrationOuInLineList,
     visualizationType,
 }: EventTooltipConfigParams): TooltipConfig => {
@@ -79,6 +81,14 @@ const getEventTooltipConfig = ({
 
     if (isRegistrationOuInLineList) {
         return getRegistrationOuTooltipConfig()
+    }
+
+    if (hasTrackedEntityDimensionWithEventProgram) {
+        return {
+            content: i18n.t(
+                'Not valid with tracked entity attributes and event programs'
+            ),
+        }
     }
 
     if (hasMultipleProgramStagesSelected) {
@@ -291,6 +301,12 @@ export const getOutputTypeTooltipConfig = ({
                         ...programStageIds,
                         ...cellValueContext.programStageIds,
                     ]).size > 1,
+                /* An event program has no tracked entity type, so with an
+                 * event program in the layout a tracked entity type can only
+                 * come from a dimension of one, such as an attribute. */
+                hasTrackedEntityDimensionWithEventProgram:
+                    hasEventProgramSelected &&
+                    Boolean(tetId || cellValueContext.tetId),
                 isRegistrationOuInLineList,
                 visualizationType,
             })

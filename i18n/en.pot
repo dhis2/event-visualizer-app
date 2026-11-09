@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-11-05T14:54:25.897Z\n"
-"PO-Revision-Date: 2026-11-05T14:54:25.897Z\n"
+"POT-Creation-Date: 2026-11-09T13:33:49.911Z\n"
+"PO-Revision-Date: 2026-11-09T13:33:49.911Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -302,6 +302,9 @@ msgstr "Not valid without a program"
 
 msgid "Not valid with multiple programs"
 msgstr "Not valid with multiple programs"
+
+msgid "Not valid with tracked entity attributes and event programs"
+msgstr "Not valid with tracked entity attributes and event programs"
 
 msgid "Not valid with multiple program stages"
 msgstr "Not valid with multiple program stages"
