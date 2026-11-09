@@ -5,7 +5,8 @@ import {
 } from '@modules/utils/local-storage'
 import type { VisualizationType } from '@types'
 
-export const LAST_USED_TYPE_STORAGE_KEY = 'dhis2.event-visualizer.lastUsedType'
+export const LAST_USED_TYPE_STORAGE_KEY =
+    'dhis2.individual-data-visualizer.lastUsedType'
 
 const isVisualizationType = (
     value: string | null

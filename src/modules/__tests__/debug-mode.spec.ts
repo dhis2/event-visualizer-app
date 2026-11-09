@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-const LOG_LEVEL_KEY = 'EVENT_VISUALIZER_LOG_LEVEL'
+const LOG_LEVEL_KEY = 'IDV_LOG_LEVEL'
 
 const importDebugMode = async () => {
     vi.resetModules()
@@ -82,7 +82,7 @@ describe('debug-mode', () => {
         })
     })
 
-    describe('env var override (process.env.EVENT_VISUALIZER_LOG_LEVEL)', () => {
+    describe('env var override (process.env.IDV_LOG_LEVEL)', () => {
         it('env var overrides env default in production', async () => {
             vi.stubEnv('NODE_ENV', 'production')
             vi.stubEnv(LOG_LEVEL_KEY, 'debug')

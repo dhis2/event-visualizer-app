@@ -10,7 +10,7 @@ const HOST_PAGE_DIR = 'src/plugin-host'
  * be served by hand, with its entry referenced via `/@fs`. Dev only: never
  * added to `build.rollupOptions.input`, so it cannot be built. */
 const servePluginHost = (): Plugin => ({
-    name: 'event-visualizer:serve-plugin-host',
+    name: 'idv:serve-plugin-host',
     apply: 'serve',
     configureServer(server) {
         server.middlewares.use((req, res, next) => {

@@ -1,4 +1,4 @@
-# Event visualizer app and plugin
+# Individual Data Visualizer (IDV) app and plugin
 
 [![CI](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml)
 [![deploy: netlify production](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml)
@@ -462,19 +462,19 @@ The app's debug tooling (verbose logging via [`loglevel`](https://github.com/pim
 - Production builds (Netlify previews, installed instances): level `error` — only real errors emit; devtools are silent.
 - Tests (`NODE_ENV=test`): level `silent` — no logger output, no devtools. Tests routinely exercise error paths, so emitting error logs by default would clutter the output.
 
-To override the default in any environment, set `EVENT_VISUALIZER_LOG_LEVEL` to one of `trace`, `debug`, `info`, `warn`, `error`, or `silent`. The boolean tools (Redux DevTools, metadata-store globals) are enabled at `trace`/`debug`/`info` and disabled at `warn`/`error`/`silent`.
+To override the default in any environment, set `IDV_LOG_LEVEL` to one of `trace`, `debug`, `info`, `warn`, `error`, or `silent`. The boolean tools (Redux DevTools, metadata-store globals) are enabled at `trace`/`debug`/`info` and disabled at `warn`/`error`/`silent`.
 
 **In the browser** (e.g. on a Netlify preview or an installed instance), set the `localStorage` key and reload:
 
 ```js
-localStorage.setItem('EVENT_VISUALIZER_LOG_LEVEL', 'debug')
+localStorage.setItem('IDV_LOG_LEVEL', 'debug')
 // then reload the page
 ```
 
 **In a test run** (or any Node-side invocation), use the environment variable:
 
 ```bash
-EVENT_VISUALIZER_LOG_LEVEL=debug pnpm test
+IDV_LOG_LEVEL=debug pnpm test
 ```
 
 If both are set, `localStorage` wins over the env var.
