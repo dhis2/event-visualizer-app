@@ -31,7 +31,7 @@ The current git branch is used to detect the relevant PR automatically. If you'r
     git remote -v | head -1
     ```
 
-    Extract the organization and repository name (e.g. `dhis2/event-visualizer-app`).
+    Extract the organization and repository name (e.g. `dhis2/individual-data-visualizer-app`).
 
 3. **Find the matching PR:**
     - On a feature branch: use `gh pr view --json number` to get the PR for the current branch.
@@ -48,7 +48,7 @@ The current git branch is used to detect the relevant PR automatically. If you'r
 
 4. **Store for use in later steps:**
     - Organization (e.g. `dhis2`)
-    - Repository (e.g. `event-visualizer-app`)
+    - Repository (e.g. `individual-data-visualizer-app`)
     - PR number (e.g. `153`)
     - Branch name (e.g. `feat/update-buttons`)
 
