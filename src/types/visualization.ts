@@ -80,9 +80,10 @@ type SavedVisualizationFieldOverrides = {
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
     trackedEntityType?: TrackedEntityTypeRef
-    /* How the cell `value` is aggregated. Not the same as
-     * `value.aggregationType`, which is the value item's own default. The
-     * backend does not require it, and leaves it out when it is not set. */
+    /* How the cell `value` is aggregated. Not the same as the value item's
+     * own default, which is on `dataElementValueDimension` or
+     * `attributeValueDimension`. The backend does not require it, and leaves
+     * it out when it is not set. */
     aggregationType?: EventVisualizationGenerated['aggregationType']
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
