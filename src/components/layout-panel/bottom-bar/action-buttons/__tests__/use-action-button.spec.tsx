@@ -465,7 +465,7 @@ describe('useActionButton for Event button', () => {
             })
         )
 
-        expect(result.current.tooltipConfig).toEqual(undefined)
+        expect(result.current.tooltipConfig).toBeUndefined()
     })
 })
 
