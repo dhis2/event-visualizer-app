@@ -1,4 +1,8 @@
-import { getProgramFields, getTrackedEntityTypeFields } from '@modules/query'
+import {
+    getCellValueItemFields,
+    getProgramFields,
+    getTrackedEntityTypeFields,
+} from '@modules/query'
 import { describe, expect, it } from 'vitest'
 
 describe('getProgramFields', () => {
@@ -23,5 +27,16 @@ describe('getTrackedEntityTypeFields', () => {
         expect(getTrackedEntityTypeFields('displayName').split(',')).toContain(
             'displayTrackedEntityTypesLabel'
         )
+    })
+})
+
+describe('getCellValueItemFields', () => {
+    it('requests what the cell value axis reads, named by the display property', () => {
+        expect(getCellValueItemFields('displayShortName').split(',')).toEqual([
+            'id',
+            'displayShortName~rename(name)',
+            'valueType',
+            'aggregationType',
+        ])
     })
 })
