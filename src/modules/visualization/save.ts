@@ -48,18 +48,6 @@ export const getSaveableVisualization = (
     const result: Partial<SavedVisualization> = {
         ...visualization,
         sorting,
-        /* Only the fields the backend stores: it looks the item up by uid and
-         * reads the stage it was chosen from, which is what keeps a data
-         * element belonging to several stages from aggregating across all of
-         * them. The aggregation the user chose is the top-level one; the
-         * `aggregationType` the API returns here is the data item's own
-         * default, which the app reads but never writes. */
-        value: vis.value
-            ? {
-                  id: vis.value.id,
-                  programStage: vis.value.programStage,
-              }
-            : undefined,
     }
     // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
     delete result.legacy

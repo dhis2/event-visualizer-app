@@ -173,10 +173,12 @@
     "repetitions": [],
     "aggregationType": "AVERAGE",
     "value": {
+        "id": "OvY4VVhSDeJ"
+    },
+    "attributeValueDimension": {
         "id": "OvY4VVhSDeJ",
         "name": "Weight in kg",
-        "aggregationType": "NONE",
         "valueType": "NUMBER",
-        "dimensionItemType": "PROGRAM_ATTRIBUTE"
+        "aggregationType": "NONE"
     }
 }

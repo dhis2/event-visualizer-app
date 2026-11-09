@@ -55,6 +55,19 @@ export const getTrackedEntityTypeFields = (
         'displayTrackedEntityTypesLabel',
     ].join(',')
 
+/* What the cell value axis reads from a data item: its name, whether it is
+ * numeric, and its own aggregation type. Every query that lists items which
+ * can become the cell value includes these. */
+export const getCellValueItemFields = (
+    displayNameProp: CurrentUser['settings']['displayNameProperty']
+): string =>
+    [
+        'id',
+        `${displayNameProp}~rename(name)`,
+        'valueType',
+        'aggregationType',
+    ].join(',')
+
 /*
  * Option sets and legend sets have no shortName, so their names always come
  * from displayName regardless of the user's display property setting.
