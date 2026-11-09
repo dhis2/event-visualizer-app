@@ -45,7 +45,7 @@ export const getVisualizationQueryFields = (
     `programDimensions[${getProgramFields(displayNameProp)}]`,
     'access',
     'href',
-    ...getDimensionMetadataFields(),
+    ...getDimensionMetadataFields(displayNameProp),
     'legend[set[id,displayName],strategy,style,showKey]',
     `trackedEntityType[${getTrackedEntityTypeFields(displayNameProp)}]`,
     '!interpretations',
