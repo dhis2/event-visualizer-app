@@ -251,6 +251,6 @@ describe('useLineListAnalyticsData', () => {
         fetchPagesWithoutWaiting(2, 3)
         await waitFor(() => expect(analytics).toHaveBeenCalledTimes(2))
 
-        expect(hook[1].pageRequest).toEqual({ page: 3, pageSize: 100 })
+        expect(hook[1].requestedPage).toEqual({ page: 3, pageSize: 100 })
     })
 })

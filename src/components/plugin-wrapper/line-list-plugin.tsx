@@ -36,7 +36,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onResponseReceived,
     filterText,
 }) => {
-    const [fetchAnalyticsData, { data, isFetching, pageRequest }] =
+    const [fetchAnalyticsData, { data, isFetching, requestedPage }] =
         useLineListAnalyticsData()
 
     // null indicates no custom sorting has been applied
@@ -133,7 +133,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             onPaginate={onPaginate}
             visualization={eventVisualization}
             isFetching={isFetching}
-            pageRequest={pageRequest}
+            requestedPage={requestedPage}
             isInDashboard={isInDashboard}
             isInModal={isInModal}
             onColumnHeaderClick={onColumnHeaderClick}

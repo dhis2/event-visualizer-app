@@ -46,7 +46,7 @@ const renderBar = (props: BarProps = {}) => {
         pager: PAGE_TWO_OF_MANY,
         pageLength: 100,
         visualization,
-        pageRequest: null,
+        requestedPage: null,
         isDisconnected: false,
         onPaginate,
         ...props,
@@ -152,7 +152,7 @@ describe('PaginationBar', () => {
         it('keeps the bar enabled while a page loads', () => {
             renderBar({
                 pager: PAGE_TWO_OF_THIRTEEN,
-                pageRequest: { page: 3, pageSize: 100 },
+                requestedPage: { page: 3, pageSize: 100 },
             })
 
             expect(previousButton()).toBeEnabled()
@@ -163,7 +163,7 @@ describe('PaginationBar', () => {
         })
 
         it('marks next as disabled while a page loads without totals', () => {
-            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
+            renderBar({ requestedPage: { page: 3, pageSize: 100 } })
 
             expect(nextButton()).toHaveAttribute('aria-disabled', 'true')
             expect(previousButton()).toBeEnabled()
@@ -172,7 +172,7 @@ describe('PaginationBar', () => {
         })
 
         it('shows the page that is loading', () => {
-            renderBar({ pageRequest: { page: 3, pageSize: 100 } })
+            renderBar({ requestedPage: { page: 3, pageSize: 100 } })
 
             expect(pageInput()).toHaveValue('3')
         })
@@ -180,7 +180,7 @@ describe('PaginationBar', () => {
         it('shows the page count for the page size that is loading', () => {
             renderBar({
                 pager: { page: 2, pageSize: 100, total: 1234, pageCount: 13 },
-                pageRequest: { page: 1, pageSize: 50 },
+                requestedPage: { page: 1, pageSize: 50 },
             })
 
             expect(screen.getByText('25')).toBeInTheDocument()
@@ -189,7 +189,7 @@ describe('PaginationBar', () => {
         it('disables next when the last page is loading', () => {
             renderBar({
                 pager: { page: 12, pageSize: 100, total: 1234, pageCount: 13 },
-                pageRequest: { page: 13, pageSize: 100 },
+                requestedPage: { page: 13, pageSize: 100 },
             })
 
             expect(nextButton()).toBeDisabled()
@@ -259,7 +259,7 @@ describe('PaginationBar', () => {
         it('requests the page after the one that is loading', () => {
             const { onPaginate } = renderBar({
                 pager: PAGE_TWO_OF_THIRTEEN,
-                pageRequest: { page: 3, pageSize: 100 },
+                requestedPage: { page: 3, pageSize: 100 },
             })
 
             fireEvent.click(nextButton())
@@ -269,7 +269,7 @@ describe('PaginationBar', () => {
 
         it('does not request the next page while a page loads without totals', () => {
             const { onPaginate } = renderBar({
-                pageRequest: { page: 3, pageSize: 100 },
+                requestedPage: { page: 3, pageSize: 100 },
             })
 
             fireEvent.click(nextButton())
@@ -279,7 +279,7 @@ describe('PaginationBar', () => {
 
         it('requests the previous page while a page loads without totals', () => {
             const { onPaginate } = renderBar({
-                pageRequest: { page: 3, pageSize: 100 },
+                requestedPage: { page: 3, pageSize: 100 },
             })
 
             fireEvent.click(previousButton())
@@ -290,7 +290,7 @@ describe('PaginationBar', () => {
         it('keeps the page size that is loading when paging', () => {
             const { onPaginate } = renderBar({
                 pager: PAGE_TWO_OF_THIRTEEN,
-                pageRequest: { page: 1, pageSize: 50 },
+                requestedPage: { page: 1, pageSize: 50 },
             })
 
             fireEvent.click(nextButton())

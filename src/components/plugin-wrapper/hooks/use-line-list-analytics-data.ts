@@ -2,7 +2,7 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { LineListPager, PageRequest } from '@components/line-list/types'
+import type { LineListPager, RequestedPage } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useAlert, useDataEngine } from '@dhis2/app-runtime'
@@ -98,7 +98,7 @@ type AnalyticsDataState = {
     isFetching: boolean
     data: LineListAnalyticsData | null
     /* The page the newest request asks for, while it is loading */
-    pageRequest: PageRequest | null
+    requestedPage: RequestedPage | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 type EmptyPageAlertProps = { page: number; shownPage: number }
@@ -285,7 +285,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const [state, setState] = useState<AnalyticsDataState>({
         isFetching: false,
         data: null,
-        pageRequest: null,
+        requestedPage: null,
     })
 
     const { reserve, release } = useInFlightDedup()
@@ -336,7 +336,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
-                pageRequest: { page, pageSize },
+                requestedPage: { page, pageSize },
             }))
 
             const { dimension: sortField, direction: sortDirection } =
@@ -368,7 +368,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     setState((prevState) => ({
                         ...prevState,
                         isFetching: false,
-                        pageRequest: null,
+                        requestedPage: null,
                     }))
                     showEmptyPageAlert({
                         page,
@@ -409,7 +409,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 setState({
                     data: analyticsData,
                     isFetching: false,
-                    pageRequest: null,
+                    requestedPage: null,
                 })
                 shownPageRef.current = page
 
@@ -423,7 +423,7 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     setState((prevState) => ({
                         ...prevState,
                         isFetching: false,
-                        pageRequest: null,
+                        requestedPage: null,
                     }))
                 } else {
                     showBoundary(error)

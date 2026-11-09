@@ -28,7 +28,7 @@ import type {
     ColumnHeaderClickFn,
     DataSortFn,
     DataSortPayload,
-    PageRequest,
+    RequestedPage,
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
@@ -59,7 +59,7 @@ type LineListProps = {
     onPaginate: PaginateFn
     visualization: CurrentVisualization
     isFetching?: boolean
-    pageRequest?: PageRequest | null
+    requestedPage?: RequestedPage | null
     isInDashboard?: boolean
     isInModal?: boolean
     onColumnHeaderClick?: ColumnHeaderClickFn
@@ -81,7 +81,7 @@ const LineListInternal: FC<LineListProps> = ({
     onPaginate,
     visualization,
     isFetching = false,
-    pageRequest = null,
+    requestedPage = null,
     isInDashboard = false,
     isInModal = false,
     onColumnHeaderClick,
@@ -217,7 +217,7 @@ const LineListInternal: FC<LineListProps> = ({
                                     pager={pager}
                                     pageLength={rows.length}
                                     visualization={visualization}
-                                    pageRequest={pageRequest}
+                                    requestedPage={requestedPage}
                                     isDisconnected={isDisconnected}
                                     onPaginate={onPaginate}
                                 />

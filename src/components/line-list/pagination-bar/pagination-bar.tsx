@@ -2,7 +2,7 @@ import { useMetadataStore } from '@components/app-wrapper/metadata-provider/meta
 import { useScrollBoxWidth } from '@components/line-list/scroll-box'
 import type {
     LineListPager,
-    PageRequest,
+    RequestedPage,
     PagerWithTotals,
     PaginateFn,
 } from '@components/line-list/types'
@@ -28,7 +28,7 @@ type PaginationBarProps = {
     pageLength: number
     visualization: CurrentVisualization
     /* The page being loaded, which the bar shows and pages on from */
-    pageRequest: PageRequest | null
+    requestedPage: RequestedPage | null
     isDisconnected: boolean
     onPaginate: PaginateFn
 }
@@ -48,10 +48,10 @@ const getRowCount = (
 
 const getPageCount = (
     pager: PagerWithTotals,
-    pageRequest: PageRequest | null
+    requestedPage: RequestedPage | null
 ): number =>
-    pageRequest
-        ? Math.ceil(pager.total / pageRequest.pageSize)
+    requestedPage
+        ? Math.ceil(pager.total / requestedPage.pageSize)
         : pager.pageCount
 
 export const PaginationBar: FC<PaginationBarProps> = ({
@@ -82,24 +82,24 @@ const PaginationBarInternal: FC<PaginationBarInternalProps> = ({
     pager,
     pageLength,
     visualization,
-    pageRequest,
+    requestedPage,
     onPaginate,
     disabled,
     tooltipProps,
 }) => {
     const scrollBoxWidth = useScrollBoxWidth()
     const metadataStore = useMetadataStore()
-    const { page, pageSize } = pageRequest ?? pager
+    const { page, pageSize } = requestedPage ?? pager
     const pageCount = hasTotals(pager)
-        ? getPageCount(pager, pageRequest)
+        ? getPageCount(pager, requestedPage)
         : undefined
     /* Without totals, only the page in the response is known to be the last */
     const isLastPage = hasTotals(pager)
-        ? page >= getPageCount(pager, pageRequest)
+        ? page >= getPageCount(pager, requestedPage)
         : page === pager.page && pager.isLastPage
     /* Without totals, the page after the loading one may not exist. Next
      * keeps its focus, so a keyboard user can press it again once it loads. */
-    const isNextBlocked = !hasTotals(pager) && pageRequest !== null
+    const isNextBlocked = !hasTotals(pager) && requestedPage !== null
     const singlePage = isSinglePage(pager)
     const rowCount = getRowCount(pager, pageLength)
 
