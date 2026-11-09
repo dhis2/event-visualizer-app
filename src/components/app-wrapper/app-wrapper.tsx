@@ -3,22 +3,25 @@ import { AppCachedDataQueryProvider } from './app-cached-data-query-provider'
 import { DndContextProvider } from './drag-and-drop-provider/dnd-context-provider'
 import { InterpretationsProvider } from './interpretations-provider'
 import { AppMetadataProvider } from './metadata-provider/metadata-provider'
+import { ServerVersionGate } from './server-version-gate/server-version-gate'
 import { StoreProvider } from './store-provider'
 import { StoreToLocationSyncer } from './store-to-location-syncer'
 // eslint-disable-next-line no-restricted-imports
 import '../../locales/index.js'
 
 export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
-    <AppCachedDataQueryProvider>
-        <AppMetadataProvider>
-            <StoreProvider>
-                <StoreToLocationSyncer />
-                <DndContextProvider>
-                    <InterpretationsProvider>
-                        {children}
-                    </InterpretationsProvider>
-                </DndContextProvider>
-            </StoreProvider>
-        </AppMetadataProvider>
-    </AppCachedDataQueryProvider>
+    <ServerVersionGate>
+        <AppCachedDataQueryProvider>
+            <AppMetadataProvider>
+                <StoreProvider>
+                    <StoreToLocationSyncer />
+                    <DndContextProvider>
+                        <InterpretationsProvider>
+                            {children}
+                        </InterpretationsProvider>
+                    </DndContextProvider>
+                </StoreProvider>
+            </AppMetadataProvider>
+        </AppCachedDataQueryProvider>
+    </ServerVersionGate>
 )
