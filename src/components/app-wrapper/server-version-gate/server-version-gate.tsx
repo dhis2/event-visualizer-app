@@ -33,14 +33,15 @@ export const ServerVersionGate: FC<{ children: ReactNode }> = ({
                     <IconErrorGeneric />
                 </div>
                 <p className={classes.title}>
-                    {i18n.t('App not supported on DHIS2 Core {{version}}', {
-                        version: serverVersion.full,
-                    })}
+                    {i18n.t('This app needs a newer version of DHIS2')}
                 </p>
                 <p className={classes.description}>
                     {i18n.t(
-                        'Please ask your system administrator to upgrade to {{version}} to use the Individual Data Visualizer app.',
-                        { version: `2.${MIN_MINOR}.${MIN_PATCH}` }
+                        'This server is running version {{currentVersion}}. Individual Data Visualizer needs {{requiredVersion}} or later.',
+                        {
+                            currentVersion: serverVersion.full,
+                            requiredVersion: `2.${MIN_MINOR}.${MIN_PATCH}`,
+                        }
                     )}
                 </p>
             </div>
