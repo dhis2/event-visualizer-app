@@ -1,5 +1,6 @@
 import {
     getAggregatableDimensionFields,
+    getDimensionMetadataFields,
     getProgramFields,
     getTrackedEntityTypeFields,
 } from '@modules/query'
@@ -40,5 +41,23 @@ describe('getAggregatableDimensionFields', () => {
             'valueType',
             'aggregationType',
         ])
+    })
+})
+
+describe('getDimensionMetadataFields', () => {
+    /* A list asked for in two entries is merged by the API, but then its
+     * fields are spread over several places. */
+    it('asks for each list in a single entry', () => {
+        const listNames = getDimensionMetadataFields().map(
+            (entry) => entry.split('[')[0]
+        )
+
+        expect(new Set(listNames).size).toBe(listNames.length)
+    })
+
+    it('asks for the legend set with the data element', () => {
+        expect(getDimensionMetadataFields()).toContain(
+            'dataElementDimensions[dataElement[id,name],legendSet[id,name]]'
+        )
     })
 })

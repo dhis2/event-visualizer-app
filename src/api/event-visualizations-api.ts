@@ -5,6 +5,7 @@ import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
     dimensionFields,
+    getDimensionMetadataFields,
     getAggregatableDimensionFields,
     getProgramFields,
     getTrackedEntityTypeFields,
@@ -12,7 +13,6 @@ import {
 } from '@modules/query'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { getSaveableVisualization } from '@modules/visualization/save'
-import { getDimensionMetadataFields } from '@modules/visualization/vis-type'
 import type {
     ApiSavedVisualization,
     CurrentUser,
@@ -46,7 +46,6 @@ export const getVisualizationQueryFields = (
     'access',
     'href',
     ...getDimensionMetadataFields(),
-    'dataElementDimensions[legendSet[id,name]]',
     'legend[set[id,displayName],strategy,style,showKey]',
     `trackedEntityType[${getTrackedEntityTypeFields(displayNameProp)}]`,
     '!interpretations',

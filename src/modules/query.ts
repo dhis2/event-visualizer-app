@@ -70,6 +70,16 @@ export const getAggregatableDimensionFields = (
         'aggregationType',
     ].join(',')
 
+export const getDimensionMetadataFields = (): string[] => [
+    'dataElementDimensions[dataElement[id,name],legendSet[id,name]]',
+    'attributeDimensions[attribute[id,name]]',
+    'programIndicatorDimensions[programIndicator[id,name]]',
+    'categoryDimensions[category[id,name]]',
+    'categoryOptionGroupSetDimensions[categoryOptionGroupSet[id,name]]',
+    'organisationUnitGroupSetDimensions[organisationUnitGroupSet[id,name]]',
+    'dataElementGroupSetDimensions[dataElementGroupSet[id,name]]',
+]
+
 /*
  * Option sets and legend sets have no shortName, so their names always come
  * from displayName regardless of the user's display property setting.
