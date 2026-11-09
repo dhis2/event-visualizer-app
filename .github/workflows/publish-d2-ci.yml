@@ -53,5 +53,5 @@ jobs:
               env:
                   SLACK_WEBHOOK: ${{ secrets.SLACK_BACKEND_WEBHOOK }}
                   SLACK_CHANNEL: 'analytics-internal-bot'
-                  SLACK_MESSAGE: 'Event Visualizer App failed to deploy to d2-ci'
+                  SLACK_MESSAGE: 'Individual Data Visualizer App failed to deploy to d2-ci'
                   SLACK_COLOR: '#ff0000'
