@@ -112,7 +112,8 @@ export const getCellValueAnalyticsRequestParams = (
         metadataStore
     )
     /* Analytics works out what DEFAULT means for the item itself, but rejects
-     * it for an item that aggregates by NONE (E7265). */
+     * it for an item that aggregates by NONE (E7265). A visualization saved
+     * with DEFAULT can still meet one when the item's type changed later. */
     return {
         ...params,
         aggregationType: replaceDefaultForNoneItem(

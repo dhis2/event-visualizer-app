@@ -27,7 +27,9 @@ export const resolveAggregationType = (
 }
 
 /* An item that aggregates by NONE has no default to follow, so `DEFAULT` is
- * replaced by the fallback. */
+ * replaced by the fallback. It is stored that way too: should the item get a
+ * real aggregation type later, the visualization keeps showing the values the
+ * user saw rather than quietly switching to that type. */
 export const replaceDefaultForNoneItem = (
     aggregationType: AggregationType,
     item: AggregatableItem

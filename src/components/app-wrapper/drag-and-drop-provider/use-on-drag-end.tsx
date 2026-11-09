@@ -8,6 +8,7 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
+import { replaceDefaultForNoneItem } from '@modules/dimension/aggregation-type'
 import {
     getDimensionBlockReason,
     type DimensionBlockReason,
@@ -163,7 +164,10 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 dispatch(
                     setVisUiConfigCellValue({
                         id: draggedItemData.dimensionId,
-                        aggregationType: 'DEFAULT',
+                        aggregationType: replaceDefaultForNoneItem(
+                            'DEFAULT',
+                            dimension
+                        ),
                     })
                 )
             }
