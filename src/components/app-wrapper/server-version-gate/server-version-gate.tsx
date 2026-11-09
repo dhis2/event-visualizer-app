@@ -6,9 +6,9 @@ import classes from './styles/server-version-gate.module.css'
 
 type ServerVersion = NonNullable<ReturnType<typeof useConfig>['serverVersion']>
 
-/* The app is bundled with DHIS2 43.3 and depends on backend fixes from that
+/* The app is bundled with DHIS2 2.43.3 and depends on backend fixes from that
  * release. The App Hub only checks major versions, so it can be installed on
- * 43.0-43.2 too. */
+ * 2.43.0-2.43.2 too. */
 const MIN_MINOR = 43
 const MIN_PATCH = 3
 
@@ -16,9 +16,6 @@ const isUnsupported = ({ major, minor, patch }: ServerVersion) =>
     major === 2 &&
     minor !== undefined &&
     (minor < MIN_MINOR || (minor === MIN_MINOR && (patch ?? 0) < MIN_PATCH))
-
-const formatVersion = ({ minor, patch }: ServerVersion) =>
-    patch === undefined ? `${minor}` : `${minor}.${patch}`
 
 export const ServerVersionGate: FC<{ children: ReactNode }> = ({
     children,
@@ -37,13 +34,13 @@ export const ServerVersionGate: FC<{ children: ReactNode }> = ({
                 </div>
                 <p className={classes.title}>
                     {i18n.t('App not supported on DHIS2 Core {{version}}', {
-                        version: formatVersion(serverVersion),
+                        version: serverVersion.full,
                     })}
                 </p>
                 <p className={classes.description}>
                     {i18n.t(
                         'Please ask your system administrator to upgrade to {{version}} to use the Individual Data Visualizer app.',
-                        { version: `${MIN_MINOR}.${MIN_PATCH}` }
+                        { version: `2.${MIN_MINOR}.${MIN_PATCH}` }
                     )}
                 </p>
             </div>

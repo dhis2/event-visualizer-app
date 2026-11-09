@@ -30,7 +30,7 @@ describe('ServerVersionGate', () => {
             expect(screen.queryByText('app content')).not.toBeInTheDocument()
             expect(
                 screen.getByText(
-                    'Please ask your system administrator to upgrade to 43.3 to use the Individual Data Visualizer app.'
+                    'Please ask your system administrator to upgrade to 2.43.3 to use the Individual Data Visualizer app.'
                 )
             ).toBeInTheDocument()
         }
@@ -40,7 +40,7 @@ describe('ServerVersionGate', () => {
         renderWithVersion('2.43.2')
 
         expect(
-            screen.getByText('App not supported on DHIS2 Core 43.2')
+            screen.getByText('App not supported on DHIS2 Core 2.43.2')
         ).toBeInTheDocument()
     })
 
