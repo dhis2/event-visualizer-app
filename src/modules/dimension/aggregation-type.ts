@@ -25,3 +25,13 @@ export const resolveAggregationType = (
         ? FALLBACK_AGGREGATION_TYPE
         : item.aggregationType
 }
+
+/* An item that aggregates by NONE has no default to follow, so `DEFAULT` is
+ * replaced by the fallback. */
+export const replaceDefaultForNoneItem = (
+    aggregationType: AggregationType,
+    item: AggregatableItem
+): AggregationType =>
+    aggregationType === 'DEFAULT' && item.aggregationType === 'NONE'
+        ? FALLBACK_AGGREGATION_TYPE
+        : aggregationType
