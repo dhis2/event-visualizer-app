@@ -11,6 +11,7 @@ import {
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
 import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension/fixed'
+import { getCellValueItemFields } from '@modules/query'
 import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
     DimensionMetadataItem,
@@ -98,7 +99,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 fields: [
                     'id',
                     `${displayNameProperty}~rename(name)`,
-                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet,aggregationType]]`,
+                    `trackedEntityTypeAttributes[trackedEntityAttribute[${getCellValueItemFields(displayNameProperty)},optionSet]]`,
                 ],
             },
         }),
