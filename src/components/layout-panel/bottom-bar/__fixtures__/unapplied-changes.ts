@@ -13,7 +13,13 @@ export const metadata = {
         name: 'Program 1',
         programType: 'WITHOUT_REGISTRATION',
     },
-    [STAGE_ID]: { id: STAGE_ID, name: 'Stage 1', program: { id: PROGRAM_ID } },
+    [STAGE_ID]: {
+        id: STAGE_ID,
+        name: 'Stage 1',
+        repeatable: false,
+        hideDueDate: false,
+        program: { id: PROGRAM_ID },
+    },
     [DIMENSION_ID]: {
         id: DIMENSION_ID,
         name: 'Data element 1',

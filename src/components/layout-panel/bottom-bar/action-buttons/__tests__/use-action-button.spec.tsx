@@ -417,6 +417,56 @@ describe('useActionButton for Event button', () => {
             content: 'Not valid with multiple programs',
         })
     })
+
+    it.each(['LINE_LIST', 'PIVOT_TABLE'] as const)(
+        'returns correct result for: %s, event program and tracked entity attribute',
+        async (visualizationType) => {
+            const { result } = await renderHookWithAppWrapper(
+                () => useActionButton('EVENT'),
+                createStoreWithPreloadedState({
+                    dimensionSelection: {
+                        dataSourceId: metadata.p1.id,
+                    },
+                    visUiConfig: {
+                        layout: {
+                            columns: [
+                                metadata['p1.p1s1.d1'].id,
+                                metadata['tei1.a1'].id,
+                            ],
+                        },
+                        visualizationType,
+                    },
+                })
+            )
+
+            expect(result.current.tooltipConfig).toEqual({
+                content:
+                    'Not valid with tracked entity attributes and event programs',
+            })
+        }
+    )
+
+    it('returns correct result for: LL, tracker program and tracked entity attribute', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.a1'].id,
+                        ],
+                    },
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        expect(result.current.tooltipConfig).toBeUndefined()
+    })
 })
 
 describe('useActionButton for Enrollment button', () => {
@@ -934,6 +984,37 @@ describe('useActionButton for Tracked entity instance button', () => {
             content: 'Not valid with event programs',
         })
     })
+
+    it.each([
+        {
+            order: 'event program first',
+            columns: [metadata['p1.p1s1.d1'].id, metadata['p2.p2s1.d1'].id],
+        },
+        {
+            order: 'tracker program first',
+            columns: [metadata['p2.p2s1.d1'].id, metadata['p1.p1s1.d1'].id],
+        },
+    ])(
+        'returns correct result for: LL, event program and tracker program, $order',
+        async ({ columns }) => {
+            const { result } = await renderHookWithAppWrapper(
+                () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+                createStoreWithPreloadedState({
+                    dimensionSelection: {
+                        dataSourceId: metadata.p2.id,
+                    },
+                    visUiConfig: {
+                        layout: { columns },
+                        visualizationType: 'LINE_LIST',
+                    },
+                })
+            )
+
+            expect(result.current.tooltipConfig).toEqual({
+                content: 'Not valid with event programs',
+            })
+        }
+    )
 
     it('returns correct result for: LL, category in layout', async () => {
         const { result } = await renderHookWithAppWrapper(

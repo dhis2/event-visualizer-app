@@ -32,11 +32,30 @@ const eventProgram = {
     programStages: [{ ...trackerStage, id: 's2', program: { id: 'p2' } }],
 }
 
+const secondTrackerStage = { ...trackerStage, id: 's3', program: { id: 'p3' } }
+
+const secondTrackerProgram = {
+    ...trackerProgram,
+    id: 'p3',
+    name: 'Program 3',
+    programStages: [secondTrackerStage],
+}
+
 const metadata = {
     p1: trackerProgram,
     s1: trackerStage,
     tet1: { id: 'tet1', name: 'Person' },
     p2: eventProgram,
+    p3: secondTrackerProgram,
+    s3: secondTrackerStage,
+    's3.de1': {
+        id: 's3.de1',
+        name: 'DE 1',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+        programId: 'p3',
+        programStageId: 's3',
+    },
     's2.de1': {
         id: 's2.de1',
         name: 'DE 1',
@@ -166,10 +185,10 @@ describe('RowGranularityLabel', () => {
         })
     })
 
-    it('leaves a tracked entity list alone when the layout spans programs', async () => {
+    it('leaves a tracked entity list alone when the layout spans tracker programs', async () => {
         await renderWithAppWrapper(
             <RowGranularityLabel />,
-            buildMockOptions('TRACKED_ENTITY_INSTANCE', ['s1.de1', 's2.de1'])
+            buildMockOptions('TRACKED_ENTITY_INSTANCE', ['s1.de1', 's3.de1'])
         )
 
         await userEvent.hover(screen.getByText('One row for each Person'))
