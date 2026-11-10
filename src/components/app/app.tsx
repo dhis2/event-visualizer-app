@@ -55,13 +55,15 @@ const EventVisualizer: FC = () => {
                 <DetailsPanel />
             </GridEndColumn>
             <InterpretationModal />
-            <CssVariables colors spacers theme elevations />
         </GridContainer>
     )
 }
 
 export const App: FC = () => (
-    <AppWrapper>
-        <EventVisualizer />
-    </AppWrapper>
+    <>
+        <CssVariables colors spacers theme elevations />
+        <AppWrapper>
+            <EventVisualizer />
+        </AppWrapper>
+    </>
 )

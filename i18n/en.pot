@@ -22,6 +22,16 @@ msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
 
+msgid "This app needs a newer version of DHIS2"
+msgstr "This app needs a newer version of DHIS2"
+
+msgid ""
+"This server is running version {{currentVersion}}. Individual Data "
+"Visualizer needs {{requiredVersion}} or later."
+msgstr ""
+"This server is running version {{currentVersion}}. Individual Data "
+"Visualizer needs {{requiredVersion}} or later."
+
 msgid "Changes not applied"
 msgstr "Changes not applied"
 
