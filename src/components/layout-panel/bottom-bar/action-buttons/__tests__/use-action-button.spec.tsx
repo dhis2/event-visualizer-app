@@ -935,6 +935,37 @@ describe('useActionButton for Tracked entity instance button', () => {
         })
     })
 
+    it.each([
+        {
+            order: 'event program first',
+            columns: [metadata['p1.p1s1.d1'].id, metadata['p2.p2s1.d1'].id],
+        },
+        {
+            order: 'tracker program first',
+            columns: [metadata['p2.p2s1.d1'].id, metadata['p1.p1s1.d1'].id],
+        },
+    ])(
+        'returns correct result for: LL, event program and tracker program, $order',
+        async ({ columns }) => {
+            const { result } = await renderHookWithAppWrapper(
+                () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+                createStoreWithPreloadedState({
+                    dimensionSelection: {
+                        dataSourceId: metadata.p2.id,
+                    },
+                    visUiConfig: {
+                        layout: { columns },
+                        visualizationType: 'LINE_LIST',
+                    },
+                })
+            )
+
+            expect(result.current.tooltipConfig).toEqual({
+                content: 'Not valid with event programs',
+            })
+        }
+    )
+
     it('returns correct result for: LL, category in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('TRACKED_ENTITY_INSTANCE'),

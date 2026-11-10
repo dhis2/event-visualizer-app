@@ -10,12 +10,7 @@ import {
     selectLayoutAllDimensionIds,
     type VisUiConfigState,
 } from '@store/vis-ui-config-slice'
-import type {
-    MetadataStore,
-    OutputType,
-    Program,
-    VisualizationType,
-} from '@types'
+import type { MetadataStore, OutputType, VisualizationType } from '@types'
 
 /* The output types the bottom bar offers for a visualization type. A pivot
  * table has no tracked entity output. */
@@ -94,7 +89,7 @@ const getEventTooltipConfig = ({
 }
 
 type EnrollmentTooltipConfigParams = {
-    programMetadata: Program | undefined
+    hasEventProgramSelected: boolean
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsSelected: boolean
@@ -104,7 +99,7 @@ type EnrollmentTooltipConfigParams = {
 }
 
 const getEnrollmentTooltipConfig = ({
-    programMetadata,
+    hasEventProgramSelected,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
@@ -124,7 +119,7 @@ const getEnrollmentTooltipConfig = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
+    if (hasEventProgramSelected) {
         return { content: i18n.t('Not valid with event programs') }
     }
 
@@ -139,7 +134,7 @@ const getEnrollmentTooltipConfig = ({
 }
 
 type TrackedEntityInstanceTooltipConfigParams = {
-    programMetadata: Program | undefined
+    hasEventProgramSelected: boolean
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasCompletedOnInLayout: boolean
@@ -151,7 +146,7 @@ type TrackedEntityInstanceTooltipConfigParams = {
 }
 
 const getTrackedEntityInstanceTooltipConfig = ({
-    programMetadata,
+    hasEventProgramSelected,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasCompletedOnInLayout,
@@ -177,7 +172,7 @@ const getTrackedEntityInstanceTooltipConfig = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
+    if (hasEventProgramSelected) {
         return { content: i18n.t('Not valid with event programs') }
     }
 
@@ -263,17 +258,22 @@ export const getOutputTypeTooltipConfig = ({
         selectedTetIds.add(cellValueContext.tetId)
     }
 
-    const programMetadata = programIds[0]
-        ? metadataStore.getProgramMetadataItem(programIds[0])
-        : undefined
     const hasCategoryInLayout = dimensionTypeCount('CATEGORY') > 0
     const hasCategoryOptionGroupSetInLayout =
         dimensionTypeCount('CATEGORY_OPTION_GROUP_SET') > 0
     /* Layout-only: a cell value on its own is not a layout, so it must not make
      * an empty one look valid. */
     const hasNoProgramInLayout = programIds.length === 0
-    const hasMultipleProgramsSelected =
-        new Set([...programIds, ...cellValueContext.programIds]).size > 1
+    const selectedProgramIds = new Set([
+        ...programIds,
+        ...cellValueContext.programIds,
+    ])
+    const hasMultipleProgramsSelected = selectedProgramIds.size > 1
+    const hasEventProgramSelected = [...selectedProgramIds].some((programId) =>
+        isDataSourceProgramWithoutRegistration(
+            metadataStore.getProgramMetadataItem(programId)
+        )
+    )
     /* A line list shows the registration org unit only with tracked entity
      * output. */
     const isRegistrationOuInLineList =
@@ -296,7 +296,7 @@ export const getOutputTypeTooltipConfig = ({
             })
         case 'ENROLLMENT':
             return getEnrollmentTooltipConfig({
-                programMetadata,
+                hasEventProgramSelected,
                 hasCategoryInLayout,
                 hasCategoryOptionGroupSetInLayout,
                 hasNoProgramInLayout,
@@ -306,7 +306,7 @@ export const getOutputTypeTooltipConfig = ({
             })
         case 'TRACKED_ENTITY_INSTANCE':
             return getTrackedEntityInstanceTooltipConfig({
-                programMetadata,
+                hasEventProgramSelected,
                 hasCategoryInLayout,
                 hasCategoryOptionGroupSetInLayout,
                 hasCompletedOnInLayout:
