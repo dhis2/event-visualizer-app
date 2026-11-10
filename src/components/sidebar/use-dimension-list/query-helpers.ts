@@ -1,3 +1,4 @@
+import { getAggregatableDimensionFields } from '@modules/query'
 import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type { CurrentUser, SingleQuery } from '@types'
 
@@ -72,7 +73,7 @@ export const createDimensionBaseQuery = ({
     resource,
     params: {
         pageSize: 10,
-        fields: `id,${nameProp}~rename(name),dimensionType,valueType,optionSet,aggregationType`,
+        fields: `${getAggregatableDimensionFields(nameProp)},dimensionType,optionSet`,
         filter: `dimensionType:eq:${dimensionType}`,
         order: `${nameProp}:asc`,
         paging: true,

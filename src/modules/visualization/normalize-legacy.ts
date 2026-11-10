@@ -1,3 +1,5 @@
+import { replaceDefaultForNoneItem } from '@modules/dimension/aggregation-type'
+import { getCellValueItem } from '@modules/dimension/cell-value'
 import { dropInvalidGrouping } from '@modules/dimension/grouping'
 import {
     CONTEXTLESS_DIMENSION_TYPES,
@@ -174,11 +176,10 @@ type CellValue = NonNullable<SavedVisualization['value']>
  * the data element across every stage it belongs to. */
 const normalizeLegacyValue = (
     value: CellValue,
+    vis: SavedVisualization,
     stageRef: LegacyDimensionContext['stageRef']
 ): CellValue =>
-    stageRef &&
-    !value.programStage &&
-    value.dimensionItemType === 'DATA_ELEMENT'
+    stageRef && !value.programStage && vis.dataElementValueDimension
         ? { ...value, programStage: stageRef }
         : value
 
@@ -220,8 +221,9 @@ const normalizeLegacyValue = (
  *   says how the value is aggregated, so it is dropped when there is no value,
  *   and a missing one becomes `DEFAULT`, which analytics treats the same way:
  *   the value item's own type. The backend accepts either field without the
- *   other, though no known client saves that. This does not imply `legacy`
- *   either.
+ *   other, though no known client saves that. `DEFAULT` on an item that
+ *   aggregates by NONE becomes the fallback type the app saves for such an
+ *   item; ER let users save that combination. Neither implies `legacy`.
  *
  * Out of scope (handled downstream — these run on every load, not just legacy
  * visualizations, so they do not imply the `legacy` flag):
@@ -333,9 +335,13 @@ export const normalizeApiSavedVisualization = (
     } else {
         normalizedVis.value = normalizeLegacyValue(
             normalizedVis.value,
+            normalizedVis,
             context.stageRef
         )
-        normalizedVis.aggregationType ??= 'DEFAULT'
+        normalizedVis.aggregationType = replaceDefaultForNoneItem(
+            normalizedVis.aggregationType ?? 'DEFAULT',
+            getCellValueItem(normalizedVis) ?? {}
+        )
     }
 
     /* Legacy visualizations don't set the hide flags reliably, so they are

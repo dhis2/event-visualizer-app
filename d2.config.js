@@ -4,7 +4,6 @@ const config = {
     name: 'individual-data-visualizer',
     // id: TBD,
     title: 'Individual Data Visualizer',
-    coreApp: true,
     minDHIS2Version: '2.43',
     direction: 'auto',
     pwa: {

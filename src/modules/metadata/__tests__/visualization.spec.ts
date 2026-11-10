@@ -411,30 +411,61 @@ describe('extractDimensionMetadata', () => {
 })
 
 describe('extractValueMetadata', () => {
-    it('registers the cell value as a dimension of the type the API reports', () => {
+    const item = {
+        name: 'Weight',
+        aggregationType: 'AVERAGE',
+        valueType: 'NUMBER',
+    }
+
+    it('registers a data element value under its stage', () => {
         const visualization = {
-            value: {
-                id: 'UXz7xuGCEhU',
-                name: 'MCH Weight (g)',
-                aggregationType: 'AVERAGE',
-                valueType: 'NUMBER',
-                dimensionItemType: 'DATA_ELEMENT',
-            },
+            value: { id: 'de1', programStage: { id: 'stage1' } },
+            dataElementValueDimension: { id: 'de1', ...item },
         } as unknown as SavedVisualization
 
         expect(extractValueMetadata(visualization)).toEqual({
-            UXz7xuGCEhU: {
-                id: 'UXz7xuGCEhU',
-                name: 'MCH Weight (g)',
-                aggregationType: 'AVERAGE',
-                valueType: 'NUMBER',
-                dimensionType: 'DATA_ELEMENT',
+            'stage1.de1': { id: 'de1', ...item, dimensionType: 'DATA_ELEMENT' },
+        })
+    })
+
+    it('registers an attribute value under the tracked entity type', () => {
+        const visualization = {
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: 'tet1' },
+            value: { id: 'tea1' },
+            attributeValueDimension: { id: 'tea1', ...item },
+        } as unknown as SavedVisualization
+
+        expect(extractValueMetadata(visualization)).toEqual({
+            'tet1.tea1': {
+                id: 'tea1',
+                ...item,
+                dimensionType: 'PROGRAM_ATTRIBUTE',
             },
+        })
+    })
+
+    it('registers an attribute value plain when there is no tracked entity type', () => {
+        const visualization = {
+            value: { id: 'tea1' },
+            attributeValueDimension: { id: 'tea1', ...item },
+        } as unknown as SavedVisualization
+
+        expect(extractValueMetadata(visualization)).toEqual({
+            tea1: { id: 'tea1', ...item, dimensionType: 'PROGRAM_ATTRIBUTE' },
         })
     })
 
     it('returns nothing when the visualization has no cell value', () => {
         expect(extractValueMetadata({} as SavedVisualization)).toEqual({})
+    })
+
+    it('returns nothing when the API resolved no item for the value', () => {
+        expect(
+            extractValueMetadata({
+                value: { id: 'gone1' },
+            } as unknown as SavedVisualization)
+        ).toEqual({})
     })
 })
 
@@ -477,4 +508,61 @@ describe('extractMetadataFromVisualization', () => {
             })
         }
     )
+
+    /* The layout dimension itself carries no aggregation type, so it comes
+     * from the visualization's data element and attribute lists. */
+    it("registers a layout item's own aggregation type", () => {
+        const visualization = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    programStage: { id: 'stage' },
+                    items: [],
+                },
+                {
+                    dimension: 'attr1',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {},
+            dataElementDimensions: [
+                {
+                    dataElement: {
+                        id: 'de1',
+                        name: 'Weight',
+                        aggregationType: 'NONE',
+                    },
+                },
+            ],
+            attributeDimensions: [
+                {
+                    attribute: {
+                        id: 'attr1',
+                        name: 'Age',
+                        aggregationType: 'SUM',
+                    },
+                },
+            ],
+            programDimensions: [
+                {
+                    id: 'prog',
+                    name: 'Program',
+                    programType: 'WITH_REGISTRATION',
+                    trackedEntityType: { id: 'tet', name: 'Person' },
+                    programStages: [{ id: 'stage', name: 'Stage' }],
+                },
+            ],
+        } as unknown as SavedVisualization
+
+        const metadata = extractMetadataFromVisualization(visualization)
+
+        expect(metadata['stage.de1']).toMatchObject({ aggregationType: 'NONE' })
+        expect(metadata['tet.attr1']).toMatchObject({ aggregationType: 'SUM' })
+    })
 })

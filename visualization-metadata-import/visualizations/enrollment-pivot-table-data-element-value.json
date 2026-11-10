@@ -1,0 +1,43 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Enrollment pivot table, data element value",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "userOrganisationUnitChildren": true,
+            "filterDimensions": ["WSGAb5XwJ3Y.enrollmentDate"],
+            "aggregationType": "AVERAGE",
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "dataElementValueDimension": {
+                "id": "vANAXwtLwcT"
+            },
+            "columnDimensions": ["WSGAb5XwJ3Y.programStatus"],
+            "rowDimensions": ["WSGAb5XwJ3Y.ou"],
+            "simpleDimensions": [
+                {
+                    "parent": "COLUMN",
+                    "dimension": "programStatus",
+                    "program": "WSGAb5XwJ3Y",
+                    "values": []
+                },
+                {
+                    "parent": "ROW",
+                    "dimension": "ou",
+                    "program": "WSGAb5XwJ3Y",
+                    "values": ["USER_ORGUNIT_CHILDREN"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "enrollmentDate",
+                    "program": "WSGAb5XwJ3Y",
+                    "values": ["THIS_YEAR"]
+                }
+            ],
+            "outputType": "ENROLLMENT",
+            "id": "unFRccFpt4V"
+        }
+    ]
+}

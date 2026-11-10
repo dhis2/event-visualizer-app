@@ -1,4 +1,5 @@
 import {
+    getCellValueItem,
     getCellValueMetadataItemOrThrow,
     isValidCellValueDimension,
 } from '@modules/dimension/cell-value'
@@ -39,6 +40,38 @@ describe('isValidCellValueDimension', () => {
 
     it('rejects a dimension that is missing entirely', () => {
         expect(isValidCellValueDimension(undefined)).toBe(false)
+    })
+})
+
+describe('getCellValueItem', () => {
+    const item = { id: 'item1', name: 'Weight', valueType: 'NUMBER' as const }
+
+    it('reads a data element value from the data element field', () => {
+        expect(
+            getCellValueItem({
+                value: { id: 'item1' },
+                dataElementValueDimension: item,
+            })
+        ).toEqual({ ...item, dimensionType: 'DATA_ELEMENT' })
+    })
+
+    it('reads an attribute value from the attribute field', () => {
+        expect(
+            getCellValueItem({
+                value: { id: 'item1' },
+                attributeValueDimension: item,
+            })
+        ).toEqual({ ...item, dimensionType: 'PROGRAM_ATTRIBUTE' })
+    })
+
+    it('returns nothing when there is no cell value', () => {
+        expect(
+            getCellValueItem({ dataElementValueDimension: item })
+        ).toBeUndefined()
+    })
+
+    it('returns nothing when neither field holds the item', () => {
+        expect(getCellValueItem({ value: { id: 'item1' } })).toBeUndefined()
     })
 })
 
@@ -92,21 +125,21 @@ describe('getCellValueMetadataItemOrThrow', () => {
         ] as SavedVisualization['programDimensions'],
     }
 
-    it('finds a program indicator value by its plain id', () => {
+    it('finds an attribute value by its plain id when there is no tracked entity type', () => {
         const metadataStore = new MetadataStore({})
         metadataStore.addMetadata({
-            id: 'indicator1',
-            name: 'Indicator',
-            dimensionType: 'PROGRAM_INDICATOR',
+            id: 'attribute1',
+            name: 'Weight in kg',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
         })
 
         expect(
             getCellValueMetadataItemOrThrow(
-                { id: 'indicator1' },
-                trackerVis,
+                { id: 'attribute1' },
+                {},
                 metadataStore
             )
-        ).toMatchObject({ id: 'indicator1', name: 'Indicator' })
+        ).toMatchObject({ id: 'attribute1', name: 'Weight in kg' })
     })
 
     /* Saved before the cell value carried its stage. */

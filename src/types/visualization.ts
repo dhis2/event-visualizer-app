@@ -57,9 +57,18 @@ export type DimensionArray = Array<DimensionRecord>
 
 type ProgramDimensionArray = Array<Program>
 
+/* A data element or attribute as `getAggregatableDimensionFields` fetches it.
+ * `aggregationType` is the item's own default, not the one the visualization
+ * applies to the cell value. */
+export type AggregatableDimension = IdRecord & {
+    name?: string
+    valueType?: ValueType
+    aggregationType?: EventVisualizationGenerated['aggregationType']
+}
+
 type DataElementDimensionArray = Array<{
     legendSet: IdNameRecord
-    dataElement: IdNameRecord
+    dataElement: IdNameRecord & AggregatableDimension
 }>
 
 type SavedVisualizationFieldOverrides = {
@@ -72,14 +81,17 @@ type SavedVisualizationFieldOverrides = {
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
     trackedEntityType?: TrackedEntityTypeRef
-    /* How the cell `value` is aggregated. Not the same as
-     * `value.aggregationType`, which is the value item's own default. The
-     * backend does not require it, and leaves it out when it is not set. */
+    /* How the cell `value` is aggregated. Not the same as the value item's
+     * own default, which is on `dataElementValueDimension` or
+     * `attributeValueDimension`. The backend does not require it, and leaves
+     * it out when it is not set. */
     aggregationType?: EventVisualizationGenerated['aggregationType']
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
-    attributeDimensions?: MetadataRecordArray<'attribute'>
+    attributeDimensions?: Array<{
+        attribute: IdNameRecord & AggregatableDimension
+    }>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
     categoryDimensions: MetadataRecordArray<'category'>
     categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
@@ -95,17 +107,12 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    /* The API resolves the cell value against the data element or tracked
-     * entity attribute behind it, so the dimension's own properties come back
-     * with it. The backend only stores the id: the aggregation type the
-     * visualization applies is the top-level one. */
-    value?: IdRecord & {
-        name?: string
-        aggregationType?: EventVisualizationGenerated['aggregationType']
-        valueType?: ValueType
-        dimensionItemType?: DimensionType
-        programStage?: IdRecord
-    }
+    /* The item chosen as the cell value and the stage it was chosen from.
+     * Its details are in the data element or attribute field below, whichever
+     * the backend resolved the id to. */
+    value?: IdRecord & { programStage?: IdRecord }
+    dataElementValueDimension?: AggregatableDimension
+    attributeValueDimension?: AggregatableDimension
 }
 
 /**
@@ -161,10 +168,7 @@ export type SavedVisualization = Omit<
 export type EmptyVisualization = Record<string, never>
 /* All the app keeps of the cell value: the item and the stage it was chosen
  * from. Anything else about the item is read from the metadata store. */
-export type CellValueRef = Pick<
-    NonNullable<SavedVisualization['value']>,
-    'id' | 'programStage'
->
+export type CellValueRef = NonNullable<SavedVisualization['value']>
 
 export type CurrentVisualization = Pick<
     SavedVisualization,

@@ -5,13 +5,14 @@ import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
     dimensionFields,
+    getDimensionMetadataFields,
+    getAggregatableDimensionFields,
     getProgramFields,
     getTrackedEntityTypeFields,
     programStageFields,
 } from '@modules/query'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { getSaveableVisualization } from '@modules/visualization/save'
-import { getDimensionMetadataFields } from '@modules/visualization/vis-type'
 import type {
     ApiSavedVisualization,
     CurrentUser,
@@ -36,14 +37,15 @@ export const getVisualizationQueryFields = (
     `columns[${dimensionFields}]`,
     `rows[${dimensionFields}]`,
     `filters[${dimensionFields}]`,
-    `value[id,${displayNameProp}~rename(name),aggregationType,valueType,dimensionItemType,programStage[id]]`,
+    'value[id,programStage[id]]',
+    `dataElementValueDimension[${getAggregatableDimensionFields(displayNameProp)}]`,
+    `attributeValueDimension[${getAggregatableDimensionFields(displayNameProp)}]`,
     `program[${getProgramFields(displayNameProp)}]`,
     `programStage[${programStageFields}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,
     'access',
     'href',
-    ...getDimensionMetadataFields(),
-    'dataElementDimensions[legendSet[id,name]]',
+    ...getDimensionMetadataFields(displayNameProp),
     'legend[set[id,displayName],strategy,style,showKey]',
     `trackedEntityType[${getTrackedEntityTypeFields(displayNameProp)}]`,
     '!interpretations',

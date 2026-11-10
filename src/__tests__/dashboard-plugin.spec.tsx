@@ -25,12 +25,12 @@ const queryResult = vi.hoisted(() => ({
             programDimensions: [],
             metaData: {},
             aggregationType: 'DEFAULT',
-            value: {
+            value: { id: 'de1' },
+            dataElementValueDimension: {
                 id: 'de1',
                 name: 'Weight',
                 aggregationType: 'SUM',
                 valueType: 'NUMBER',
-                dimensionItemType: 'DATA_ELEMENT',
             },
         },
     },

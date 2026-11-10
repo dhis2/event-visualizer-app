@@ -51,7 +51,7 @@ These commands run ESLint, Stylelint and Prettier (plus a TypeScript and ls-lint
 
 ### `pnpm cy:open` / `pnpm cy:run`
 
-Run the Cypress E2E test suite, either in the Cypress GUI or in the terminal.
+Run the Cypress E2E test suite, either in the Cypress GUI or in the terminal. The visualizations the suite needs on top of the DB dump are imported with the scripts in [`visualization-metadata-import/`](./visualization-metadata-import/README.md).
 
 ### `pnpm generate-types`
 

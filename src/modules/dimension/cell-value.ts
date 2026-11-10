@@ -2,7 +2,9 @@ import { isValueTypeNumeric } from '@modules/value-type'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CellValueRef,
+    AggregatableDimension,
     DimensionMetadataItem,
+    DimensionType,
     MetadataStore,
     SavedVisualization,
 } from '@types'
@@ -14,7 +16,7 @@ import type {
  * and invalid for another at the same moment. */
 export const isValidCellValueDimension = (
     dimension: Pick<DimensionMetadataItem, 'valueType'> | undefined
-): boolean =>
+): dimension is Pick<DimensionMetadataItem, 'valueType'> =>
     Boolean(dimension?.valueType && isValueTypeNumeric(dimension.valueType))
 
 export const getCellValueRef = ({
@@ -25,6 +27,31 @@ export const getCellValueRef = ({
     ...(programStage && { programStage: { id: programStage.id } }),
 })
 
+/* The API names the item behind the cell value only by which field holds it. */
+export const getCellValueItem = (
+    visualization: Pick<
+        SavedVisualization,
+        'value' | 'dataElementValueDimension' | 'attributeValueDimension'
+    >
+): (AggregatableDimension & { dimensionType: DimensionType }) | undefined => {
+    if (!visualization.value) {
+        return undefined
+    }
+    if (visualization.dataElementValueDimension) {
+        return {
+            ...visualization.dataElementValueDimension,
+            dimensionType: 'DATA_ELEMENT',
+        }
+    }
+    if (visualization.attributeValueDimension) {
+        return {
+            ...visualization.attributeValueDimension,
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+        }
+    }
+    return undefined
+}
+
 /* The dimension id analytics reads the cell value by. Only the stage qualifies
  * it: a tracked entity attribute is sent unprefixed, the same way analytics
  * returns its headers. */
@@ -33,8 +60,7 @@ export const getCellValueAnalyticsId = (value: CellValueRef): string =>
 
 /* Finds the cell value's metadata from what is saved: the id and the stage.
  * A value without a stage is a tracked entity attribute, keyed under the
- * tracked entity type, or a program indicator, keyed plain; uids are unique,
- * so whichever key the store holds is the right one. */
+ * tracked entity type when there is one, plain otherwise. */
 export const getCellValueMetadataItemOrThrow = (
     value: CellValueRef,
     visualization: Pick<

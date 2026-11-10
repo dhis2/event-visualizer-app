@@ -586,27 +586,6 @@ describe('getSaveableVisualization', () => {
         expect(s0.direction).toBe('DESC')
     })
 
-    it('keeps only the persisted fields of the cell value', () => {
-        const vis = {
-            value: {
-                id: 'UXz7xuGCEhU',
-                name: 'MCH Weight (g)',
-                aggregationType: 'AVERAGE',
-                valueType: 'NUMBER',
-                dimensionItemType: 'DATA_ELEMENT',
-                programStage: { id: 'A03MvHHogjR' },
-            },
-            columns: [],
-            rows: [],
-            filters: [],
-        } as unknown as SavedVisualization
-
-        expect(getSaveableVisualization(vis).value).toEqual({
-            id: 'UXz7xuGCEhU',
-            programStage: { id: 'A03MvHHogjR' },
-        })
-    })
-
     it('leaves the cell value out when the visualization has none', () => {
         const vis = {
             columns: [],
@@ -970,7 +949,7 @@ describe('normalizeApiSavedVisualization', () => {
     ) =>
         buildApiVis({
             type: 'PIVOT_TABLE',
-            value: { id: UID, aggregationType: 'MAX' },
+            value: { id: UID },
             ...overrides,
         })
 
@@ -978,6 +957,57 @@ describe('normalizeApiSavedVisualization', () => {
         const result = normalizeApiSavedVisualization(buildCellValueVis())
 
         expect(result.aggregationType).toBe('DEFAULT')
+    })
+
+    const noneItem = { id: UID, aggregationType: 'NONE' as const }
+
+    /* ER let users save DEFAULT for an item that aggregates by NONE. */
+    it.each([[undefined], ['DEFAULT' as const]])(
+        'turns a %s aggregation type into AVERAGE when the data element aggregates by NONE',
+        (aggregationType) => {
+            const result = normalizeApiSavedVisualization(
+                buildCellValueVis({
+                    aggregationType,
+                    dataElementValueDimension: noneItem,
+                })
+            )
+
+            expect(result.aggregationType).toBe('AVERAGE')
+            expect(result.legacy).toBeUndefined()
+        }
+    )
+
+    it('turns DEFAULT into AVERAGE when the attribute aggregates by NONE', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'DEFAULT',
+                attributeValueDimension: noneItem,
+            })
+        )
+
+        expect(result.aggregationType).toBe('AVERAGE')
+    })
+
+    it('keeps DEFAULT when the item has a type of its own', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'DEFAULT',
+                dataElementValueDimension: { id: UID, aggregationType: 'SUM' },
+            })
+        )
+
+        expect(result.aggregationType).toBe('DEFAULT')
+    })
+
+    it('keeps an explicit aggregation type when the item aggregates by NONE', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'MAX',
+                dataElementValueDimension: noneItem,
+            })
+        )
+
+        expect(result.aggregationType).toBe('MAX')
     })
 
     it('keeps a saved aggregation type', () => {
@@ -1009,34 +1039,38 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.legacy).toBeUndefined()
     })
 
-    const buildLegacyCellValueVis = (value: ApiSavedVisualization['value']) =>
+    const buildLegacyCellValueVis = (
+        value: ApiSavedVisualization['value'],
+        valueItem: Partial<ApiSavedVisualization> = {}
+    ) =>
         buildCellValueVis({
             program: { id: PID },
             programStage: { id: SID },
             value,
+            ...valueItem,
         } as Partial<ApiSavedVisualization>)
 
     it('moves the root stage onto a data element cell value', () => {
         const result = normalizeApiSavedVisualization(
-            buildLegacyCellValueVis({
-                id: UID,
-                dimensionItemType: 'DATA_ELEMENT',
-            })
+            buildLegacyCellValueVis(
+                { id: UID },
+                { dataElementValueDimension: { id: UID } }
+            )
         )
 
         expect(result.value?.programStage).toEqual({ id: SID })
     })
 
-    it.each(['PROGRAM_ATTRIBUTE', 'PROGRAM_INDICATOR'] as const)(
-        'does not give a %s cell value a stage',
-        (dimensionItemType) => {
-            const result = normalizeApiSavedVisualization(
-                buildLegacyCellValueVis({ id: UID, dimensionItemType })
+    it('does not give an attribute cell value a stage', () => {
+        const result = normalizeApiSavedVisualization(
+            buildLegacyCellValueVis(
+                { id: UID },
+                { attributeValueDimension: { id: UID } }
             )
+        )
 
-            expect(result.value?.programStage).toBeUndefined()
-        }
-    )
+        expect(result.value?.programStage).toBeUndefined()
+    })
 
     it('does not give a stage to a cell value of unknown type', () => {
         const result = normalizeApiSavedVisualization(
@@ -1048,11 +1082,10 @@ describe('normalizeApiSavedVisualization', () => {
 
     it("keeps the cell value's own stage over the root stage", () => {
         const result = normalizeApiSavedVisualization(
-            buildLegacyCellValueVis({
-                id: UID,
-                dimensionItemType: 'DATA_ELEMENT',
-                programStage: { id: 'otherStage1' },
-            })
+            buildLegacyCellValueVis(
+                { id: UID, programStage: { id: 'otherStage1' } },
+                { dataElementValueDimension: { id: UID } }
+            )
         )
 
         expect(result.value?.programStage).toEqual({ id: 'otherStage1' })
@@ -1062,7 +1095,8 @@ describe('normalizeApiSavedVisualization', () => {
         const result = normalizeApiSavedVisualization(
             buildCellValueVis({
                 program: { id: PID },
-                value: { id: UID, dimensionItemType: 'DATA_ELEMENT' },
+                value: { id: UID },
+                dataElementValueDimension: { id: UID },
             } as Partial<ApiSavedVisualization>)
         )
 

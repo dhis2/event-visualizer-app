@@ -1,5 +1,6 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
-import { FALLBACK_AGGREGATION_TYPE } from '@modules/dimension/aggregation-type'
+import { isActiveFilterDimensionRecord } from '@modules/dimension/active-filter'
+import { replaceDefaultForNoneItem } from '@modules/dimension/aggregation-type'
 import {
     getCellValueAnalyticsId,
     getCellValueMetadataItemOrThrow,
@@ -33,11 +34,16 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
+    /* Only filters are dropped when nothing is selected on them. On rows or
+     * columns, such a dimension still splits the table by every value. */
     return {
         adaptedVisualization: {
             columns: adaptDimensions(columns, visualization),
             rows: adaptDimensions(rows, visualization),
-            filters: adaptDimensions(filters, visualization),
+            filters: adaptDimensions(
+                filters.filter(isActiveFilterDimensionRecord),
+                visualization
+            ),
             outputType: visualization.outputType,
         },
         parameters,
@@ -106,13 +112,15 @@ export const getCellValueAnalyticsRequestParams = (
         metadataStore
     )
     /* Analytics works out what DEFAULT means for the item itself, but rejects
-     * it for an item that aggregates by NONE (E7265). */
-    const isDefaultForNoneItem =
-        params.aggregationType === 'DEFAULT' && item.aggregationType === 'NONE'
-
-    return isDefaultForNoneItem
-        ? { ...params, aggregationType: FALLBACK_AGGREGATION_TYPE }
-        : params
+     * it for an item that aggregates by NONE (E7265). A visualization saved
+     * with DEFAULT can still meet one when the item's type changed later. */
+    return {
+        ...params,
+        aggregationType: replaceDefaultForNoneItem(
+            params.aggregationType,
+            item
+        ),
+    }
 }
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,

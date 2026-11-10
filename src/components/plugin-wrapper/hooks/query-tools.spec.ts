@@ -337,6 +337,29 @@ describe('getAdaptedVisualization (line list)', () => {
         expect(headers).toEqual([`${SID}.${UID}`])
     })
 
+    it('sends an org unit group set column with nothing selected', () => {
+        const vis = buildVis({
+            dimension: 'J5jldMd8OHv',
+            dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+            programStage: undefined,
+        })
+
+        expect(dimensionsOf(vis)).toEqual(['J5jldMd8OHv'])
+    })
+
+    it('omits an org unit group set filter with nothing selected', () => {
+        const vis = buildVis(
+            {
+                dimension: 'J5jldMd8OHv',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                programStage: undefined,
+            },
+            'filters'
+        )
+
+        expect(dimensionsOf(vis, 'filters')).toEqual([])
+    })
+
     it('expands repetition indexes without an undefined stage segment', () => {
         const vis = buildVis({
             dimension: UID,
@@ -469,6 +492,66 @@ describe('getAdaptedVisualization (pivot table)', () => {
         expect(
             getAdaptedPivotTableVisualization(vis).adaptedVisualization.columns
         ).toEqual([expect.objectContaining({ dimension: `${SID}.${UID}` })])
+    })
+
+    it('omits a filter that constrains nothing', () => {
+        const vis = {
+            ...basePivotTable,
+            filters: [
+                { dimension: 'programStatus', program: { id: 'p1' } },
+                { dimension: 'eventStatus', programStage: { id: SID } },
+                {
+                    dimension: 'J5jldMd8OHv',
+                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.filters
+        ).toEqual([])
+    })
+
+    it('sends a filter that has items or a condition', () => {
+        const vis = {
+            ...basePivotTable,
+            filters: [
+                {
+                    dimension: 'programStatus',
+                    program: { id: 'p1' },
+                    items: [{ id: 'CANCELLED' }],
+                },
+                {
+                    dimension: UID,
+                    programStage: { id: SID },
+                    filter: 'GT:5',
+                },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.filters
+        ).toEqual([
+            expect.objectContaining({
+                dimension: 'PROGRAM_STATUS',
+                items: [{ id: 'CANCELLED' }],
+            }),
+            expect.objectContaining({
+                dimension: `${SID}.${UID}`,
+                filter: 'GT:5',
+            }),
+        ])
+    })
+
+    it('keeps a row that constrains nothing', () => {
+        const vis = {
+            ...basePivotTable,
+            rows: [{ dimension: 'programStatus', program: { id: 'p1' } }],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.rows
+        ).toEqual([expect.objectContaining({ dimension: 'PROGRAM_STATUS' })])
     })
 })
 

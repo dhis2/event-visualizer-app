@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
+import { checkInstanceVisualizations } from './cypress/plugins/check-instance-visualizations'
 import { selectByVersionTags } from './cypress/plugins/select-by-version-tags'
 import viteConfig from './vite-cypress.config.mjs'
 
@@ -34,6 +35,8 @@ const setupNodeEvents = async (
             }
         }
     })
+
+    on('before:run', () => checkInstanceVisualizations(config))
 
     if (!config.env.dhis2InstanceVersion) {
         throw new Error(

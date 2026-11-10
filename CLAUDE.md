@@ -200,6 +200,15 @@ shapes, and filter syntax all change between versions. Look them up against the 
 instance: see the `dhis2-api-lookup` skill for the three-tier procedure (OpenAPI spec →
 probe the live API → read the `dhis2-core` source).
 
+### Same fields everywhere
+
+The same metadata object can reach the metadata store through several requests: the sidebar, the
+data source select, a loaded visualization. Each kind of object has one field-list helper in
+`@modules/query` (`getProgramFields`, `getTrackedEntityTypeFields`, `getAggregatableDimensionFields`,
+…), and every request for that object uses it, so an item carries the same fields whichever way it
+came in. A new request for such an object uses the existing helper; a field one consumer needs is
+added to the helper, not to a single request.
+
 ### DHIS2 instances
 
 | Instance | URL                                       | Allowed                                                        |
@@ -414,12 +423,13 @@ its program qualifier so it reads like the TEI registration OU.
 1. `normalizeApiSavedVisualization` (`@modules/visualization/normalize-legacy`) brings the API
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
    (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
-   `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
-   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)).
+   `aggregationType` with the cell `value`: it drops the type when there is no value, fills a
+   missing one with `DEFAULT`, and turns `DEFAULT` into AVERAGE for an item that aggregates by NONE
+   (see [Cell value aggregation type](#cell-value-aggregation-type)).
    A legacy pivot table keeps its one stage at the root and saves a data element value without a
-   stage, so the root stage is moved onto the value; attribute and program indicator values get
-   none. The `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` mapping is not its concern — that runs per
-   analytics request, in `transformDimensions` (`@modules/dimension/translation`).
+   stage, so the root stage is moved onto the value; attribute values get none. The
+   `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` mapping is not its concern — that runs per analytics
+   request, in `transformDimensions` (`@modules/dimension/translation`).
 2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:
@@ -480,30 +490,49 @@ Two fields share the name `aggregationType`:
 
 - The top-level `aggregationType` is how the visualization aggregates the cell value. It is
   persisted, and only means something together with `value`.
-- `value.aggregationType` is the item's own aggregation type. The API returns it with the value,
-  but only `value.id` and `value.programStage` are persisted.
+- The item's own aggregation type is on `dataElementValueDimension` or `attributeValueDimension`
+  (see below). It is read, never written.
 
 `DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
 `DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
-one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` for it (E7265), so
-the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
-to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
-aggregation name.
+app resolves `DEFAULT` to a real type (`resolveAggregationType` in
+`@modules/dimension/aggregation-type`) only to show an aggregation name.
+
+An item that aggregates by NONE has no type to follow, and analytics rejects `DEFAULT` for it
+(E7265). `replaceDefaultForNoneItem` turns `DEFAULT` into AVERAGE for such an item in three places:
+
+- **Picking the value**: AVERAGE is stored, not `DEFAULT`, so the visualization keeps showing the
+  same values if the item later gets a real aggregation type. This reads the item's own type from
+  the metadata store (see [Cell value identity](#cell-value-identity)).
+- **Loading**: `normalizeApiSavedVisualization` rewrites a saved `DEFAULT` to AVERAGE. ER let users
+  save that combination.
+- **The analytics request** (`getCellValueAnalyticsRequestParams`): a visualization saved with
+  `DEFAULT` can still meet a NONE item when the item's type changed after saving.
 
 ### Cell value identity
 
-The app keeps only `{ id, programStage }` of the value (`CellValueRef`); everything else about the
-item is read from the metadata store, where it is keyed like a layout dimension: `stageId.id` for a
-data element, `tetId.id` for a tracked entity attribute, plain `id` for a program indicator.
+The API returns `value` as `{ id, programStage }` only, and that is all the app keeps of it
+(`CellValueRef`). The item's name, value type and own aggregation type come back on
+`dataElementValueDimension` or `attributeValueDimension`, whichever the backend resolved the id to;
+which one is set is the only thing that says the item's type. A program indicator can't be the cell
+value (it is blocked outside line lists).
 
-- **Registering**: `extractValueMetadata` (`@modules/metadata/visualization`) builds the key from
-  the saved payload, the only place that carries the item's `dimensionItemType`.
+Everything else about the item is read from the metadata store, where it is keyed like a layout
+dimension: `stageId.id` for a data element, `tetId.id` for a tracked entity attribute (plain `id`
+when there is no tracked entity type).
+
+- **Registering**: `extractValueMetadata` (`@modules/metadata/visualization`) builds the key and
+  the item from the saved payload via `getCellValueItem` (`@modules/dimension/cell-value`), the
+  only place that knows the item's type.
 - **Reading**: `getCellValueMetadataItemOrThrow` (`@modules/dimension/cell-value`) finds the item
   from the id and stage alone: a value without a stage is looked up under the tracked entity type
   first, then plain. The title, the analytics request and `getVisualizationUiConfig` use it, so the
   value's metadata must be in the store before the ui config is derived from a visualization.
 - **Legacy**: an ER pivot table keeps its one stage at the root, so on load
   `normalizeApiSavedVisualization` moves it onto a data element value.
+- **From the layout**: the `columns`/`rows`/`filters` objects don't carry an item's name or own
+  aggregation type, so a loaded layout item gets them from `dataElementDimensions` /
+  `attributeDimensions`, the lists the backend builds those layout dimensions from.
 
 ## Grouping values by legend
 

@@ -1,0 +1,68 @@
+{
+    "eventVisualizations": [
+        {
+            "name": "E2E: Event pivot table, categories",
+            "regressionType": "NONE",
+            "rawPeriods": ["THIS_YEAR"],
+            "hideEmptyRows": true,
+            "userOrganisationUnit": true,
+            "filterDimensions": [
+                "bMcwwoVnbSR.kO3z4Dhc038.eventDate",
+                "bMcwwoVnbSR.kO3z4Dhc038.ou"
+            ],
+            "categoryDimensions": [
+                {
+                    "category": {
+                        "id": "LFsZ8v5v7rq"
+                    },
+                    "categoryOptions": []
+                }
+            ],
+            "categoryOptionGroupSetDimensions": [
+                {
+                    "categoryOptionGroupSet": {
+                        "id": "SooXFOUnciJ"
+                    },
+                    "categoryOptionGroups": []
+                }
+            ],
+            "dataElementDimensions": [
+                {
+                    "dataElement": {
+                        "id": "hKZh1et5n7v"
+                    },
+                    "programStage": {
+                        "id": "kO3z4Dhc038"
+                    }
+                }
+            ],
+            "digitGroupSeparator": "SPACE",
+            "hideEmptyRowItems": "NONE",
+            "hideSubtitle": true,
+            "type": "PIVOT_TABLE",
+            "columnDimensions": ["LFsZ8v5v7rq"],
+            "rowDimensions": [
+                "SooXFOUnciJ",
+                "bMcwwoVnbSR.kO3z4Dhc038.hKZh1et5n7v"
+            ],
+            "simpleDimensions": [
+                {
+                    "parent": "FILTER",
+                    "dimension": "eventDate",
+                    "program": "bMcwwoVnbSR",
+                    "programStage": "kO3z4Dhc038",
+                    "values": ["THIS_YEAR"]
+                },
+                {
+                    "parent": "FILTER",
+                    "dimension": "ou",
+                    "program": "bMcwwoVnbSR",
+                    "programStage": "kO3z4Dhc038",
+                    "values": ["USER_ORGUNIT"]
+                }
+            ],
+            "outputType": "EVENT",
+            "id": "EidT2M2SzAo"
+        }
+    ]
+}

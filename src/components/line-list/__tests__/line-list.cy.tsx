@@ -235,12 +235,6 @@ describe(
                     .find('button')
                     .click()
                 cy.getByDataTest('fetch-overlay').should('be.visible')
-                /* Clicking the header may scroll the container; reset so the
-                 * geometry assertions run against the resting position. */
-                cy.getByDataTest('scroll-box-container').scrollTo(0, 0, {
-                    duration: 0,
-                    ensureScrollable: false,
-                })
             }
 
             const expectOverlayToCoverScrollBox = () => {
@@ -250,12 +244,15 @@ describe(
                     'be.visible'
                 )
 
-                // Overlay has z-index of 2000
-                cy.getByDataTest('fetch-overlay').should(
-                    'have.css',
-                    'z-index',
-                    '2000'
-                )
+                // Overlay is above the sticky table header
+                cy.getByDataTest('line-list-data-table-head').then(($head) => {
+                    const headZIndex = Number($head.css('z-index'))
+                    cy.getByDataTest('fetch-overlay').should(($overlay) =>
+                        expect(
+                            Number($overlay.css('z-index'))
+                        ).to.be.greaterThan(headZIndex)
+                    )
+                })
 
                 // Check that overlay covers the scroll-box-container
                 cy.getByDataTest('fetch-overlay').should(($overlay) => {
@@ -293,6 +290,85 @@ describe(
                 cy.getByDataTest('visualization-legend-key').click({
                     force: false,
                 })
+            })
+
+            it('while refetching a scrolled table, the overlay still covers the scroll container', () => {
+                mountLineList(largeLineListWithLegend, {
+                    analytics: analyticsWithPendingRefetch(
+                        largeLineListWithLegend
+                    ),
+                })
+                cy.getByDataTest('scroll-box-container').scrollTo(500, 1000, {
+                    duration: 0,
+                })
+
+                triggerPendingRefetch()
+                expectOverlayToCoverScrollBox()
+            })
+
+            it('while refetching with totals, the sort buttons and the pager still respond', () => {
+                let requestCount = 0
+                const response = largeLineListWithLegend.response as {
+                    metaData: object
+                }
+                const responseWithTotals = {
+                    ...response,
+                    metaData: {
+                        ...response.metaData,
+                        pager: {
+                            page: 1,
+                            pageSize: 100,
+                            total: 1000,
+                            pageCount: 10,
+                        },
+                    },
+                }
+                mountLineList(largeLineListWithLegend, {
+                    analytics: (() => {
+                        requestCount += 1
+                        return requestCount === 1
+                            ? responseWithTotals
+                            : new Promise(() => undefined)
+                    }) as QueryData[string],
+                })
+
+                triggerPendingRefetch()
+                cy.getByDataTest('data-table-header')
+                    .eq(1)
+                    .find('button')
+                    .click()
+                cy.getByDataTest('pagination-next').click()
+                cy.getByDataTest('pagination-next').click()
+
+                cy.getByDataTest('pagination-page-input').should(
+                    'have.value',
+                    '3'
+                )
+                cy.wrap(null).should(() => expect(requestCount).to.equal(5))
+            })
+
+            it('while a page loads without totals, next keeps its focus but does not respond', () => {
+                let requestCount = 0
+                mountLineList(largeLineListWithLegend, {
+                    analytics: (() => {
+                        requestCount += 1
+                        return requestCount === 1
+                            ? largeLineListWithLegend.response
+                            : new Promise(() => undefined)
+                    }) as QueryData[string],
+                })
+
+                cy.getByDataTest('pagination-next').click()
+                cy.getByDataTest('pagination-next')
+                    .should('have.attr', 'aria-disabled', 'true')
+                    .click()
+
+                cy.focused().should('have.attr', 'data-test', 'pagination-next')
+                cy.getByDataTest('pagination-page-input').should(
+                    'have.value',
+                    '2'
+                )
+                cy.wrap(null).should(() => expect(requestCount).to.equal(2))
             })
 
             it('while refetching a small table, the overlay covers only the scroll container', () => {

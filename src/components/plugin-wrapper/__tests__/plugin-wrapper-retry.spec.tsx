@@ -86,7 +86,7 @@ describe('PluginWrapper canvas error retry', () => {
 
             // A paging refetch that fails: the canvas error replaces the table.
             analyticsShouldFail = true
-            await user.click(screen.getByRole('button', { name: 'Next' }))
+            await user.click(screen.getByRole('button', { name: 'Next page' }))
             await deferred.releaseAll()
             await waitFor(() => {
                 expect(

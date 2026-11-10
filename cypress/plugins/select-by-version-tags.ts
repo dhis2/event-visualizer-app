@@ -1,5 +1,4 @@
 import { plugin as cypressGrepPlugin } from '@cypress/grep/plugin'
-// eslint-disable-next-line no-restricted-imports
 import d2config from '../../d2.config.js'
 
 /* Version tagging is exclusion-based: a test tagged '@skip-44' does not run

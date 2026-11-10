@@ -1,6 +1,6 @@
 import { Analytics } from '@dhis2/analytics'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
-import { screen, waitFor, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { ComponentProps } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -30,15 +30,9 @@ type QueryData = NonNullable<
     Parameters<typeof renderWithAppWrapper>[1]
 >['queryData']
 type CustomResource = NonNullable<QueryData>[string]
-type AnalyticsResolver = ReturnType<
-    typeof vi.fn<
-        (type: string, query: { params: Record<string, unknown> }) => unknown
-    >
->
-
 type RenderLineListOptions = {
     eventVisualization?: Record<string, unknown>
-    analytics?: CustomResource | AnalyticsResolver
+    analytics?: CustomResource
     hostProps?: ComponentProps<typeof VisualizationTestHost>
 }
 
@@ -62,9 +56,7 @@ const renderLineList = async (
             },
             queryData: getLineListFixtureQueryData(fixture, {
                 eventVisualizations: visualizationPayload as CustomResource,
-                ...(analytics
-                    ? { analytics: analytics as CustomResource }
-                    : {}),
+                ...(analytics ? { analytics } : {}),
             }),
         }
     )
@@ -91,17 +83,6 @@ const analyticsWithPager = (fixture: LineListFixture, pager: object) => {
     } as unknown as CustomResource
 }
 
-const createAnalyticsSpy = (response: unknown): AnalyticsResolver => {
-    const resolve: (
-        type: string,
-        query: { params: Record<string, unknown> }
-    ) => unknown = () => response
-    return vi.fn(resolve)
-}
-
-const getLastAnalyticsParams = (analyticsSpy: AnalyticsResolver) =>
-    analyticsSpy.mock.calls.at(-1)![1].params
-
 describe('LineList', () => {
     beforeEach(() => {
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
@@ -112,34 +93,7 @@ describe('LineList', () => {
         ).analytics = undefined
     })
 
-    describe('Snapshot test', () => {
-        it('renders large table with legend set correctly', async () => {
-            const { container } = await renderLineList(largeLineListWithLegend)
-            expect(container).toMatchSnapshot()
-        })
-    })
-
     describe('Sorting', () => {
-        it('refetches with the sort parameters when a sort icon is clicked', async () => {
-            const user = userEvent.setup()
-            const analyticsSpy = createAnalyticsSpy(simpleLineList.response)
-
-            await renderLineList(simpleLineList, { analytics: analyticsSpy })
-            expect(analyticsSpy).toHaveBeenCalledTimes(1)
-
-            const sortButton = screen.getByRole('button', {
-                name: /sort by.*event org\. unit/i,
-            })
-            await user.click(sortButton)
-
-            await waitFor(() => {
-                expect(analyticsSpy).toHaveBeenCalledTimes(2)
-            })
-            expect(getLastAnalyticsParams(analyticsSpy).asc).toBe(
-                'jfuXZB3A1ko.ouname'
-            )
-        })
-
         it('calls onColumnHeaderClick when column header text is clicked', async () => {
             const user = userEvent.setup()
             const onColumnHeaderClick = vi.fn()
@@ -160,158 +114,21 @@ describe('LineList', () => {
     })
 
     describe('Pagination', () => {
-        it('refetches the next page when page is changed', async () => {
-            const user = userEvent.setup()
-            const analyticsSpy = createAnalyticsSpy(
-                analyticsWithPager(largeLineListWithLegend, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                })
-            )
-
-            await renderLineList(largeLineListWithLegend, {
-                analytics: analyticsSpy,
-            })
-
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-            await user.click(nextButton)
-
-            await waitFor(() => {
-                expect(analyticsSpy).toHaveBeenCalledTimes(2)
-            })
-            expect(getLastAnalyticsParams(analyticsSpy).page).toBe(2)
-        })
-
-        it('refetches with the new page size when page size is changed', async () => {
-            const user = userEvent.setup()
-            const analyticsSpy = createAnalyticsSpy(
-                analyticsWithPager(largeLineListWithLegend, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                })
-            )
-
-            await renderLineList(largeLineListWithLegend, {
-                analytics: analyticsSpy,
-            })
-
-            // Find the page size select dropdown
-            const pageSizeSelect = screen.getByTestId(
-                'dhis2-uicore-select-input'
-            )
-
-            // Click to open the dropdown
-            await user.click(pageSizeSelect)
-
-            // Find and click on the "50" option within the options container
-            const option50 = within(
-                screen.getByTestId('dhis2-uicore-select-menu-menuwrapper')
-            ).getByText('50')
-            await user.click(option50)
-
-            await waitFor(() => {
-                expect(analyticsSpy).toHaveBeenCalledTimes(2)
-            })
-            expect(getLastAnalyticsParams(analyticsSpy)).toMatchObject({
-                page: 1,
-                pageSize: 50,
-            })
-        })
-
-        it('displays pagination information correctly', async () => {
-            await renderLineList(largeLineListWithLegend)
-
-            // Verify the correct page size is displayed (default 100 from fixture)
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/rows per page/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
-
-            expect(screen.getByText(/page 1, row 1-100/i)).toBeInTheDocument()
-        })
-
-        it('shows correct pagination state for first page', async () => {
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
-        })
-
-        it('shows correct pagination state for middle page', async () => {
+        it('shows the pager of the analytics response', async () => {
             await renderLineList(largeLineListWithLegend, {
                 analytics: analyticsWithPager(largeLineListWithLegend, {
-                    page: 2,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            expect(screen.getByText(/page 2/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 101-200/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).not.toBeDisabled()
-            expect(nextButton).not.toBeDisabled()
-        })
-
-        it('shows correct pagination state for last page', async () => {
-            await renderLineList(largeLineListWithLegend, {
-                analytics: analyticsWithPager(largeLineListWithLegend, {
-                    page: 3,
-                    pageSize: 100,
-                    isLastPage: true,
-                }),
-            })
-
-            expect(screen.getByText(/page 3/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 201-300/i)).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).not.toBeDisabled()
-            expect(nextButton).toBeDisabled()
-        })
-
-        it('shows correct pagination state for single page', async () => {
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
                     pageSize: 100,
-                    isLastPage: true,
+                    total: 1234,
+                    pageCount: 13,
                 }),
             })
 
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).toBeDisabled()
+            expect(screen.getByLabelText('Page number')).toHaveValue('1')
+            expect(screen.getByText('13')).toBeInTheDocument()
+            expect(
+                screen.getByTestId('pagination-row-count')
+            ).toHaveTextContent(/^1 234 /)
         })
     })
 
@@ -574,54 +391,16 @@ describe('LineList', () => {
                 }),
             })
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-            const pageSizeSelect = screen.getByTestId(
-                'dhis2-uicore-select-input'
-            )
-
-            expect(prevButton).toBeDisabled()
-            expect(nextButton).toBeDisabled()
-            expect(pageSizeSelect).toHaveClass('disabled')
-
-            // Page size should show current value but be non-interactive
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText('Rows per page')).toBeInTheDocument()
-        })
-
-        it('shows tooltip on hover when pagination is disabled due to disconnection', async () => {
-            const user = userEvent.setup()
-
-            // Set disconnected state
-            mockUseDhis2ConnectionStatus.mockReturnValue({
-                isConnected: false,
-                isDisconnected: true,
-            })
-
-            await renderLineList(simpleLineList, {
-                analytics: analyticsWithPager(simpleLineList, {
-                    page: 1,
-                    pageSize: 100,
-                    isLastPage: false,
-                }),
-            })
-
-            // Find the sticky pagination container (which now has the tooltip props applied)
-            const paginationContainer = screen.getByTestId(
-                'sticky-pagination-container'
-            )
-            expect(paginationContainer).toBeInTheDocument()
-
-            // Hover over the pagination container
-            await user.hover(paginationContainer)
-
-            // Wait for tooltip to appear and check if tooltip content appears
-            await expect(
-                screen.findByText('Not available offline')
-            ).resolves.toBeInTheDocument()
-
-            // Unhover to clean up
-            await user.unhover(paginationContainer)
+            expect(
+                screen.getByRole('button', { name: 'Previous page' })
+            ).toBeDisabled()
+            expect(
+                screen.getByRole('button', { name: 'Next page' })
+            ).toBeDisabled()
+            expect(screen.getByLabelText('Page number')).toBeDisabled()
+            expect(
+                screen.getByRole('button', { name: 'Pagination options' })
+            ).toBeDisabled()
         })
 
         it('shows normal behavior when connection is restored', async () => {

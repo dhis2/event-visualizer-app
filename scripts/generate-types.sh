@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-
 # Configuration
-API_URL="https://test.e2e.dhis2.org/anly-dev/api/openapi.yaml?expandedRefs=true"
+API_URL="https://e2e.im.dhis2.org/analytics-dev/api/openapi.yaml?expandedRefs=true"
 TYPES_DIR="./src/types/dhis2-openapi-schemas"
 TEMP_DIR="./temp-openapi"
 AUTH_HEADER="Authorization: Basic $(echo -n "admin:district" | base64)"
@@ -14,7 +13,7 @@ mkdir -p "$TEMP_DIR" "$TYPES_DIR"
 
 # Fetch OpenAPI spec
 echo "📥 Fetching OpenAPI specification..."
-curl -H "Accept: application/x-yaml" -H "$AUTH_HEADER" "$API_URL" -o "$TEMP_DIR/openapi.yaml"
+curl --fail --show-error -H "Accept: application/x-yaml" -H "$AUTH_HEADER" "$API_URL" -o "$TEMP_DIR/openapi.yaml"
 
 # Generate types with openapi-typescript
 echo "⌛ Generating TypeScript types..."
@@ -40,7 +39,7 @@ in_schemas && /^[ ]{8}[A-Za-z0-9_]+(\??):/ {
 }
 in_schemas && /^[ ]{6}\}/ { in_schemas=0 }
 in_components && /^}/ { in_components=0 }
-' "$TYPES_DIR/generated.ts" > "$TYPES_DIR/index.ts"
+' "$TYPES_DIR/generated.ts" >"$TYPES_DIR/index.ts"
 
 # # Generate named type aliases using Node.js script
 # echo "🔗 Generating named type aliases..."
