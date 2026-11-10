@@ -423,8 +423,9 @@ its program qualifier so it reads like the TEI registration OU.
 1. `normalizeApiSavedVisualization` (`@modules/visualization/normalize-legacy`) brings the API
    payload to app shape: upgrades legacy dimensions and strips the dropped legacy dimensions
    (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`). It also keeps the top-level
-   `aggregationType` with the cell `value`: it drops the type when there is no value, and fills a
-   missing one with `DEFAULT` (see [Cell value aggregation type](#cell-value-aggregation-type)).
+   `aggregationType` with the cell `value`: it drops the type when there is no value, fills a
+   missing one with `DEFAULT`, and turns `DEFAULT` into AVERAGE for an item that aggregates by NONE
+   (see [Cell value aggregation type](#cell-value-aggregation-type)).
    A legacy pivot table keeps its one stage at the root and saves a data element value without a
    stage, so the root stage is moved onto the value; attribute values get none. The
    `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` mapping is not its concern — that runs per analytics
@@ -494,10 +495,19 @@ Two fields share the name `aggregationType`:
 
 `DEFAULT` means "whatever the item aggregates by". It is saved as `DEFAULT` and sent to analytics as
 `DEFAULT`, so the visualization keeps following the item and analytics decides what that is. The
-one exception is an item that aggregates by NONE: analytics rejects `DEFAULT` for it (E7265), so
-the request (`getCellValueAnalyticsRequestParams`) sends AVERAGE instead. The app resolves `DEFAULT`
-to a real type (`resolveAggregationType` in `@modules/dimension/aggregation-type`) only to show an
-aggregation name.
+app resolves `DEFAULT` to a real type (`resolveAggregationType` in
+`@modules/dimension/aggregation-type`) only to show an aggregation name.
+
+An item that aggregates by NONE has no type to follow, and analytics rejects `DEFAULT` for it
+(E7265). `replaceDefaultForNoneItem` turns `DEFAULT` into AVERAGE for such an item in three places:
+
+- **Picking the value**: AVERAGE is stored, not `DEFAULT`, so the visualization keeps showing the
+  same values if the item later gets a real aggregation type. This reads the item's own type from
+  the metadata store (see [Cell value identity](#cell-value-identity)).
+- **Loading**: `normalizeApiSavedVisualization` rewrites a saved `DEFAULT` to AVERAGE. ER let users
+  save that combination.
+- **The analytics request** (`getCellValueAnalyticsRequestParams`): a visualization saved with
+  `DEFAULT` can still meet a NONE item when the item's type changed after saving.
 
 ### Cell value identity
 
