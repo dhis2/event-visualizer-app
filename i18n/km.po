@@ -8,7 +8,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
+"POT-Creation-Date: 2026-10-22T12:48:15.232Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Khmer (https://app.transifex.com/hisp-uio/teams/100509/km/)\n"
@@ -28,8 +28,7 @@ msgid ""
 "layoutTetName}} dimensions: {{list}}."
 msgstr ""
 
-msgid ""
-"{{- name}} was not added because it is already used as the custom value."
+msgid "Only numeric data items can be used as the cell value."
 msgstr ""
 
 msgid "Changes not applied"
@@ -37,6 +36,12 @@ msgstr ""
 
 msgid "Retry"
 msgstr "សូមសាកល្បងឡើងវិញ"
+
+msgid "Use as value (without filters)"
+msgstr ""
+
+msgid "Use as value"
+msgstr ""
 
 msgid "Add to {{- axisName}}"
 msgstr ""
@@ -224,6 +229,10 @@ msgstr "លុបចេញ"
 msgid "all"
 msgstr "ទាំងអស់"
 
+msgid "And {{- count}} other..."
+msgid_plural "And {{- count}} other..."
+msgstr[0] ""
+
 msgid "None selected"
 msgstr "មិនត្រូវបានជ្រើសរើស"
 
@@ -238,27 +247,6 @@ msgstr ""
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr ""
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr ""
-
-msgid "Update custom value"
-msgstr ""
-
-msgid "Create custom value table"
-msgstr ""
-
-msgid "Switch to custom value table"
-msgstr ""
-
-msgid "Update custom value table"
-msgstr ""
-
-msgid "Enrollment"
-msgstr "ការចុះឈ្មោះ"
 
 msgid "Create {{- enrollmentLabel}} list"
 msgstr ""
@@ -278,9 +266,6 @@ msgstr ""
 msgid "Update {{- enrollmentLabel}} table"
 msgstr ""
 
-msgid "Event"
-msgstr ""
-
 msgid "Create {{- eventLabel}} list"
 msgstr ""
 
@@ -297,9 +282,6 @@ msgid "Update {{- eventLabel}} list"
 msgstr ""
 
 msgid "Update {{- eventLabel}} table"
-msgstr ""
-
-msgid "tracked entity"
 msgstr ""
 
 msgid "Create {{- trackedEntityTypeName}} list"
@@ -350,58 +332,23 @@ msgstr ""
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr ""
 
-msgid "Configure custom value"
+msgid "One row for each {{- outputTypeLabel}}"
 msgstr ""
 
-msgid "Choose the numeric data item to show in table cells."
+msgid "Use item default ({{- aggregationType}})"
 msgstr ""
 
-msgid "Search data items"
+msgid "Value"
+msgstr "តម្លៃ"
+
+msgid "Reset to count"
 msgstr ""
 
-msgid "Loading data"
+msgid "Cells show a count. Drag a numeric data item here to show its value."
 msgstr ""
 
-msgid "Error loading data"
-msgstr ""
-
-msgid "Failed to load data items"
-msgstr ""
-
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr ""
-
-msgid "No numeric data items in this program"
-msgstr ""
-
-msgid "This stage does not have any numeric data items available."
-msgstr ""
-
-msgid "This program does not have any numeric data items available."
-msgstr ""
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr ""
-
-msgid "Aggregation"
-msgstr ""
-
-msgid "Cancel"
-msgstr "បោះបង់"
-
-msgid "Update"
-msgstr "ធ្វើ​បច្ចុប្បន្នភាព"
-
-msgid "Select a value before updating"
-msgstr ""
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr ""
+msgid "Count"
+msgstr "ផលរាប់"
 
 msgid "Collapse layout"
 msgstr ""
@@ -423,6 +370,9 @@ msgstr ""
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
+
+msgid "Cancel"
+msgstr "បោះបង់"
 
 msgid "Convert"
 msgstr ""
@@ -639,6 +589,9 @@ msgstr "បង្ហាញដោយមិនមានលក្ខខណ្ឌច
 msgid "Create a {{- visType}} before updating"
 msgstr ""
 
+msgid "Update"
+msgstr "ធ្វើ​បច្ចុប្បន្នភាព"
+
 msgid "Metadata"
 msgstr "ទិន្នន័យ"
 
@@ -655,6 +608,9 @@ msgid "Program indicators"
 msgstr ""
 
 msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Event"
 msgstr ""
 
 msgid "Choose a data source"
@@ -734,6 +690,10 @@ msgstr ""
 msgid "Collapse all cards"
 msgstr ""
 
+msgid "Enter at least {{- count}} characters to search"
+msgid_plural "Enter at least {{- count}} characters to search"
+msgstr[0] ""
+
 msgid "Something went wrong while searching."
 msgstr ""
 
@@ -782,6 +742,20 @@ msgstr ""
 msgid "Delete"
 msgstr "​លុប​"
 
+msgid "Save as a new visualization?"
+msgstr ""
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+
+msgid "Save a copy with the new name instead?"
+msgstr ""
+
+msgid "Save as new"
+msgstr ""
+
 msgid "Open"
 msgstr "បើក"
 
@@ -799,11 +773,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr ""
 
-msgid "Rename successful"
-msgstr "ការផ្លាស់ប្តូរឈ្មោះ បានជោគជ័យ"
-
 msgid "Rename failed"
 msgstr "ការផ្លាស់ប្តូរឈ្មោះ បរាជ័យ"
+
+msgid "Rename successful"
+msgstr "ការផ្លាស់ប្តូរឈ្មោះ បានជោគជ័យ"
 
 msgid "Hide layout"
 msgstr ""
@@ -889,9 +863,6 @@ msgstr ""
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr ""
 
-msgid "Count"
-msgstr "ផលរាប់"
-
 msgid "Standard deviation"
 msgstr "គំលាតគំរូ"
 
@@ -908,6 +879,12 @@ msgid "Min value (sum in org unit hierarchy)"
 msgstr ""
 
 msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "ការចុះឈ្មោះ"
+
+msgid "tracked entity"
 msgstr ""
 
 msgid "equal to (=)"
@@ -973,9 +950,6 @@ msgstr "មិនមានតម្លៃ"
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-msgstr ""
-
-msgid "Already used as custom value."
 msgstr ""
 
 msgid "Cannot be used in a {{visType}}."
@@ -1266,9 +1240,6 @@ msgstr "ឆ្នាំមុន"
 msgid "Period"
 msgstr "កំឡុងពេល"
 
-msgid "Organisation unit"
-msgstr "ផ្នែក​នៃ​អង្គការ"
-
 msgid "Style"
 msgstr "​រចនាបទ"
 
@@ -1306,7 +1277,7 @@ msgstr ""
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "រូបភាពព្រឹត្តិការណ៍"
+msgstr ""
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"

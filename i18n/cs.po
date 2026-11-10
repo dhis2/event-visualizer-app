@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
+"POT-Creation-Date: 2026-10-22T12:48:15.232Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
@@ -25,8 +25,7 @@ msgid ""
 "layoutTetName}} dimensions: {{list}}."
 msgstr ""
 
-msgid ""
-"{{- name}} was not added because it is already used as the custom value."
+msgid "Only numeric data items can be used as the cell value."
 msgstr ""
 
 msgid "Changes not applied"
@@ -34,6 +33,12 @@ msgstr ""
 
 msgid "Retry"
 msgstr "Opakovat"
+
+msgid "Use as value (without filters)"
+msgstr ""
+
+msgid "Use as value"
+msgstr ""
 
 msgid "Add to {{- axisName}}"
 msgstr ""
@@ -221,6 +226,13 @@ msgstr "Odstranit"
 msgid "all"
 msgstr "vše"
 
+msgid "And {{- count}} other..."
+msgid_plural "And {{- count}} other..."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
 msgid "None selected"
 msgstr "Není vybrán žádný"
 
@@ -235,27 +247,6 @@ msgstr "Fáze programu: {{- stageName}}"
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr ""
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr ""
-
-msgid "Update custom value"
-msgstr ""
-
-msgid "Create custom value table"
-msgstr ""
-
-msgid "Switch to custom value table"
-msgstr ""
-
-msgid "Update custom value table"
-msgstr ""
-
-msgid "Enrollment"
-msgstr "Zápis"
 
 msgid "Create {{- enrollmentLabel}} list"
 msgstr ""
@@ -275,9 +266,6 @@ msgstr ""
 msgid "Update {{- enrollmentLabel}} table"
 msgstr ""
 
-msgid "Event"
-msgstr "Událost"
-
 msgid "Create {{- eventLabel}} list"
 msgstr ""
 
@@ -295,9 +283,6 @@ msgstr ""
 
 msgid "Update {{- eventLabel}} table"
 msgstr ""
-
-msgid "tracked entity"
-msgstr "trasovaná entita"
 
 msgid "Create {{- trackedEntityTypeName}} list"
 msgstr ""
@@ -347,58 +332,23 @@ msgstr ""
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr ""
 
-msgid "Configure custom value"
+msgid "One row for each {{- outputTypeLabel}}"
 msgstr ""
 
-msgid "Choose the numeric data item to show in table cells."
+msgid "Use item default ({{- aggregationType}})"
 msgstr ""
 
-msgid "Search data items"
+msgid "Value"
+msgstr "Hodnota"
+
+msgid "Reset to count"
 msgstr ""
 
-msgid "Loading data"
-msgstr "Načítání dat"
-
-msgid "Error loading data"
-msgstr "Chyba při načítání dat"
-
-msgid "Failed to load data items"
+msgid "Cells show a count. Drag a numeric data item here to show its value."
 msgstr ""
 
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr ""
-
-msgid "No numeric data items in this program"
-msgstr ""
-
-msgid "This stage does not have any numeric data items available."
-msgstr ""
-
-msgid "This program does not have any numeric data items available."
-msgstr ""
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr ""
-
-msgid "Aggregation"
-msgstr "Agregace"
-
-msgid "Cancel"
-msgstr "Zrušit"
-
-msgid "Update"
-msgstr "Aktualizovat"
-
-msgid "Select a value before updating"
-msgstr ""
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr ""
+msgid "Count"
+msgstr "Počet"
 
 msgid "Collapse layout"
 msgstr ""
@@ -420,6 +370,9 @@ msgstr ""
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
+
+msgid "Cancel"
+msgstr "Zrušit"
 
 msgid "Convert"
 msgstr ""
@@ -638,6 +591,9 @@ msgstr "Zobrazit bez filtrů"
 msgid "Create a {{- visType}} before updating"
 msgstr ""
 
+msgid "Update"
+msgstr "Aktualizovat"
+
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -655,6 +611,9 @@ msgstr "Indikátory programu"
 
 msgid "{{- name}} registration"
 msgstr ""
+
+msgid "Event"
+msgstr "Událost"
 
 msgid "Choose a data source"
 msgstr ""
@@ -733,6 +692,13 @@ msgstr ""
 msgid "Collapse all cards"
 msgstr ""
 
+msgid "Enter at least {{- count}} characters to search"
+msgid_plural "Enter at least {{- count}} characters to search"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+
 msgid "Something went wrong while searching."
 msgstr ""
 
@@ -781,6 +747,20 @@ msgstr "Získat odkaz ..."
 msgid "Delete"
 msgstr "Vymazat"
 
+msgid "Save as a new visualization?"
+msgstr ""
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+
+msgid "Save a copy with the new name instead?"
+msgstr ""
+
+msgid "Save as new"
+msgstr "Uložit jako nové"
+
 msgid "Open"
 msgstr "Otevřít"
 
@@ -798,11 +778,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr ""
 
-msgid "Rename successful"
-msgstr "Přejmenování bylo úspěšné"
-
 msgid "Rename failed"
 msgstr "Přejmenování selhalo"
+
+msgid "Rename successful"
+msgstr "Přejmenování bylo úspěšné"
 
 msgid "Hide layout"
 msgstr "Skrýt rozvržení"
@@ -891,9 +871,6 @@ msgstr "První hodnota (průměr v hierarchii organizačních jednotek)"
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr ""
 
-msgid "Count"
-msgstr "Počet"
-
 msgid "Standard deviation"
 msgstr "Standardní odchylka"
 
@@ -911,6 +888,12 @@ msgstr "Minimální hodnota (součet v hierarchii organizačních jednotek)"
 
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Maximální hodnota (součet v hierarchii organizačních jednotek)"
+
+msgid "Enrollment"
+msgstr "Zápis"
+
+msgid "tracked entity"
+msgstr "trasovaná entita"
 
 msgid "equal to (=)"
 msgstr "rovno (=)"
@@ -975,9 +958,6 @@ msgstr "Žádná hodnota"
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-msgstr ""
-
-msgid "Already used as custom value."
 msgstr ""
 
 msgid "Cannot be used in a {{visType}}."
@@ -1267,9 +1247,6 @@ msgstr "Poslední rok"
 msgid "Period"
 msgstr "Období"
 
-msgid "Organisation unit"
-msgstr "Organizační jednotka"
-
 msgid "Style"
 msgstr "Styl"
 
@@ -1307,7 +1284,7 @@ msgstr ""
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "Vizualizér událostí"
+msgstr ""
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
