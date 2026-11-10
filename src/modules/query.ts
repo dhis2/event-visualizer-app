@@ -55,10 +55,12 @@ export const getTrackedEntityTypeFields = (
         'displayTrackedEntityTypesLabel',
     ].join(',')
 
-/* What the cell value axis reads from a data item: its name, whether it is
- * numeric, and its own aggregation type. Every query that lists items which
- * can become the cell value includes these. */
-export const getCellValueItemFields = (
+/* The fields that decide whether a data element or attribute can be
+ * aggregated as the cell value, and how: whether it is numeric and its own
+ * aggregation type, plus its name. Every query for an item that might become
+ * the cell value asks for them, so its metadata is the same whether it comes
+ * from the sidebar, the layout or the cell value of a saved visualization. */
+export const getAggregatableDimensionFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string =>
     [
@@ -67,6 +69,26 @@ export const getCellValueItemFields = (
         'valueType',
         'aggregationType',
     ].join(',')
+
+/* Legend sets have no shortName, so their names always come from displayName
+ * regardless of the user's display property setting. */
+export const getDimensionMetadataFields = (
+    displayNameProp: CurrentUser['settings']['displayNameProperty']
+): string[] => {
+    const itemFields = `id,${displayNameProp}~rename(name)`
+    const aggregatableDimensionFields =
+        getAggregatableDimensionFields(displayNameProp)
+
+    return [
+        `dataElementDimensions[dataElement[${aggregatableDimensionFields}],legendSet[id,displayName~rename(name)]]`,
+        `attributeDimensions[attribute[${aggregatableDimensionFields}]]`,
+        `programIndicatorDimensions[programIndicator[${itemFields}]]`,
+        `categoryDimensions[category[${itemFields}]]`,
+        `categoryOptionGroupSetDimensions[categoryOptionGroupSet[${itemFields}]]`,
+        `organisationUnitGroupSetDimensions[organisationUnitGroupSet[${itemFields}]]`,
+        `dataElementGroupSetDimensions[dataElementGroupSet[${itemFields}]]`,
+    ]
+}
 
 /*
  * Option sets and legend sets have no shortName, so their names always come

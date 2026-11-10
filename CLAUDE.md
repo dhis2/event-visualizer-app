@@ -200,6 +200,15 @@ shapes, and filter syntax all change between versions. Look them up against the 
 instance: see the `dhis2-api-lookup` skill for the three-tier procedure (OpenAPI spec →
 probe the live API → read the `dhis2-core` source).
 
+### Same fields everywhere
+
+The same metadata object can reach the metadata store through several requests: the sidebar, the
+data source select, a loaded visualization. Each kind of object has one field-list helper in
+`@modules/query` (`getProgramFields`, `getTrackedEntityTypeFields`, `getAggregatableDimensionFields`,
+…), and every request for that object uses it, so an item carries the same fields whichever way it
+came in. A new request for such an object uses the existing helper; a field one consumer needs is
+added to the helper, not to a single request.
+
 ### DHIS2 instances
 
 | Instance | URL                                       | Allowed                                                        |
@@ -511,6 +520,9 @@ when there is no tracked entity type).
   value's metadata must be in the store before the ui config is derived from a visualization.
 - **Legacy**: an ER pivot table keeps its one stage at the root, so on load
   `normalizeApiSavedVisualization` moves it onto a data element value.
+- **From the layout**: the `columns`/`rows`/`filters` objects don't carry an item's name or own
+  aggregation type, so a loaded layout item gets them from `dataElementDimensions` /
+  `attributeDimensions`, the lists the backend builds those layout dimensions from.
 
 ## Grouping values by legend
 

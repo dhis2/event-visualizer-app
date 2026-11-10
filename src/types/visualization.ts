@@ -57,18 +57,19 @@ export type DimensionArray = Array<DimensionRecord>
 
 type ProgramDimensionArray = Array<Program>
 
-type DataElementDimensionArray = Array<{
-    legendSet: IdNameRecord
-    dataElement: IdNameRecord
-}>
-
-/* `aggregationType` is the item's own default, not the one the visualization
+/* A data element or attribute as `getAggregatableDimensionFields` fetches it.
+ * `aggregationType` is the item's own default, not the one the visualization
  * applies to the cell value. */
-export type CellValueItem = IdRecord & {
+export type AggregatableDimension = IdRecord & {
     name?: string
     valueType?: ValueType
     aggregationType?: EventVisualizationGenerated['aggregationType']
 }
+
+type DataElementDimensionArray = Array<{
+    legendSet: IdNameRecord
+    dataElement: IdNameRecord & AggregatableDimension
+}>
 
 type SavedVisualizationFieldOverrides = {
     id: string
@@ -80,14 +81,17 @@ type SavedVisualizationFieldOverrides = {
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
     trackedEntityType?: TrackedEntityTypeRef
-    /* How the cell `value` is aggregated. Not the same as
-     * `value.aggregationType`, which is the value item's own default. The
-     * backend does not require it, and leaves it out when it is not set. */
+    /* How the cell `value` is aggregated. Not the same as the value item's
+     * own default, which is on `dataElementValueDimension` or
+     * `attributeValueDimension`. The backend does not require it, and leaves
+     * it out when it is not set. */
     aggregationType?: EventVisualizationGenerated['aggregationType']
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
-    attributeDimensions?: MetadataRecordArray<'attribute'>
+    attributeDimensions?: Array<{
+        attribute: IdNameRecord & AggregatableDimension
+    }>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
     categoryDimensions: MetadataRecordArray<'category'>
     categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
@@ -107,8 +111,8 @@ type SavedVisualizationFieldOverrides = {
      * Its details are in the data element or attribute field below, whichever
      * the backend resolved the id to. */
     value?: IdRecord & { programStage?: IdRecord }
-    dataElementValueDimension?: CellValueItem
-    attributeValueDimension?: CellValueItem
+    dataElementValueDimension?: AggregatableDimension
+    attributeValueDimension?: AggregatableDimension
 }
 
 /**

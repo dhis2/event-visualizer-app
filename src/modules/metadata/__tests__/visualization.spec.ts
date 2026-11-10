@@ -508,4 +508,61 @@ describe('extractMetadataFromVisualization', () => {
             })
         }
     )
+
+    /* The layout dimension itself carries no aggregation type, so it comes
+     * from the visualization's data element and attribute lists. */
+    it("registers a layout item's own aggregation type", () => {
+        const visualization = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    programStage: { id: 'stage' },
+                    items: [],
+                },
+                {
+                    dimension: 'attr1',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {},
+            dataElementDimensions: [
+                {
+                    dataElement: {
+                        id: 'de1',
+                        name: 'Weight',
+                        aggregationType: 'NONE',
+                    },
+                },
+            ],
+            attributeDimensions: [
+                {
+                    attribute: {
+                        id: 'attr1',
+                        name: 'Age',
+                        aggregationType: 'SUM',
+                    },
+                },
+            ],
+            programDimensions: [
+                {
+                    id: 'prog',
+                    name: 'Program',
+                    programType: 'WITH_REGISTRATION',
+                    trackedEntityType: { id: 'tet', name: 'Person' },
+                    programStages: [{ id: 'stage', name: 'Stage' }],
+                },
+            ],
+        } as unknown as SavedVisualization
+
+        const metadata = extractMetadataFromVisualization(visualization)
+
+        expect(metadata['stage.de1']).toMatchObject({ aggregationType: 'NONE' })
+        expect(metadata['tet.attr1']).toMatchObject({ aggregationType: 'SUM' })
+    })
 })
