@@ -1231,3 +1231,55 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
         })
     })
 })
+
+describe('MetadataStore — cell value item', () => {
+    it('gives a data element value its stage and program', () => {
+        const store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+
+        const vis = {
+            outputType: 'EVENT',
+            type: 'PIVOT_TABLE',
+            programDimensions: [
+                {
+                    id: 'progA',
+                    name: 'Program A',
+                    programType: 'WITHOUT_REGISTRATION',
+                    programStages: [
+                        {
+                            id: 'stageA',
+                            name: 'Stage A',
+                            repeatable: false,
+                            hideDueDate: false,
+                            program: { id: 'progA' },
+                        },
+                    ],
+                },
+            ],
+            value: { id: 'deWeight', programStage: { id: 'stageA' } },
+            aggregationType: 'DEFAULT',
+            dataElementValueDimension: {
+                id: 'deWeight',
+                name: 'Weight',
+                aggregationType: 'SUM',
+                valueType: 'NUMBER',
+            },
+            columns: [],
+            rows: [],
+            filters: [],
+            metaData: {},
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        expect(store.getMetadataSnapshot()['stageA.deWeight']).toMatchObject({
+            id: 'stageA.deWeight',
+            dimensionId: 'deWeight',
+            dimensionType: 'DATA_ELEMENT',
+            programStageId: 'stageA',
+            programId: 'progA',
+        })
+    })
+})
