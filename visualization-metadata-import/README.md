@@ -1,6 +1,6 @@
 # Visualization metadata import
 
-The E2E instances are built from the `analytics-with-idv-20261014` DB dump. The visualizations the E2E suite and the line list fixture capture (`pnpm cy:capture-fixtures`) need on top of that dump live in `visualizations/`, one metadata payload per file.
+The E2E instances are built from the `analytics-with-idv-20261110` DB dump. The visualizations the E2E suite and the line list fixture capture (`pnpm cy:capture-fixtures`) need on top of that dump live in `visualizations/`, one metadata payload per file.
 
 `db-dump-visualizations.json` lists the IDs and names of the event visualizations in the DB dump. Don't put any of them in `visualizations/`: the dump is shared with other apps' E2E suites, and `import.sh` would overwrite their copy.
 
