@@ -14,18 +14,3 @@ export const getVisTypeDescriptions = (): Record<
         'View data and indicators in a manipulatable table. (adjust for EVER)'
     ),
 })
-
-export const dimensionMetadataPropMap: Record<string, string> = {
-    dataElementDimensions: 'dataElement',
-    attributeDimensions: 'attribute',
-    programIndicatorDimensions: 'programIndicator',
-    categoryDimensions: 'category',
-    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
-    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
-    dataElementGroupSetDimensions: 'dataElementGroupSet',
-}
-
-export const getDimensionMetadataFields = (): Array<string> =>
-    Object.entries(dimensionMetadataPropMap).map(
-        ([listName, objectName]) => `${listName}[${objectName}[id,name]]`
-    )

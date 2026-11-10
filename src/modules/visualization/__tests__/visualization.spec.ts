@@ -959,6 +959,57 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.aggregationType).toBe('DEFAULT')
     })
 
+    const noneItem = { id: UID, aggregationType: 'NONE' as const }
+
+    /* ER let users save DEFAULT for an item that aggregates by NONE. */
+    it.each([[undefined], ['DEFAULT' as const]])(
+        'turns a %s aggregation type into AVERAGE when the data element aggregates by NONE',
+        (aggregationType) => {
+            const result = normalizeApiSavedVisualization(
+                buildCellValueVis({
+                    aggregationType,
+                    dataElementValueDimension: noneItem,
+                })
+            )
+
+            expect(result.aggregationType).toBe('AVERAGE')
+            expect(result.legacy).toBeUndefined()
+        }
+    )
+
+    it('turns DEFAULT into AVERAGE when the attribute aggregates by NONE', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'DEFAULT',
+                attributeValueDimension: noneItem,
+            })
+        )
+
+        expect(result.aggregationType).toBe('AVERAGE')
+    })
+
+    it('keeps DEFAULT when the item has a type of its own', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'DEFAULT',
+                dataElementValueDimension: { id: UID, aggregationType: 'SUM' },
+            })
+        )
+
+        expect(result.aggregationType).toBe('DEFAULT')
+    })
+
+    it('keeps an explicit aggregation type when the item aggregates by NONE', () => {
+        const result = normalizeApiSavedVisualization(
+            buildCellValueVis({
+                aggregationType: 'MAX',
+                dataElementValueDimension: noneItem,
+            })
+        )
+
+        expect(result.aggregationType).toBe('MAX')
+    })
+
     it('keeps a saved aggregation type', () => {
         const result = normalizeApiSavedVisualization(
             buildCellValueVis({ aggregationType: 'SUM' })

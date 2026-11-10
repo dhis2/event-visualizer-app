@@ -1,8 +1,8 @@
 import { isValueTypeNumeric } from '@modules/value-type'
 import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
-    CellValueItem,
     CellValueRef,
+    AggregatableDimension,
     DimensionMetadataItem,
     DimensionType,
     MetadataStore,
@@ -16,7 +16,7 @@ import type {
  * and invalid for another at the same moment. */
 export const isValidCellValueDimension = (
     dimension: Pick<DimensionMetadataItem, 'valueType'> | undefined
-): boolean =>
+): dimension is Pick<DimensionMetadataItem, 'valueType'> =>
     Boolean(dimension?.valueType && isValueTypeNumeric(dimension.valueType))
 
 export const getCellValueRef = ({
@@ -33,7 +33,7 @@ export const getCellValueItem = (
         SavedVisualization,
         'value' | 'dataElementValueDimension' | 'attributeValueDimension'
     >
-): (CellValueItem & { dimensionType: DimensionType }) | undefined => {
+): (AggregatableDimension & { dimensionType: DimensionType }) | undefined => {
     if (!visualization.value) {
         return undefined
     }

@@ -410,14 +410,38 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
-msgid "Rows per page"
-msgstr "Rows per page"
+msgid "Page number"
+msgstr "Page number"
 
-msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgid "Pagination options"
+msgstr "Pagination options"
+
+msgid "Rows per page (view only)"
+msgstr "Rows per page (view only)"
 
 msgid "Not available offline"
 msgstr "Not available offline"
+
+msgid "Previous page"
+msgstr "Previous page"
+
+msgid "Next page"
+msgstr "Next page"
+
+msgid "{{- formattedCount}} enrollment"
+msgid_plural "{{- formattedCount}} enrollment"
+msgstr[0] "{{- formattedCount}} enrollment"
+msgstr[1] "{{- formattedCount}} enrollments"
+
+msgid "{{- formattedCount}} tracked entity"
+msgid_plural "{{- formattedCount}} tracked entity"
+msgstr[0] "{{- formattedCount}} tracked entity"
+msgstr[1] "{{- formattedCount}} tracked entities"
+
+msgid "{{- formattedCount}} event"
+msgid_plural "{{- formattedCount}} event"
+msgstr[0] "{{- formattedCount}} event"
+msgstr[1] "{{- formattedCount}} events"
 
 msgid "most recent"
 msgstr "most recent"
@@ -592,6 +616,9 @@ msgstr "Filters are not applied to Event visualizations"
 
 msgid "Show without filters"
 msgstr "Show without filters"
+
+msgid "Page {{page}} not found, returned to page {{shownPage}}"
+msgstr "Page {{page}} not found, returned to page {{shownPage}}"
 
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"

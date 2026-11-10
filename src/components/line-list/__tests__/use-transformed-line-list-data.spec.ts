@@ -274,20 +274,31 @@ describe('formatCellValue', () => {
         ).toBe('60 - 70')
     })
 
-    it('renders a time dimension DATETIME value as a plain date', () => {
-        expect(
-            formatCellValue({
-                rawValue: '2025-08-23 00:00:00.0',
-                header: {
-                    name: 'eventdate',
-                    valueType: 'DATETIME',
-                } as FormatCellValueHeader,
-                visualization,
-                metaDataItems: {},
-                isUndefined: false,
-            }).formattedValue
-        ).toBe('2025-08-23')
+    const formatDateValue = (name: string) =>
+        formatCellValue({
+            rawValue: '2025-08-23 14:30:00.0',
+            header: { name, valueType: 'DATETIME' } as FormatCellValueHeader,
+            visualization,
+            metaDataItems: {},
+            isUndefined: false,
+        }).formattedValue
+
+    it.each([
+        'eventdate',
+        'Zj7UnCAulEk.eventdate',
+        'Zj7UnCAulEk.scheduleddate',
+        'IpHINAT79UW.enrollmentdate',
+        'IpHINAT79UW.incidentdate',
+    ])('renders the %s time dimension as a plain date', (name) => {
+        expect(formatDateValue(name)).toBe('2025-08-23')
     })
+
+    it.each(['lastupdated', 'Zj7UnCAulEk.someDataElement'])(
+        'keeps the time of the %s DATETIME value',
+        (name) => {
+            expect(formatDateValue(name)).toBe('2025-08-23 14:30')
+        }
+    )
 })
 
 describe('transformLineListData', () => {
