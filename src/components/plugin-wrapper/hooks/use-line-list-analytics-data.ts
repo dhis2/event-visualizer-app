@@ -226,14 +226,14 @@ const fetchLegendSets = async ({
     return legendSets
 }
 
-/* The legend set assigned to the column's data item. A grouped column has
- * none: its header carries the grouping legend set and its values are legend
- * IDs, so there is nothing numeric to colour. */
+/* Analytics only sets a header's legendSet when the column is grouped by it */
+const isGroupedByLegend = (header: GridHeader) => Boolean(header.legendSet)
+
 export const getDataItemLegendSetId = (
     header: GridHeader,
     metaDataItems: AnalyticsResponseMetadataItems
 ): string | undefined => {
-    if (header.legendSet || !isValueTypeNumeric(header.valueType)) {
+    if (isGroupedByLegend(header) || !isValueTypeNumeric(header.valueType)) {
         return undefined
     }
     const legendSetId = metaDataItems[header.name ?? '']?.legendSet
