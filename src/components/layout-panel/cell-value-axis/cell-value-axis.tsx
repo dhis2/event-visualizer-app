@@ -44,13 +44,14 @@ export const CellValueAxis: FC = () => {
     const { active, over } = useDndContext()
     const activeDragData = getActiveDragData(active)
     const canTakeActiveDrag = Boolean(activeDragData?.canBeCellValue)
-    /* An invalid dimension is rejected on drop, so the axis must not invite it
-     * in the first place: no highlight, and hatching while such a drag is in
-     * flight. When the layout is blocked too, the overlay already covers every
-     * axis, and this one joins them rather than hatching itself. */
-    const isActiveDropTarget =
-        isCellValueDroppableData(over?.data.current) && canTakeActiveDrag
+    /* An invalid dimension is rejected on drop, so the axis must not invite it:
+     * no highlight, and hatching once such a drag reaches the axis. When the
+     * layout is blocked too, the overlay already covers every axis, and this
+     * one joins them rather than hatching itself. */
+    const isOverAxis = isCellValueDroppableData(over?.data.current)
+    const isActiveDropTarget = isOverAxis && canTakeActiveDrag
     const isDropBlocked =
+        isOverAxis &&
         activeDragData !== undefined &&
         !canTakeActiveDrag &&
         !activeDragData.isLayoutBlocked
