@@ -36,14 +36,4 @@ describe('download', () => {
             expectDownloadToBeServed(menuPath, urlPart)
         )
     })
-
-    /* The backend rejects the request with E7125: analytics/dataValueSet
-     * doesn't know the stage-prefixed dimensions of an event pivot table. */
-    it.skip('serves the pivot table data value set', () => {
-        cy.visit(`/#/${PIVOT_TABLE_ID}`)
-        cy.getByDataTest('visualization-container').should('be.visible')
-        stubWindowOpen()
-
-        expectDownloadToBeServed(['Advanced', 'JSON'], '/dataValueSet')
-    })
 })

@@ -19,7 +19,14 @@ import {
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { useCallback, useState } from 'react'
-import type { DownloadFn } from './types'
+import type { DownloadFn, DownloadType, FileFormat } from './types'
+
+const getDownloadTarget = (type: DownloadType, format: FileFormat) => {
+    if (type === 'table') {
+        return format === 'html+css' ? '_blank' : '_top'
+    }
+    return ['csv', 'xls', 'xlsx'].includes(format) ? '_top' : '_blank'
+}
 
 type UseDownloadResult = {
     isDownloadDisabled: boolean
@@ -42,8 +49,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
-
-            let target = '_top'
 
             const visualization =
                 transformVisualizationForAnalyticsRequest(currentVis)
@@ -101,12 +106,9 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             paging: false,
                         })
 
-                    target = format === 'html+css' ? '_blank' : '_top'
-
                     break
                 case 'plain':
                     req = req
-                        // Perhaps the 2nd arg `passFilterAsDimension` should be false for the advanced submenu?
                         .fromVisualization(adaptedVisualization, true)
                         .withParameters({
                             ...parameters,
@@ -120,9 +122,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xsl', 'xslx'].includes(format)
-                        ? '_top'
-                        : '_blank'
                     break
             }
 
@@ -136,7 +135,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 url.searchParams.append(key, String(value))
             )
 
-            window.open(url, target)
+            window.open(url, getDownloadTarget(type, format))
         },
         [
             analyticsEngine,
@@ -149,12 +148,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     )
 
     const downloadForPT: DownloadFn = useCallback(
-        ({ type, format, idScheme, path }) => {
+        ({ type, format, idScheme }) => {
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
-
-            let target = '_top'
 
             const visualization =
                 transformVisualizationForAnalyticsRequest(currentVis)
@@ -164,51 +161,44 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             let req = new analyticsEngine.request()
                 .withPath(
-                    path ??
-                        `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
+                    `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
                 )
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
-
-            const applyBaseOptions = () => {
-                if (!path) {
-                    req = req.withProgram(
-                        getSingleProgramFromVisualization(visualization).id
-                    )
-                }
-
-                if (visualization.showHierarchy) {
-                    req = req.withHierarchyMeta()
-                }
-
-                if (visualization.sortOrder) {
-                    req = req.withSortOrder(
-                        visualization.sortOrder === 1 ? 'ASC' : 'DESC'
-                    )
-                }
-
-                if (visualization.topLimit) {
-                    req = req.withLimit(visualization.topLimit)
-                }
-
-                const cellValueParams = getCellValueAnalyticsRequestParams(
-                    visualization,
-                    metadataStore
+                .withProgram(
+                    getSingleProgramFromVisualization(visualization).id
                 )
-                if (cellValueParams) {
-                    req = req
-                        .withValue(cellValueParams.value)
-                        .withAggregationType(cellValueParams.aggregationType)
-                }
 
-                if (
-                    relativePeriodDate &&
-                    isVisualizationWithTimeDimension(visualization)
-                ) {
-                    req = req.withRelativePeriodDate(relativePeriodDate)
-                }
+            if (visualization.showHierarchy) {
+                req = req.withHierarchyMeta()
             }
-            applyBaseOptions()
+
+            if (visualization.sortOrder) {
+                req = req.withSortOrder(
+                    visualization.sortOrder === 1 ? 'ASC' : 'DESC'
+                )
+            }
+
+            if (visualization.topLimit) {
+                req = req.withLimit(visualization.topLimit)
+            }
+
+            const cellValueParams = getCellValueAnalyticsRequestParams(
+                visualization,
+                metadataStore
+            )
+            if (cellValueParams) {
+                req = req
+                    .withValue(cellValueParams.value)
+                    .withAggregationType(cellValueParams.aggregationType)
+            }
+
+            if (
+                relativePeriodDate &&
+                isVisualizationWithTimeDimension(visualization)
+            ) {
+                req = req.withRelativePeriodDate(relativePeriodDate)
+            }
 
             switch (type) {
                 case 'table':
@@ -221,16 +211,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             paging: false,
                         })
 
-                    target = format === 'html+css' ? '_blank' : '_top'
-
                     break
                 case 'plain':
                     req = req
-                        .fromVisualization(
-                            adaptedVisualization,
-                            // in DV we only pass true when path is dataValueSet, in LL we always pass true as we don't have the advanced menu there
-                            path ? path === 'dataValueSet' : true
-                        )
+                        .fromVisualization(adaptedVisualization, true)
                         .withParameters({
                             ...parameters,
                             paging: false,
@@ -242,9 +226,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xsl', 'xslx'].includes(format)
-                        ? '_top'
-                        : '_blank'
                     break
             }
 
@@ -258,7 +239,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 url.searchParams.append(key, String(value))
             )
 
-            window.open(url, target)
+            window.open(url, getDownloadTarget(type, format))
         },
         [
             analyticsEngine,
