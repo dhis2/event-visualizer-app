@@ -35,7 +35,12 @@ export const dropInvalidGrouping = (
             return dimension
         }
 
-        return isProgramIndicatorLegendFilter(dimension)
-            ? { ...dimension, legendSet: undefined, filter: undefined }
-            : { ...dimension, legendSet: undefined }
+        const withoutGrouping = { ...dimension }
+        delete withoutGrouping.legendSet
+
+        if (isProgramIndicatorLegendFilter(dimension)) {
+            delete withoutGrouping.filter
+        }
+
+        return withoutGrouping
     })
