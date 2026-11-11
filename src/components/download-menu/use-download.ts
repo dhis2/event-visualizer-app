@@ -106,7 +106,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     break
                 case 'plain':
                     req = req
-                        // Perhaps the 2nd arg `passFilterAsDimension` should be false for the advanced submenu?
                         .fromVisualization(adaptedVisualization, true)
                         .withParameters({
                             ...parameters,
@@ -149,7 +148,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     )
 
     const downloadForPT: DownloadFn = useCallback(
-        ({ type, format, idScheme, path }) => {
+        ({ type, format, idScheme }) => {
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
@@ -164,18 +163,15 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             let req = new analyticsEngine.request()
                 .withPath(
-                    path ??
-                        `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
+                    `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
                 )
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
 
             const applyBaseOptions = () => {
-                if (!path) {
-                    req = req.withProgram(
-                        getSingleProgramFromVisualization(visualization).id
-                    )
-                }
+                req = req.withProgram(
+                    getSingleProgramFromVisualization(visualization).id
+                )
 
                 if (visualization.showHierarchy) {
                     req = req.withHierarchyMeta()
@@ -226,11 +222,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     break
                 case 'plain':
                     req = req
-                        .fromVisualization(
-                            adaptedVisualization,
-                            // in DV we only pass true when path is dataValueSet, in LL we always pass true as we don't have the advanced menu there
-                            path ? path === 'dataValueSet' : true
-                        )
+                        .fromVisualization(adaptedVisualization, true)
                         .withParameters({
                             ...parameters,
                             paging: false,

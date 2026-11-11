@@ -192,25 +192,5 @@ describe('useDownload', () => {
             expect(url.searchParams.get('outputIdScheme')).toBe('NAME')
             expect(url.searchParams.get('dataIdScheme')).toBe('NAME')
         })
-
-        /* The advanced submenu (data value set, JRXML, raw SQL) is only rendered
-         * for pivot tables, and its items pass a `path` and no `idScheme`. A data
-         * value set is identified by UID server-side, so no scheme is forced. */
-        describe('advanced submenu', () => {
-            it('targets the data value set endpoint without forcing a scheme', () => {
-                const { result } = renderDownload(makePivotVis())
-
-                result.current.download({
-                    type: 'plain',
-                    format: 'json',
-                    path: 'dataValueSet',
-                })
-
-                const url = getOpenedUrl(openSpy)
-                expect(url.pathname).toContain('/analytics/dataValueSet')
-                expect(url.searchParams.get('outputIdScheme')).toBeNull()
-                expect(url.searchParams.get('dataIdScheme')).toBeNull()
-            })
-        })
     })
 })
