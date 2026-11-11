@@ -1,9 +1,11 @@
 import { interceptLineListAnalytics, sortColumn } from '../helpers'
+import { getHeaderTexts } from '../support/rendering'
 
 const EVENT_LINE_LIST_ID = 't6SxiQdVPVs'
 const ENROLLMENT_LINE_LIST_ID = 'kUbNtOy0T12'
 const TRACKED_ENTITY_LINE_LIST_ID = 'IS74uKRvJvl'
 const AGE_DIMENSION = 'Zj7UnCAulEk.qrur9Dvnyt5'
+const DEFAULT_CELL_BACKGROUND_COLOR = 'rgb(255, 255, 255)'
 
 type Pager = { total: number; pageCount: number }
 
@@ -120,6 +122,27 @@ describe('line list', () => {
                 )
             }
         )
+    })
+
+    it('colours the cells by the legend set of each data item', () => {
+        openLineList()
+
+        cy.getByDataTest('visualization-legend-key')
+            .should('contain', 'Age 10y interval')
+            .and('contain', 'Weight in kg')
+        cy.getByDataTest('data-table-header').then(($headers) => {
+            const ageColumnIndex =
+                getHeaderTexts($headers).indexOf('Age in years')
+            getRows()
+                .first()
+                .findByDataTest('table-cell')
+                .eq(ageColumnIndex)
+                .should(
+                    'not.have.css',
+                    'background-color',
+                    DEFAULT_CELL_BACKGROUND_COLOR
+                )
+        })
     })
 
     it('opens a dimension modal from a header', () => {
