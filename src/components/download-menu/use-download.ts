@@ -167,44 +167,40 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 )
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
-
-            const applyBaseOptions = () => {
-                req = req.withProgram(
+                .withProgram(
                     getSingleProgramFromVisualization(visualization).id
                 )
 
-                if (visualization.showHierarchy) {
-                    req = req.withHierarchyMeta()
-                }
-
-                if (visualization.sortOrder) {
-                    req = req.withSortOrder(
-                        visualization.sortOrder === 1 ? 'ASC' : 'DESC'
-                    )
-                }
-
-                if (visualization.topLimit) {
-                    req = req.withLimit(visualization.topLimit)
-                }
-
-                const cellValueParams = getCellValueAnalyticsRequestParams(
-                    visualization,
-                    metadataStore
-                )
-                if (cellValueParams) {
-                    req = req
-                        .withValue(cellValueParams.value)
-                        .withAggregationType(cellValueParams.aggregationType)
-                }
-
-                if (
-                    relativePeriodDate &&
-                    isVisualizationWithTimeDimension(visualization)
-                ) {
-                    req = req.withRelativePeriodDate(relativePeriodDate)
-                }
+            if (visualization.showHierarchy) {
+                req = req.withHierarchyMeta()
             }
-            applyBaseOptions()
+
+            if (visualization.sortOrder) {
+                req = req.withSortOrder(
+                    visualization.sortOrder === 1 ? 'ASC' : 'DESC'
+                )
+            }
+
+            if (visualization.topLimit) {
+                req = req.withLimit(visualization.topLimit)
+            }
+
+            const cellValueParams = getCellValueAnalyticsRequestParams(
+                visualization,
+                metadataStore
+            )
+            if (cellValueParams) {
+                req = req
+                    .withValue(cellValueParams.value)
+                    .withAggregationType(cellValueParams.aggregationType)
+            }
+
+            if (
+                relativePeriodDate &&
+                isVisualizationWithTimeDimension(visualization)
+            ) {
+                req = req.withRelativePeriodDate(relativePeriodDate)
+            }
 
             switch (type) {
                 case 'table':
