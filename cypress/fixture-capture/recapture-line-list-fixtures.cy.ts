@@ -1,9 +1,7 @@
 /**
  * Recaptures the line-list fixtures by loading each visualization in the
- * running app against the e2e.im.dhis2.org/analytics-dev instance and
- * writing the intercepted API responses verbatim into the fixture
- * directories. Not the E2E instance CI uses: two of these visualizations
- * only exist on analytics-dev.
+ * running app against the E2E instance and writing the intercepted API
+ * responses verbatim into the fixture directories.
  *
  * Excluded from normal e2e runs (it lives outside the e2e specPattern);
  * run it with:
@@ -20,6 +18,7 @@ const SCENARIOS = [
     { directory: 'inpatient-visit-overview-bombali', id: 'kb9Uml5FEEz' },
     { directory: 'inpatient-extra-columns-and-legends', id: 'Rq4ppYwc4r8' },
     { directory: 'no-time-dimension', id: 'ETJXkMmCGsK' },
+    { directory: 'event-line-list-event-program', id: 't6SxiQdVPVs' },
 ]
 
 describe('recapture line-list fixtures', () => {

@@ -41,66 +41,72 @@
     "dataElementDimensions": [
         {
             "dataElement": {
-                "name": "Gender",
-                "id": "oZg33kd9taw"
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "oZg33kd9taw",
+                "name": "Gender"
             }
         },
         {
             "dataElement": {
-                "name": "Height in cm",
-                "id": "GieVkTxp4HH"
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "id": "GieVkTxp4HH",
+                "name": "Height in cm"
             },
             "legendSet": {
-                "name": "Height in cm",
-                "id": "TBxGTceyzwy"
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
             }
         },
         {
             "dataElement": {
-                "name": "Weight in kg",
-                "id": "vV9UWAZohSf"
+                "valueType": "INTEGER_POSITIVE",
+                "aggregationType": "AVERAGE",
+                "id": "vV9UWAZohSf",
+                "name": "Weight in kg"
             },
             "legendSet": {
-                "name": "Weight in kg",
-                "id": "OrkEzxZEH4X"
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
             }
         }
     ],
     "programIndicatorDimensions": [
         {
             "programIndicator": {
-                "name": "Average age of deaths",
-                "id": "tUdBD1JDxpn"
+                "id": "tUdBD1JDxpn",
+                "name": "Average age of deaths"
             }
         },
         {
             "programIndicator": {
-                "name": "Average height of girls at 5 years old",
-                "id": "gWxh7DiRmG7"
+                "id": "gWxh7DiRmG7",
+                "name": "Average height of girls at 5 years old"
             }
         },
         {
             "programIndicator": {
-                "name": "BMI",
-                "id": "x7PaHGvgWY2"
+                "id": "x7PaHGvgWY2",
+                "name": "BMI"
             }
         },
         {
             "programIndicator": {
-                "name": "BMI female under 5 y",
-                "id": "hlPt8H4bUOQ"
+                "id": "hlPt8H4bUOQ",
+                "name": "BMI female under 5 y"
             }
         },
         {
             "programIndicator": {
-                "name": "BMI male under 5 y",
-                "id": "Y7hKDSuqEtH"
+                "id": "Y7hKDSuqEtH",
+                "name": "BMI male under 5 y"
             }
         },
         {
             "programIndicator": {
-                "name": "Inpatient bed days average",
-                "id": "HS8QXAJtuKV"
+                "id": "HS8QXAJtuKV",
+                "name": "Inpatient bed days average"
             }
         }
     ],
@@ -251,7 +257,7 @@
         "update": true,
         "delete": true
     },
-    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/kb9Uml5FEEz",
+    "href": "https://e2e.im.dhis2.org/idv-playground/api/eventVisualizations/kb9Uml5FEEz",
     "subscribed": false,
     "favorite": false,
     "metaData": {

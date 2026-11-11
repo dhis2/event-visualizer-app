@@ -4,22 +4,16 @@ import {
 } from '@components/line-list/__tests__/line-list-fixture-utils'
 import { Analytics } from '@dhis2/analytics'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
-import { extractMetadataFromVisualization } from '@modules/metadata/visualization'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
-import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { waitFor } from '@testing-library/react'
-import type {
-    ApiSavedVisualization,
-    CurrentVisualization,
-    DimensionMetadataItem,
-    InitialMetadataItems,
-} from '@types'
+import type { ApiSavedVisualization, CurrentVisualization } from '@types'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import {
     collectLegendSetIdsToFetch,
     toLineListAnalyticsData,
     useLineListAnalyticsData,
+    type LineListAnalyticsData,
     type LineListAnalyticsDataHeader,
     type LineListAnalyticsResponse,
     type LineListLegendSet,
@@ -53,11 +47,6 @@ describe('useLineListAnalyticsData', () => {
             () => useLineListAnalyticsData(),
             {
                 queryData: getLineListFixtureQueryData(largeLineListWithLegend),
-                /* The hook does not run the load pipeline that seeds the
-                 * metadata store, so seed it here the same way. */
-                metadata: extractMetadataFromVisualization(
-                    largeLineListWithLegendVis
-                ) as InitialMetadataItems,
             }
         )
 
@@ -80,10 +69,7 @@ describe('useLineListAnalyticsData', () => {
         expect(data.headers.map(({ dimensionId }) => dimensionId)).toContain(
             'Zj7UnCAulEk.vV9UWAZohSf'
         )
-        expect(data.legendSets.map(({ id }) => id).toSorted()).toEqual([
-            'OrkEzxZEH4X',
-            'TBxGTceyzwy',
-        ])
+        expect(data.legendSets.map(({ id }) => id)).toEqual(['Yf6UHoPkdS6'])
     })
 })
 
@@ -128,9 +114,9 @@ describe('toLineListAnalyticsData', () => {
             (header) => header.name === 'Zj7UnCAulEk.vV9UWAZohSf'
         )
         expect(weightHeader?.dimensionId).toBe('Zj7UnCAulEk.vV9UWAZohSf')
-        expect(analyticsData.legendSets.map(({ id }) => id).toSorted()).toEqual(
-            ['OrkEzxZEH4X', 'TBxGTceyzwy']
-        )
+        expect(analyticsData.legendSets.map(({ id }) => id)).toEqual([
+            'Yf6UHoPkdS6',
+        ])
     })
 })
 
@@ -140,6 +126,11 @@ const headers = [
     { name: 's1.height', dimensionId: 's1.height', valueType: 'NUMBER' },
 ] as LineListAnalyticsDataHeader[]
 
+const metaDataItems = {
+    's1.weight': { uid: 'weight', name: 'Weight', legendSet: 'ls1' },
+    's1.height': { uid: 'height', name: 'Height', legendSet: 'ls2' },
+} as unknown as LineListAnalyticsData['metaDataItems']
+
 const buildVisualization = (legend: unknown): CurrentVisualization =>
     ({ outputType: 'EVENT', legend }) as unknown as CurrentVisualization
 
@@ -147,9 +138,8 @@ describe('collectLegendSetIdsToFetch', () => {
     it('returns the configured set for the FIXED strategy', () => {
         expect(
             collectLegendSetIdsToFetch(
-                headers,
-                buildVisualization({ strategy: 'FIXED', set: { id: 'ls1' } }),
-                createMetadataStoreStub()
+                { headers, metaDataItems },
+                buildVisualization({ strategy: 'FIXED', set: { id: 'ls1' } })
             )
         ).toEqual(['ls1'])
     })
@@ -157,42 +147,61 @@ describe('collectLegendSetIdsToFetch', () => {
     it('returns nothing for the FIXED strategy without a configured set', () => {
         expect(
             collectLegendSetIdsToFetch(
-                headers,
-                buildVisualization({ strategy: 'FIXED' }),
-                createMetadataStoreStub()
+                { headers, metaDataItems },
+                buildVisualization({ strategy: 'FIXED' })
             )
         ).toEqual([])
     })
 
-    it('returns the per-column sets from the metadata store for the BY_DATA_ITEM strategy', () => {
-        const metadataStore = createMetadataStoreStub({
-            dimensions: {
-                's1.weight': { legendSetId: 'ls1' },
-                's1.height': { legendSetId: 'ls2' },
-            } as unknown as Record<string, DimensionMetadataItem>,
-        })
-
+    it('returns the legend sets of the data items for the BY_DATA_ITEM strategy', () => {
         expect(
             collectLegendSetIdsToFetch(
-                headers,
-                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
-                metadataStore
+                { headers, metaDataItems },
+                buildVisualization({ strategy: 'BY_DATA_ITEM' })
             )
         ).toEqual(['ls1', 'ls2'])
     })
 
-    it('skips columns without a legend set for the BY_DATA_ITEM strategy', () => {
-        const metadataStore = createMetadataStoreStub({
-            dimensions: {
-                's1.weight': { legendSetId: 'ls1' },
-            } as unknown as Record<string, DimensionMetadataItem>,
-        })
+    it('returns each legend set once for the BY_DATA_ITEM strategy', () => {
+        expect(
+            collectLegendSetIdsToFetch(
+                {
+                    headers,
+                    metaDataItems: {
+                        ...metaDataItems,
+                        's1.height': { uid: 'height', legendSet: 'ls1' },
+                    } as unknown as LineListAnalyticsData['metaDataItems'],
+                },
+                buildVisualization({ strategy: 'BY_DATA_ITEM' })
+            )
+        ).toEqual(['ls1'])
+    })
+
+    it('skips grouped columns for the BY_DATA_ITEM strategy', () => {
+        const headersWithGroupedHeight = headers.map((header) =>
+            header.name === 's1.height'
+                ? { ...header, valueType: 'TEXT', legendSet: 'ls2' }
+                : header
+        ) as LineListAnalyticsDataHeader[]
 
         expect(
             collectLegendSetIdsToFetch(
-                headers,
-                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
-                metadataStore
+                { headers: headersWithGroupedHeight, metaDataItems },
+                buildVisualization({ strategy: 'BY_DATA_ITEM' })
+            )
+        ).toEqual(['ls1'])
+    })
+
+    it('skips columns without a legend set for the BY_DATA_ITEM strategy', () => {
+        expect(
+            collectLegendSetIdsToFetch(
+                {
+                    headers,
+                    metaDataItems: {
+                        's1.weight': metaDataItems['s1.weight'],
+                    } as LineListAnalyticsData['metaDataItems'],
+                },
+                buildVisualization({ strategy: 'BY_DATA_ITEM' })
             )
         ).toEqual(['ls1'])
     })
@@ -200,9 +209,8 @@ describe('collectLegendSetIdsToFetch', () => {
     it('returns nothing when the visualization has no legend', () => {
         expect(
             collectLegendSetIdsToFetch(
-                headers,
-                buildVisualization(undefined),
-                createMetadataStoreStub()
+                { headers, metaDataItems },
+                buildVisualization(undefined)
             )
         ).toEqual([])
     })

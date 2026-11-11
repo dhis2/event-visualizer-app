@@ -10,8 +10,8 @@ mirrors the requests the app makes:
 
 All scenarios exist as saved visualizations on
 the [E2E instance](https://e2e.im.dhis2.org/idv-playground), which `pnpm cy:capture-fixtures`
-captures from. Two of them (`inpatient-extra-columns-and-legends` and `no-time-dimension`) come from
-`visualization-metadata-import/`. The capture spec maps each directory to its visualization ID:
+captures from. Three of them (`inpatient-extra-columns-and-legends`, `no-time-dimension` and
+`event-line-list-event-program`) come from `visualization-metadata-import/`. The capture spec maps each directory to its visualization ID:
 
 - `e2e-enrollment` (`AFjkDs7acBh`) — "E2E: Enrollment": a minimal enrollment
   line list
@@ -20,10 +20,13 @@ captures from. Two of them (`inpatient-extra-columns-and-legends` and `no-time-d
   legend-grouped columns
 - `inpatient-extra-columns-and-legends` (`Rq4ppYwc4r8`) — "Inpatient: Cases
   under 5 years female this year (case) additional columns and legends": data
-  element and program indicator columns plus a by-data-item legend, for legend
-  resolution and coloring
+  element and program indicator columns, two of them grouped by legend, plus a
+  by-data-item legend
 - `no-time-dimension` (`ETJXkMmCGsK`) — "No time dimension": a line list
   without any time dimension, for the NoTimeDimensionWarning
+- `event-line-list-event-program` (`t6SxiQdVPVs`) — "E2E: Event line list,
+  event program": numeric columns that aren't grouped, coloured by the legend
+  set of each data item
 
 ## Regenerating
 

@@ -12,6 +12,9 @@ const largeLineListWithLegend = loadLineListFixture(
     'inpatient-extra-columns-and-legends'
 )
 const inpatientVisit = loadLineListFixture('inpatient-visit-overview-bombali')
+const eventLineListWithLegend = loadLineListFixture(
+    'event-line-list-event-program'
+)
 
 type QueryData = ReturnType<typeof getLineListFixtureQueryData>
 
@@ -122,7 +125,7 @@ describe(
                 /* Short enough that the legend key cannot fit its items */
                 { viewportHeight: 500 },
                 () => {
-                    mountLineList(largeLineListWithLegend)
+                    mountLineList(eventLineListWithLegend)
 
                     // Check that legend key is visible
                     cy.getByDataTest('visualization-legend-key').should(

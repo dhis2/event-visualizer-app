@@ -1,0 +1,1412 @@
+{
+    "headers": [
+        {
+            "name": "Zj7UnCAulEk.ouname",
+            "column": "Organisation unit name",
+            "valueType": "TEXT",
+            "type": "java.lang.String",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "Zj7UnCAulEk.eventdate",
+            "column": "Report date",
+            "valueType": "DATE",
+            "type": "java.time.LocalDate",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "Zj7UnCAulEk.oZg33kd9taw",
+            "column": "Gender",
+            "valueType": "TEXT",
+            "type": "java.lang.String",
+            "hidden": false,
+            "meta": true,
+            "optionSet": "pC3N9N77UmT"
+        },
+        {
+            "name": "Zj7UnCAulEk.qrur9Dvnyt5",
+            "column": "Age in years",
+            "valueType": "INTEGER",
+            "type": "java.lang.Integer",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "Zj7UnCAulEk.vV9UWAZohSf",
+            "column": "Weight in kg",
+            "valueType": "INTEGER_POSITIVE",
+            "type": "java.lang.Integer",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "Zj7UnCAulEk.fWIAEtYVEGk",
+            "column": "Mode of Discharge",
+            "valueType": "TEXT",
+            "type": "java.lang.String",
+            "hidden": false,
+            "meta": true,
+            "optionSet": "iDFPKpFTiVw"
+        },
+        {
+            "name": "HS8QXAJtuKV",
+            "column": "Inpatient bed days average",
+            "valueType": "NUMBER",
+            "type": "java.lang.Double",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "lastupdated",
+            "column": "Last updated on",
+            "valueType": "DATETIME",
+            "type": "java.time.LocalDateTime",
+            "hidden": false,
+            "meta": true
+        }
+    ],
+    "metaData": {
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": false
+        },
+        "items": {
+            "202511": {
+                "uid": "202511",
+                "code": "202511",
+                "name": "November 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-11-01T00:00:00.000",
+                "endDate": "2025-11-30T00:00:00.000"
+            },
+            "202512": {
+                "uid": "202512",
+                "code": "202512",
+                "name": "December 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-12-01T00:00:00.000",
+                "endDate": "2025-12-31T00:00:00.000"
+            },
+            "202601": {
+                "uid": "202601",
+                "code": "202601",
+                "name": "January 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-01-01T00:00:00.000",
+                "endDate": "2026-01-31T00:00:00.000"
+            },
+            "202602": {
+                "uid": "202602",
+                "code": "202602",
+                "name": "February 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-02-01T00:00:00.000",
+                "endDate": "2026-02-28T00:00:00.000"
+            },
+            "202603": {
+                "uid": "202603",
+                "code": "202603",
+                "name": "March 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-03-01T00:00:00.000",
+                "endDate": "2026-03-31T00:00:00.000"
+            },
+            "202604": {
+                "uid": "202604",
+                "code": "202604",
+                "name": "April 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-04-01T00:00:00.000",
+                "endDate": "2026-04-30T00:00:00.000"
+            },
+            "202605": {
+                "uid": "202605",
+                "code": "202605",
+                "name": "May 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-05-01T00:00:00.000",
+                "endDate": "2026-05-31T00:00:00.000"
+            },
+            "202606": {
+                "uid": "202606",
+                "code": "202606",
+                "name": "June 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-06-01T00:00:00.000",
+                "endDate": "2026-06-30T00:00:00.000"
+            },
+            "202607": {
+                "uid": "202607",
+                "code": "202607",
+                "name": "July 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-01T00:00:00.000",
+                "endDate": "2026-07-31T00:00:00.000"
+            },
+            "202608": {
+                "uid": "202608",
+                "code": "202608",
+                "name": "August 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-01T00:00:00.000",
+                "endDate": "2026-08-31T00:00:00.000"
+            },
+            "202609": {
+                "uid": "202609",
+                "code": "202609",
+                "name": "September 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-09-01T00:00:00.000",
+                "endDate": "2026-09-30T00:00:00.000"
+            },
+            "202610": {
+                "uid": "202610",
+                "code": "202610",
+                "name": "October 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-10-01T00:00:00.000",
+                "endDate": "2026-10-31T00:00:00.000"
+            },
+            "iDFPKpFTiVw": {
+                "uid": "iDFPKpFTiVw",
+                "name": "Mode of discharge",
+                "options": [
+                    {
+                        "uid": "yeod5tOXpkP",
+                        "code": "MODDISCH"
+                    },
+                    {
+                        "uid": "gj2fKKyp8OH",
+                        "code": "MODDIED"
+                    },
+                    {
+                        "uid": "fShHdgT7XGb",
+                        "code": "MODTRANS"
+                    },
+                    {
+                        "uid": "Fhbf4aKpZmZ",
+                        "code": "MODABSC"
+                    }
+                ]
+            },
+            "qrur9Dvnyt5": {
+                "uid": "qrur9Dvnyt5",
+                "code": "DE_3000003",
+                "name": "Age in years",
+                "description": "Age of person in years.",
+                "legendSet": "Yf6UHoPkdS6",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "gj2fKKyp8OH": {
+                "uid": "gj2fKKyp8OH",
+                "code": "MODDIED",
+                "name": "Died"
+            },
+            "Zj7UnCAulEk": {
+                "uid": "Zj7UnCAulEk",
+                "name": "Inpatient morbidity and mortality",
+                "description": "Anonymous and ICD-10 coded inpatient data"
+            },
+            "ImspTQPwCqd": {
+                "uid": "ImspTQPwCqd",
+                "code": "OU_525",
+                "name": "Sierra Leone"
+            },
+            "Zj7UnCAulEk.fWIAEtYVEGk": {
+                "uid": "fWIAEtYVEGk",
+                "code": "DE_3000009",
+                "name": "Mode of Discharge",
+                "description": "How the patient was discharged.",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "eBAyeGv0exc": {
+                "uid": "eBAyeGv0exc",
+                "name": "Inpatient morbidity and mortality"
+            },
+            "pC3N9N77UmT": {
+                "uid": "pC3N9N77UmT",
+                "name": "Gender",
+                "options": [
+                    {
+                        "uid": "rBvjJYbMCVx",
+                        "code": "Male"
+                    },
+                    {
+                        "uid": "Mnp3oXrpAbK",
+                        "code": "Female"
+                    }
+                ]
+            },
+            "Zj7UnCAulEk.eventdate": {
+                "name": "Report date"
+            },
+            "Zj7UnCAulEk.ou": {
+                "name": "Organisation unit"
+            },
+            "Mnp3oXrpAbK": {
+                "uid": "Mnp3oXrpAbK",
+                "code": "Female",
+                "name": "Female"
+            },
+            "Zj7UnCAulEk.oZg33kd9taw": {
+                "uid": "oZg33kd9taw",
+                "code": "DE_3000004",
+                "name": "Gender",
+                "description": "Gender of patient.",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "rBvjJYbMCVx": {
+                "uid": "rBvjJYbMCVx",
+                "code": "Male",
+                "name": "Male"
+            },
+            "Zj7UnCAulEk.vV9UWAZohSf": {
+                "uid": "vV9UWAZohSf",
+                "code": "DE_240795",
+                "name": "Weight in kg",
+                "legendSet": "OrkEzxZEH4X",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "USER_ORGUNIT": {
+                "organisationUnits": ["ImspTQPwCqd"]
+            },
+            "Fhbf4aKpZmZ": {
+                "uid": "Fhbf4aKpZmZ",
+                "code": "MODABSC",
+                "name": "Absconded"
+            },
+            "fWIAEtYVEGk": {
+                "uid": "fWIAEtYVEGk",
+                "code": "DE_3000009",
+                "name": "Mode of Discharge",
+                "description": "How the patient was discharged.",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "vV9UWAZohSf": {
+                "uid": "vV9UWAZohSf",
+                "code": "DE_240795",
+                "name": "Weight in kg",
+                "legendSet": "OrkEzxZEH4X",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "Zj7UnCAulEk.qrur9Dvnyt5": {
+                "uid": "qrur9Dvnyt5",
+                "code": "DE_3000003",
+                "name": "Age in years",
+                "description": "Age of person in years.",
+                "legendSet": "Yf6UHoPkdS6",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "oZg33kd9taw": {
+                "uid": "oZg33kd9taw",
+                "code": "DE_3000004",
+                "name": "Gender",
+                "description": "Gender of patient.",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "HS8QXAJtuKV": {
+                "uid": "HS8QXAJtuKV",
+                "name": "Inpatient bed days average",
+                "dimensionItemType": "PROGRAM_INDICATOR",
+                "valueType": "NUMBER",
+                "aggregationType": "AVERAGE",
+                "totalAggregationType": "SUM"
+            },
+            "fShHdgT7XGb": {
+                "uid": "fShHdgT7XGb",
+                "code": "MODTRANS",
+                "name": "Transferred"
+            },
+            "yeod5tOXpkP": {
+                "uid": "yeod5tOXpkP",
+                "code": "MODDISCH",
+                "name": "Discharged"
+            }
+        },
+        "dimensions": {
+            "Zj7UnCAulEk.ou": ["ImspTQPwCqd"],
+            "Zj7UnCAulEk.oZg33kd9taw": ["rBvjJYbMCVx", "Mnp3oXrpAbK"],
+            "Zj7UnCAulEk.fWIAEtYVEGk": [
+                "yeod5tOXpkP",
+                "gj2fKKyp8OH",
+                "fShHdgT7XGb",
+                "Fhbf4aKpZmZ"
+            ],
+            "pe": [],
+            "Zj7UnCAulEk.qrur9Dvnyt5": [],
+            "Zj7UnCAulEk.vV9UWAZohSf": [],
+            "HS8QXAJtuKV": [],
+            "Zj7UnCAulEk.eventdate": [
+                "202511",
+                "202512",
+                "202601",
+                "202602",
+                "202603",
+                "202604",
+                "202605",
+                "202606",
+                "202607",
+                "202608",
+                "202609",
+                "202610"
+            ]
+        }
+    },
+    "rowContext": {},
+    "width": 8,
+    "rows": [
+        [
+            "Bomaru CHP",
+            "2025-11-03 00:00:00.0",
+            "Male",
+            "64",
+            "25",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:18:58.793"
+        ],
+        [
+            "Koindu-kuntey MCHP",
+            "2025-12-20 00:00:00.0",
+            "Male",
+            "74",
+            "27",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:39:37.927"
+        ],
+        [
+            "Wilberforce MCHP",
+            "2025-11-28 00:00:00.0",
+            "Female",
+            "28",
+            "75",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:21.168"
+        ],
+        [
+            "Maborie MCHP",
+            "2025-12-18 00:00:00.0",
+            "Female",
+            "32",
+            "83",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:38:50.779"
+        ],
+        [
+            "Under Fives Clinic",
+            "2025-12-09 00:00:00.0",
+            "Female",
+            "77",
+            "20",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:50:10.363"
+        ],
+        [
+            "Fullah Town (M.Gbanti) MCHP",
+            "2025-11-11 00:00:00.0",
+            "Female",
+            "22",
+            "37",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:50:33.298"
+        ],
+        [
+            "Wai MCHP",
+            "2025-11-04 00:00:00.0",
+            "Male",
+            "49",
+            "69",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:18:29.317"
+        ],
+        [
+            "Masory MCHP",
+            "2025-11-21 00:00:00.0",
+            "Male",
+            "57",
+            "33",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:50:02.862"
+        ],
+        [
+            "Victoria MCHP",
+            "2025-11-30 00:00:00.0",
+            "Male",
+            "57",
+            "81",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:40:04.971"
+        ],
+        [
+            "Kaimunday CHP",
+            "2025-11-12 00:00:00.0",
+            "Female",
+            "26",
+            "47",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:39:11.087"
+        ],
+        [
+            "Bambukoro MCHP",
+            "2025-12-20 00:00:00.0",
+            "Female",
+            "81",
+            "72",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:50:24.273"
+        ],
+        [
+            "George Brook Health Centre",
+            "2025-12-23 00:00:00.0",
+            "Male",
+            "79",
+            "49",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:18:27.747"
+        ],
+        [
+            "Korgbotuma MCHP",
+            "2025-11-27 00:00:00.0",
+            "Female",
+            "31",
+            "80",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:40:07.056"
+        ],
+        [
+            "Gbahama (Makpele) MCHP",
+            "2025-12-13 00:00:00.0",
+            "Female",
+            "70",
+            "88",
+            "MODDISCH",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Fengehun MCHP",
+            "2025-12-05 00:00:00.0",
+            "Female",
+            "22",
+            "34",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:24.565"
+        ],
+        [
+            "Fatibra CHP",
+            "2025-12-16 00:00:00.0",
+            "Male",
+            "34",
+            "41",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:18:27.453"
+        ],
+        [
+            "Makama MCHP",
+            "2025-12-04 00:00:00.0",
+            "Female",
+            "60",
+            "78",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:40:04.147"
+        ],
+        [
+            "UMC (Urban Centre) Hospital",
+            "2025-11-15 00:00:00.0",
+            "Female",
+            "32",
+            "21",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:39:59.639"
+        ],
+        [
+            "Pendembu Njeigbla MCHP",
+            "2025-11-25 00:00:00.0",
+            "Female",
+            "69",
+            "53",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:50:07.308"
+        ],
+        [
+            "Gbonkoh Kareneh MCHP",
+            "2025-11-18 00:00:00.0",
+            "Female",
+            "77",
+            "59",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:19:39.365"
+        ],
+        [
+            "Ahamadyya Mission Cl",
+            "2025-11-08 00:00:00.0",
+            "Female",
+            "42",
+            "38",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:38:44.274"
+        ],
+        [
+            "Makolor CHP",
+            "2025-12-21 00:00:00.0",
+            "Female",
+            "52",
+            "19",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:18:31.358"
+        ],
+        [
+            "Kathanta Bana MCHP",
+            "2025-12-28 00:00:00.0",
+            "Female",
+            "47",
+            "21",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:40:00.247"
+        ],
+        [
+            "Koinadugu II CHP",
+            "2025-11-04 00:00:00.0",
+            "Female",
+            "19",
+            "75",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:39:59.42"
+        ],
+        [
+            "Rogbaneh MCHP",
+            "2025-11-20 00:00:00.0",
+            "Female",
+            "59",
+            "51",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:18:12.27"
+        ],
+        [
+            "Soriebolomia MCHP",
+            "2025-12-07 00:00:00.0",
+            "Female",
+            "30",
+            "30",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:18:31.978"
+        ],
+        [
+            "Senthai MCHP",
+            "2025-12-29 00:00:00.0",
+            "Male",
+            "30",
+            "49",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:17:50.699"
+        ],
+        [
+            "Sumbuya Bessima CHP",
+            "2025-12-23 00:00:00.0",
+            "Female",
+            "36",
+            "53",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:18:44.616"
+        ],
+        [
+            "Funyehun MCHP",
+            "2025-11-10 00:00:00.0",
+            "Female",
+            "50",
+            "78",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:38:56.452"
+        ],
+        [
+            "Under five (Luawa) Clinic",
+            "2025-11-13 00:00:00.0",
+            "Female",
+            "35",
+            "19",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:02.863"
+        ],
+        [
+            "Tissana CHC",
+            "2025-11-28 00:00:00.0",
+            "Male",
+            "76",
+            "59",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:19:51.94"
+        ],
+        [
+            "Makobeh MCHP",
+            "2025-12-02 00:00:00.0",
+            "Male",
+            "75",
+            "23",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:49:39.211"
+        ],
+        [
+            "Madina Gbonkobor MCHP",
+            "2025-12-01 00:00:00.0",
+            "Male",
+            "31",
+            "82",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:40:32.067"
+        ],
+        [
+            "Menika MCHP",
+            "2025-12-19 00:00:00.0",
+            "Male",
+            "68",
+            "25",
+            "MODTRANS",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Kabati CHP",
+            "2025-11-19 00:00:00.0",
+            "Female",
+            "83",
+            "65",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:20:46.866"
+        ],
+        [
+            "Wonkibor MCHP",
+            "2025-12-26 00:00:00.0",
+            "Male",
+            "63",
+            "27",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:20:22.231"
+        ],
+        [
+            "Maborognor MCHP",
+            "2025-11-15 00:00:00.0",
+            "Female",
+            "71",
+            "57",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:17:27.426"
+        ],
+        [
+            "Kathanta Bana MCHP",
+            "2025-12-12 00:00:00.0",
+            "Female",
+            "79",
+            "59",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:18:51.71"
+        ],
+        [
+            "Sandia (Kissi Tongi) CHP",
+            "2025-11-20 00:00:00.0",
+            "Female",
+            "57",
+            "86",
+            "MODTRANS",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Gorahun CHC",
+            "2025-12-21 00:00:00.0",
+            "Female",
+            "41",
+            "58",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:49:33.639"
+        ],
+        [
+            "Woyama MCHP",
+            "2025-12-07 00:00:00.0",
+            "Female",
+            "56",
+            "39",
+            "MODDISCH",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Laleihun CHP",
+            "2025-11-06 00:00:00.0",
+            "Female",
+            "64",
+            "82",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:40:24.217"
+        ],
+        [
+            "Ngelehun CHC",
+            "2025-11-06 00:00:00.0",
+            "Male",
+            "451",
+            "87",
+            "MODDIED",
+            "2",
+            "2017-11-20 16:41:47.737"
+        ],
+        [
+            "Senjekoro MCHP",
+            "2025-12-07 00:00:00.0",
+            "Female",
+            "67",
+            "40",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:40:46.051"
+        ],
+        [
+            "Rorocks CHP",
+            "2025-12-19 00:00:00.0",
+            "Male",
+            "55",
+            "16",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:50:39.82"
+        ],
+        [
+            "Nyeama CHP",
+            "2025-12-22 00:00:00.0",
+            "Male",
+            "23",
+            "15",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:49:51.808"
+        ],
+        [
+            "Gandorhun CHP",
+            "2025-11-29 00:00:00.0",
+            "Female",
+            "50",
+            "68",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:50:20.09"
+        ],
+        [
+            "Mano Njeigbla CHP",
+            "2025-12-26 00:00:00.0",
+            "Female",
+            "76",
+            "31",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:19:54.981"
+        ],
+        [
+            "Fadugu CHC",
+            "2025-11-10 00:00:00.0",
+            "Female",
+            "77",
+            "81",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:27.335"
+        ],
+        [
+            "Koindu-kuntey MCHP",
+            "2025-11-05 00:00:00.0",
+            "Male",
+            "26",
+            "35",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:18:56.4"
+        ],
+        [
+            "Sebengu MCHP",
+            "2025-11-30 00:00:00.0",
+            "Female",
+            "76",
+            "15",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:17:34.422"
+        ],
+        [
+            "Ninkikoro MCHP",
+            "2025-12-03 00:00:00.0",
+            "Male",
+            "77",
+            "18",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:51.684"
+        ],
+        [
+            "Gbaama MCHP",
+            "2025-12-08 00:00:00.0",
+            "Female",
+            "75",
+            "32",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:20:22.42"
+        ],
+        [
+            "Fodaya MCHP",
+            "2025-12-03 00:00:00.0",
+            "Female",
+            "22",
+            "51",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:10.255"
+        ],
+        [
+            "Bandajuma Clinic CHC",
+            "2025-12-28 00:00:00.0",
+            "Male",
+            "85",
+            "33",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:40:31.884"
+        ],
+        [
+            "Malema 1 MCHP",
+            "2025-12-19 00:00:00.0",
+            "Female",
+            "66",
+            "61",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:38:49.643"
+        ],
+        [
+            "Kabba Ferry MCHP",
+            "2025-11-08 00:00:00.0",
+            "Male",
+            "78",
+            "26",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:05.428"
+        ],
+        [
+            "Katherie MCHP",
+            "2025-11-24 00:00:00.0",
+            "Female",
+            "52",
+            "50",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:40:17.448"
+        ],
+        [
+            "Yongoro CHP",
+            "2025-11-30 00:00:00.0",
+            "Male",
+            "62",
+            "65",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:40:37.985"
+        ],
+        [
+            "Kumrabai Yoni MCHP",
+            "2025-11-13 00:00:00.0",
+            "Female",
+            "61",
+            "77",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:20:45.762"
+        ],
+        [
+            "Masingbi-Lol MCHP",
+            "2025-12-15 00:00:00.0",
+            "Female",
+            "68",
+            "71",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:38:30.439"
+        ],
+        [
+            "Kamabai CHC",
+            "2025-12-06 00:00:00.0",
+            "Male",
+            "55",
+            "66",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:01.096"
+        ],
+        [
+            "Kondeya (Sandor) MCHP",
+            "2025-12-06 00:00:00.0",
+            "Female",
+            "66",
+            "18",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:40:36.058"
+        ],
+        [
+            "Jimmi CHC",
+            "2025-12-01 00:00:00.0",
+            "Female",
+            "27",
+            "36",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:49:51.27"
+        ],
+        [
+            "Rokupr CHC",
+            "2025-11-28 00:00:00.0",
+            "Female",
+            "87",
+            "46",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:38:39.839"
+        ],
+        [
+            "New Maforkie CHP",
+            "2025-12-29 00:00:00.0",
+            "Female",
+            "51",
+            "19",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:20:00.272"
+        ],
+        [
+            "St. Joseph's Clinic",
+            "2025-12-18 00:00:00.0",
+            "Male",
+            "26",
+            "70",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:18:16.846"
+        ],
+        [
+            "Kaponkie MCHP",
+            "2025-11-07 00:00:00.0",
+            "Male",
+            "44",
+            "34",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:38:56.843"
+        ],
+        [
+            "Masseseh MCHP",
+            "2025-11-16 00:00:00.0",
+            "Female",
+            "18",
+            "82",
+            "MODDISCH",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Masselleh MCHP",
+            "2025-12-25 00:00:00.0",
+            "Male",
+            "42",
+            "69",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:17:31.276"
+        ],
+        [
+            "Kagbulor CHP",
+            "2025-12-03 00:00:00.0",
+            "Male",
+            "46",
+            "63",
+            "MODDISCH",
+            "14",
+            "2018-04-21 13:39:37.057"
+        ],
+        [
+            "Wilberforce Military Hospital",
+            "2025-12-15 00:00:00.0",
+            "Male",
+            "85",
+            "21",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:39:26.299"
+        ],
+        [
+            "Koinadugu II CHP",
+            "2025-11-16 00:00:00.0",
+            "Female",
+            "49",
+            "59",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:49:40.962"
+        ],
+        [
+            "Kakoya MCHP",
+            "2025-11-11 00:00:00.0",
+            "Female",
+            "56",
+            "68",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:20:00.405"
+        ],
+        [
+            "Regent (RWA) CHC",
+            "2025-11-17 00:00:00.0",
+            "Female",
+            "85",
+            "58",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:19:37.931"
+        ],
+        [
+            "Modia MCHP",
+            "2025-12-03 00:00:00.0",
+            "Male",
+            "66",
+            "22",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:59.752"
+        ],
+        [
+            "Guala MCHP",
+            "2025-11-25 00:00:00.0",
+            "Female",
+            "66",
+            "78",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:19:58.095"
+        ],
+        [
+            "Sendumei CHC",
+            "2025-12-18 00:00:00.0",
+            "Male",
+            "36",
+            "53",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:18:08.739"
+        ],
+        [
+            "Wullah Thenkle MCHP",
+            "2025-11-01 00:00:00.0",
+            "Male",
+            "64",
+            "71",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:39.812"
+        ],
+        [
+            "Senehun CHC",
+            "2025-11-10 00:00:00.0",
+            "Male",
+            "24",
+            "78",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:49:57.519"
+        ],
+        [
+            "Macauley Satellite Hospital",
+            "2025-12-21 00:00:00.0",
+            "Female",
+            "44",
+            "59",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:38:53.087"
+        ],
+        [
+            "Robina MCHP",
+            "2025-12-26 00:00:00.0",
+            "Female",
+            "87",
+            "52",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:17:37.32"
+        ],
+        [
+            "Bumpetoke CHP",
+            "2025-11-23 00:00:00.0",
+            "Male",
+            "64",
+            "83",
+            "MODTRANS",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Nengbema CHC",
+            "2025-12-09 00:00:00.0",
+            "Female",
+            "88",
+            "82",
+            "MODABSC",
+            "14",
+            "2018-04-21 13:49:29.574"
+        ],
+        [
+            "Ngogbebu MCHP",
+            "2025-12-09 00:00:00.0",
+            "Male",
+            "60",
+            "26",
+            "MODTRANS",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Magbethy MCHP",
+            "2025-12-01 00:00:00.0",
+            "Male",
+            "67",
+            "61",
+            "MODDIED",
+            "14",
+            "2018-04-21 14:20:03.259"
+        ],
+        [
+            "Baoma Kpenge CHP",
+            "2025-11-24 00:00:00.0",
+            "Male",
+            "47",
+            "56",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:19:27.362"
+        ],
+        [
+            "Saiama MCHP",
+            "2025-12-13 00:00:00.0",
+            "Male",
+            "41",
+            "64",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:20:24.004"
+        ],
+        [
+            "Mapailleh MCHP",
+            "2025-12-29 00:00:00.0",
+            "Male",
+            "34",
+            "26",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:18:37.628"
+        ],
+        [
+            "Dankawalia MCHP",
+            "2025-12-13 00:00:00.0",
+            "Male",
+            "27",
+            "24",
+            "MODTRANS",
+            "14",
+            "2018-04-21 13:38:54.942"
+        ],
+        [
+            "Yoyah CHP",
+            "2025-12-18 00:00:00.0",
+            "Male",
+            "20",
+            "50",
+            "MODDIED",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Susan's Bay MCHP",
+            "2025-12-14 00:00:00.0",
+            "Male",
+            "31",
+            "84",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:20:07.887"
+        ],
+        [
+            "Bomie MCHP",
+            "2025-12-14 00:00:00.0",
+            "Female",
+            "20",
+            "44",
+            "MODABSC",
+            "14",
+            "2018-04-21 14:18:15.399"
+        ],
+        [
+            "Masankoro MCHP",
+            "2025-11-16 00:00:00.0",
+            "Female",
+            "64",
+            "89",
+            "MODTRANS",
+            "6",
+            "2017-09-08 21:40:22.0"
+        ],
+        [
+            "Kowama MCHP",
+            "2025-12-21 00:00:00.0",
+            "Male",
+            "65",
+            "48",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:18:21.381"
+        ],
+        [
+            "Bumpe CHC",
+            "2025-11-07 00:00:00.0",
+            "Female",
+            "65",
+            "26",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:39:08.879"
+        ],
+        [
+            "Konta Wallah MCHP",
+            "2025-11-10 00:00:00.0",
+            "Male",
+            "78",
+            "45",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:19:35.288"
+        ],
+        [
+            "Wordu CHP",
+            "2025-11-26 00:00:00.0",
+            "Female",
+            "49",
+            "74",
+            "MODDISCH",
+            "14",
+            "2018-04-21 14:18:50.175"
+        ],
+        [
+            "Gbamandu MCHP",
+            "2025-12-12 00:00:00.0",
+            "Male",
+            "72",
+            "51",
+            "MODDIED",
+            "14",
+            "2018-04-21 13:39:48.443"
+        ],
+        [
+            "Konabu MCHP",
+            "2025-11-03 00:00:00.0",
+            "Male",
+            "55",
+            "71",
+            "MODTRANS",
+            "14",
+            "2018-04-21 14:19:12.001"
+        ]
+    ],
+    "height": 100,
+    "headerWidth": 8
+}
