@@ -19,7 +19,14 @@ import {
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { useCallback, useState } from 'react'
-import type { DownloadFn } from './types'
+import type { DownloadFn, DownloadType, FileFormat } from './types'
+
+const getDownloadTarget = (type: DownloadType, format: FileFormat) => {
+    if (type === 'table') {
+        return format === 'html+css' ? '_blank' : '_top'
+    }
+    return ['csv', 'xls', 'xlsx'].includes(format) ? '_top' : '_blank'
+}
 
 type UseDownloadResult = {
     isDownloadDisabled: boolean
@@ -42,8 +49,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
-
-            let target = '_top'
 
             const visualization =
                 transformVisualizationForAnalyticsRequest(currentVis)
@@ -101,8 +106,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             paging: false,
                         })
 
-                    target = format === 'html+css' ? '_blank' : '_top'
-
                     break
                 case 'plain':
                     req = req
@@ -119,9 +122,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xls', 'xlsx'].includes(format)
-                        ? '_top'
-                        : '_blank'
                     break
             }
 
@@ -135,7 +135,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 url.searchParams.append(key, String(value))
             )
 
-            window.open(url, target)
+            window.open(url, getDownloadTarget(type, format))
         },
         [
             analyticsEngine,
@@ -152,8 +152,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
-
-            let target = '_top'
 
             const visualization =
                 transformVisualizationForAnalyticsRequest(currentVis)
@@ -213,8 +211,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             paging: false,
                         })
 
-                    target = format === 'html+css' ? '_blank' : '_top'
-
                     break
                 case 'plain':
                     req = req
@@ -230,9 +226,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xls', 'xlsx'].includes(format)
-                        ? '_top'
-                        : '_blank'
                     break
             }
 
@@ -246,7 +239,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 url.searchParams.append(key, String(value))
             )
 
-            window.open(url, target)
+            window.open(url, getDownloadTarget(type, format))
         },
         [
             analyticsEngine,

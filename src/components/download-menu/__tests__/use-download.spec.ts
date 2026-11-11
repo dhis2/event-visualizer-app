@@ -73,6 +73,22 @@ describe('useDownload', () => {
     })
 
     describe('LINE_LIST', () => {
+        it('opens an HTML+CSS table download in a new tab', () => {
+            const { result } = renderDownload(makeEventVis())
+
+            result.current.download({ type: 'table', format: 'html+css' })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_blank')
+        })
+
+        it('downloads a CSV table in the current tab', () => {
+            const { result } = renderDownload(makeEventVis())
+
+            result.current.download({ type: 'table', format: 'csv' })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_top')
+        })
+
         it.each(['xls', 'xlsx', 'csv'] as const)(
             'downloads a plain %s file in the current tab',
             (format) => {
@@ -179,6 +195,22 @@ describe('useDownload', () => {
 
     describe('PIVOT_TABLE', () => {
         const makePivotVis = () => makeEventVis({ type: 'PIVOT_TABLE' })
+
+        it('opens an HTML+CSS table download in a new tab', () => {
+            const { result } = renderDownload(makePivotVis())
+
+            result.current.download({ type: 'table', format: 'html+css' })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_blank')
+        })
+
+        it('downloads a CSV table in the current tab', () => {
+            const { result } = renderDownload(makePivotVis())
+
+            result.current.download({ type: 'table', format: 'csv' })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_top')
+        })
 
         it.each(['xls', 'xlsx', 'csv'] as const)(
             'downloads a plain %s file in the current tab',

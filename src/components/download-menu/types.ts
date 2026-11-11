@@ -1,4 +1,4 @@
-type DownloadType = 'table' | 'plain'
+export type DownloadType = 'table' | 'plain'
 export type FileFormat = 'csv' | 'html+css' | 'json' | 'xls' | 'xlsx' | 'xml'
 type IdScheme = 'UID' | 'CODE' | 'NAME'
 
