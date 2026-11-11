@@ -67,16 +67,11 @@ describe('line list', () => {
 
     const lineLists = [
         { outputType: 'event', id: EVENT_LINE_LIST_ID },
-        {
-            outputType: 'enrollment',
-            id: ENROLLMENT_LINE_LIST_ID,
-            /* Core answers an enrollment query with totals with E7154 */
-            skipTotals: true,
-        },
+        { outputType: 'enrollment', id: ENROLLMENT_LINE_LIST_ID },
         { outputType: 'tracked entity', id: TRACKED_ENTITY_LINE_LIST_ID },
     ]
 
-    lineLists.forEach(({ outputType, id, skipTotals }) => {
+    lineLists.forEach(({ outputType, id }) => {
         it(`pages through the rows without totals (${outputType})`, () => {
             interceptTotalsCapability(false)
             interceptLineListAnalytics()
@@ -89,39 +84,34 @@ describe('line list', () => {
             choosePageSize(50)
         })
 
-        const itWithTotals = skipTotals ? it.skip : it
+        it(`pages through the rows with totals (${outputType})`, () => {
+            interceptTotalsCapability(true)
+            interceptLineListAnalytics()
+            openLineList(id)
 
-        itWithTotals(
-            `pages through the rows with totals (${outputType})`,
-            () => {
-                interceptTotalsCapability(true)
-                interceptLineListAnalytics()
-                openLineList(id)
-
-                waitForTotalPagesParam('true').then(
-                    ({ total, pageCount }: Pager) => {
-                        cy.getByDataTest('pagination-row-count')
-                            .invoke('text')
-                            .then((text) =>
-                                expect(text.replace(/\D/g, '')).to.equal(
-                                    String(total)
-                                )
+            waitForTotalPagesParam('true').then(
+                ({ total, pageCount }: Pager) => {
+                    cy.getByDataTest('pagination-row-count')
+                        .invoke('text')
+                        .then((text) =>
+                            expect(text.replace(/\D/g, '')).to.equal(
+                                String(total)
                             )
-                        cy.getByDataTest('pagination-bar').should(
-                            'contain.text',
-                            `/${pageCount}`
                         )
+                    cy.getByDataTest('pagination-bar').should(
+                        'contain.text',
+                        `/${pageCount}`
+                    )
 
-                        goToPageTwo()
-                        choosePageSize(50)
-                        cy.getByDataTest('pagination-bar').should(
-                            'contain.text',
-                            `/${Math.ceil(total / 50)}`
-                        )
-                    }
-                )
-            }
-        )
+                    goToPageTwo()
+                    choosePageSize(50)
+                    cy.getByDataTest('pagination-bar').should(
+                        'contain.text',
+                        `/${Math.ceil(total / 50)}`
+                    )
+                }
+            )
+        })
     })
 
     it('colours the cells by the legend set of each data item', () => {
