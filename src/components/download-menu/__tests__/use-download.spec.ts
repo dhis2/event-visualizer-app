@@ -73,6 +73,33 @@ describe('useDownload', () => {
     })
 
     describe('LINE_LIST', () => {
+        it.each(['xls', 'xlsx', 'csv'] as const)(
+            'downloads a plain %s file in the current tab',
+            (format) => {
+                const { result } = renderDownload(makeEventVis())
+
+                result.current.download({
+                    type: 'plain',
+                    format,
+                    idScheme: 'UID',
+                })
+
+                expect(openSpy.mock.calls[0][1]).toBe('_top')
+            }
+        )
+
+        it('opens a plain JSON download in a new tab', () => {
+            const { result } = renderDownload(makeEventVis())
+
+            result.current.download({
+                type: 'plain',
+                format: 'json',
+                idScheme: 'UID',
+            })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_blank')
+        })
+
         it('sends outputIdScheme=NAME and dataIdScheme=NAME for a table download', () => {
             const { result } = renderDownload(makeEventVis())
 
@@ -152,6 +179,33 @@ describe('useDownload', () => {
 
     describe('PIVOT_TABLE', () => {
         const makePivotVis = () => makeEventVis({ type: 'PIVOT_TABLE' })
+
+        it.each(['xls', 'xlsx', 'csv'] as const)(
+            'downloads a plain %s file in the current tab',
+            (format) => {
+                const { result } = renderDownload(makePivotVis())
+
+                result.current.download({
+                    type: 'plain',
+                    format,
+                    idScheme: 'UID',
+                })
+
+                expect(openSpy.mock.calls[0][1]).toBe('_top')
+            }
+        )
+
+        it('opens a plain JSON download in a new tab', () => {
+            const { result } = renderDownload(makePivotVis())
+
+            result.current.download({
+                type: 'plain',
+                format: 'json',
+                idScheme: 'UID',
+            })
+
+            expect(openSpy.mock.calls[0][1]).toBe('_blank')
+        })
 
         it('sends outputIdScheme=NAME for a table download', () => {
             const { result } = renderDownload(makePivotVis())

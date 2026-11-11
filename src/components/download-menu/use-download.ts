@@ -119,7 +119,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xsl', 'xslx'].includes(format)
+                    target = ['csv', 'xls', 'xlsx'].includes(format)
                         ? '_top'
                         : '_blank'
                     break
@@ -230,7 +230,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withParameters({ dataIdScheme: idScheme })
                     }
 
-                    target = ['csv', 'xsl', 'xslx'].includes(format)
+                    target = ['csv', 'xls', 'xlsx'].includes(format)
                         ? '_top'
                         : '_blank'
                     break
