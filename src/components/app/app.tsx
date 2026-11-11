@@ -24,7 +24,7 @@ import { useCallback, type FC } from 'react'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import './styles/app.module.css'
 
-const EventVisualizer: FC = () => {
+const IndividualDataVisualizer: FC = () => {
     useLoadVisualizationOnMount()
     const dispatch = useAppDispatch()
     const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
@@ -63,7 +63,7 @@ export const App: FC = () => (
     <>
         <CssVariables colors spacers theme elevations />
         <AppWrapper>
-            <EventVisualizer />
+            <IndividualDataVisualizer />
         </AppWrapper>
     </>
 )

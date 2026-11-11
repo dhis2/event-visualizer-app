@@ -1,7 +1,7 @@
 name: 'dhis2: prototype preview'
 
 # Deploys pushes to `prototype/**` branches as a Netlify preview at
-# https://{slug}.event-visualizer.netlify.dhis2.org. Skipped when the
+# https://{slug}.individual-data-visualizer.netlify.dhis2.org. Skipped when the
 # branch has an open PR (handled by the PR preview workflow instead).
 #
 # Org secrets:  DHIS2_BOT_NETLIFY_TOKEN, DHIS2_BOT_GITHUB_TOKEN
@@ -64,7 +64,7 @@ jobs:
                       echo "## Prototype preview"
                       echo ""
                       echo "Branch: \`$BRANCH\`"
-                      echo "URL: https://$slug.event-visualizer.netlify.dhis2.org"
+                      echo "URL: https://$slug.individual-data-visualizer.netlify.dhis2.org"
                   } >>"$GITHUB_STEP_SUMMARY"
 
             - uses: actions/checkout@v7

@@ -5,7 +5,8 @@ import {
 } from '@modules/utils/local-storage'
 import type { LayoutPanelHeight } from '@store/ui-slice'
 
-export const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
+export const AXES_HEIGHT_STORAGE_KEY =
+    'dhis2.individual-data-visualizer.axesHeight'
 
 export const getLayoutPanelHeightFromLocalStorage = (): LayoutPanelHeight => {
     const height = Number.parseInt(

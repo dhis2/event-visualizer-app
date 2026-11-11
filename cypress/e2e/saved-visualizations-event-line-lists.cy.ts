@@ -20,7 +20,7 @@ describeSavedVisualizations('event line lists', [
     {
         covers: 'Event line list, one stage of a tracker program',
         id: 'IZJmG9NHTtj',
-        name: 'EVER [Line list] [Event] Basic',
+        name: 'IDV [Line list] [Event] Basic',
         type: 'LINE_LIST',
         headers: [
             'Event org. unit',

@@ -368,20 +368,29 @@ describe('CellValueAxis drop affordance', () => {
         expect(axisClassName()).toContain('activeDropTarget')
     })
 
-    /* The overlay answers "would this drop work?", so it appears as soon as an
-     * invalid dimension is picked up — not only once it reaches the axis. */
-    it('covers itself while a dimension it would reject is being dragged', async () => {
-        dragWithoutHovering(false)
+    it('covers itself when a dimension it would reject reaches it', async () => {
+        dragOverAxis(false)
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })
         )
 
         expect(blockedOverlay()).toBeInTheDocument()
+        expect(axisClassName()).not.toContain('activeDropTarget')
+    })
+
+    it('stays uncovered while a dimension it would reject is dragged elsewhere', async () => {
+        dragWithoutHovering(false)
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(blockedOverlay()).not.toBeInTheDocument()
     })
 
     it('does not cover itself for a dimension it would accept', async () => {
-        dragWithoutHovering(true)
+        dragOverAxis(true)
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })

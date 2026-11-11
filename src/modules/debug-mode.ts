@@ -1,6 +1,6 @@
 import { type LogLevelNames } from 'loglevel'
 
-const LOG_LEVEL_KEY = 'EVENT_VISUALIZER_LOG_LEVEL'
+const LOG_LEVEL_KEY = 'IDV_LOG_LEVEL'
 
 export type LogLevel = LogLevelNames | 'silent'
 

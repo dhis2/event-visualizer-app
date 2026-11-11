@@ -439,7 +439,7 @@
             "page": 1,
             "total": 64,
             "pageSize": 2,
-            "nextPage": "https://dev.im.dhis2.org/ever-playground/api/dimensions?page=2&pageSize=2&filter=dimensionType%3Aeq%3AORGANISATION_UNIT_GROUP_SET&paging=true&fields=id%2CdisplayName%7Erename%28name%29%2CdimensionType%2CvalueType%2CoptionSet&order=displayName%3Aasc",
+            "nextPage": "https://dev.im.dhis2.org/idv-playground/api/dimensions?page=2&pageSize=2&filter=dimensionType%3Aeq%3AORGANISATION_UNIT_GROUP_SET&paging=true&fields=id%2CdisplayName%7Erename%28name%29%2CdimensionType%2CvalueType%2CoptionSet&order=displayName%3Aasc",
             "pageCount": 32
         },
         "dimensions": [

@@ -28,7 +28,7 @@ describeSavedVisualizations('event pivot tables', [
     {
         covers: 'Event pivot table, tracker stage with enrollment dimensions',
         id: 'pb8yapu3EVC',
-        name: 'EVER [Pivot table] [Event] Basic',
+        name: 'IDV [Pivot table] [Event] Basic',
         type: 'PIVOT_TABLE',
         columnHeaders: ['Sierra Leone', 'Active', 'Completed'],
         rowHeaders: [],
@@ -36,7 +36,7 @@ describeSavedVisualizations('event pivot tables', [
     {
         covers: 'Event pivot table, tracker stage with enrollment dimensions',
         id: 'TKrpEtzneOk',
-        name: 'EVER [Pivot table] [Event] Stage and enrollment dimensions',
+        name: 'IDV [Pivot table] [Event] Stage and enrollment dimensions',
         type: 'PIVOT_TABLE',
         columnHeaders: ['Active', 'Completed'],
         rowHeaders: [],

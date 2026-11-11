@@ -1,5 +1,5 @@
 {
-    "name": "EVER test: registration org unit pivot table (DHIS2-22265)",
+    "name": "IDV test: registration org unit pivot table (DHIS2-22265)",
     "regressionType": "LINEAR",
     "displayDensity": "NORMAL",
     "fontSize": "NORMAL",
@@ -119,7 +119,7 @@
         }
     ],
     "rows": [],
-    "displayName": "EVER test: registration org unit pivot table (DHIS2-22265)",
+    "displayName": "IDV test: registration org unit pivot table (DHIS2-22265)",
     "access": {
         "manage": true,
         "write": true,
@@ -128,7 +128,7 @@
         "delete": true
     },
     "metaData": {},
-    "displayFormName": "EVER test: registration org unit pivot table (DHIS2-22265)",
+    "displayFormName": "IDV test: registration org unit pivot table (DHIS2-22265)",
     "id": "Kq2yjeY86dG",
     "sorting": [],
     "repetitions": []

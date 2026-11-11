@@ -8,9 +8,9 @@ export const getVisTypeDescriptions = (): Record<
     string
 > => ({
     LINE_LIST: i18n.t(
-        'Track or compare changes over time. Recommend period as category. (adjust for EVER)'
+        'Track or compare changes over time. Recommend period as category. (adjust for IDV)'
     ),
     PIVOT_TABLE: i18n.t(
-        'View data and indicators in a manipulatable table. (adjust for EVER)'
+        'View data and indicators in a manipulatable table. (adjust for IDV)'
     ),
 })
