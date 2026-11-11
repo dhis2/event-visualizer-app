@@ -16,6 +16,9 @@ const largeLineListWithLegend = loadLineListFixture(
     'inpatient-extra-columns-and-legends'
 )
 const noTimeDimension = loadLineListFixture('no-time-dimension')
+const eventLineListWithLegend = loadLineListFixture(
+    'event-line-list-event-program'
+)
 
 /* The connection status hook needs to be controllable to test offline
  * behavior; everything else comes from the real module, which the app
@@ -268,46 +271,59 @@ describe('LineList', () => {
     })
 
     describe('Data cell styles with legend', () => {
-        it('applies background color when legend style is FILL', async () => {
-            await renderLineList(largeLineListWithLegend)
+        const AGE_COLUMN = 4
+        /* Age 64 falls in the 60 - 70 legend of the "Age 10y interval" set */
+        const AGE_LEGEND_COLOR = 'rgb(65, 171, 93)'
+        const DEFAULT_BACKGROUND_COLOR = 'rgb(255, 255, 255)'
+        const DEFAULT_TEXT_COLOR = 'rgb(33, 41, 52)'
 
-            // Get the first row's second cell (Weight in kg column) - use specific tbody selector
-            const secondCell = screen
+        const getFirstRowCellStyles = (column: number) => {
+            const cell = screen
                 .getByTestId('line-list-data-table-body')
-                .querySelector('tr:first-child td:nth-child(2)')
-            const innerDiv = secondCell?.querySelector('div')
+                .querySelector<HTMLElement>(
+                    `tr:first-child td:nth-child(${column})`
+                )!
+            return {
+                text: cell.textContent,
+                backgroundColor: window.getComputedStyle(cell).backgroundColor,
+                color: window.getComputedStyle(cell.querySelector('div')!)
+                    .color,
+            }
+        }
 
-            expect(secondCell).toBeInTheDocument()
-            expect(innerDiv).toBeInTheDocument()
+        it('applies the background color of the data item legend when legend style is FILL', async () => {
+            await renderLineList(eventLineListWithLegend)
 
-            // For FILL style, expect background color on cell and default text color on inner div
-            const cellStyle = window.getComputedStyle(secondCell!)
-            const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(158, 202, 225)')
-            expect(divStyle.color).toBe('rgb(33, 41, 52)')
+            expect(getFirstRowCellStyles(AGE_COLUMN)).toEqual({
+                text: '64',
+                backgroundColor: AGE_LEGEND_COLOR,
+                color: DEFAULT_TEXT_COLOR,
+            })
         })
 
-        it('applies text color when legend style is TEXT', async () => {
-            await renderLineList(largeLineListWithLegend, {
-                eventVisualization: withLegend(largeLineListWithLegend, {
+        it('applies the text color of the data item legend when legend style is TEXT', async () => {
+            await renderLineList(eventLineListWithLegend, {
+                eventVisualization: withLegend(eventLineListWithLegend, {
                     style: 'TEXT',
                 }),
             })
 
-            // Get the first row's second cell (Weight in kg column) - use specific tbody selector
-            const secondCell = screen
-                .getByTestId('line-list-data-table-body')
-                .querySelector('tr:first-child td:nth-child(2)')
-            const innerDiv = secondCell?.querySelector('div')
+            expect(getFirstRowCellStyles(AGE_COLUMN)).toEqual({
+                text: '64',
+                backgroundColor: DEFAULT_BACKGROUND_COLOR,
+                color: AGE_LEGEND_COLOR,
+            })
+        })
 
-            expect(secondCell).toBeInTheDocument()
-            expect(innerDiv).toBeInTheDocument()
+        it('shows the legend names of a column grouped by legend without colors', async () => {
+            await renderLineList(largeLineListWithLegend)
 
-            // For TEXT style, expect background color on cell and text color on inner div
-            const cellStyle = window.getComputedStyle(secondCell!)
-            const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
-            expect(divStyle.color).toBe('rgb(158, 202, 225)')
+            const WEIGHT_COLUMN = 2
+            expect(getFirstRowCellStyles(WEIGHT_COLUMN)).toEqual({
+                text: '50 - 60',
+                backgroundColor: DEFAULT_BACKGROUND_COLOR,
+                color: DEFAULT_TEXT_COLOR,
+            })
         })
     })
 

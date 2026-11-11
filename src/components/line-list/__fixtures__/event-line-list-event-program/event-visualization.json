@@ -1,0 +1,297 @@
+{
+    "name": "E2E: Event line list, event program",
+    "created": "2026-11-10T14:56:25.778",
+    "lastUpdated": "2026-11-10T14:56:25.778",
+    "translations": [],
+    "createdBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "lastUpdatedBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "sharing": {
+        "owner": "xE7jOejl9FI",
+        "users": {},
+        "userGroups": {},
+        "public": "rw------"
+    },
+    "regressionType": "NONE",
+    "rawPeriods": ["LAST_12_MONTHS"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "oZg33kd9taw",
+                "name": "Gender"
+            }
+        },
+        {
+            "dataElement": {
+                "valueType": "INTEGER",
+                "aggregationType": "AVERAGE",
+                "id": "qrur9Dvnyt5",
+                "name": "Age in years"
+            }
+        },
+        {
+            "dataElement": {
+                "valueType": "INTEGER_POSITIVE",
+                "aggregationType": "AVERAGE",
+                "id": "vV9UWAZohSf",
+                "name": "Weight in kg"
+            }
+        },
+        {
+            "dataElement": {
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "fWIAEtYVEGk",
+                "name": "Mode of Discharge"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [
+        {
+            "programIndicator": {
+                "id": "HS8QXAJtuKV",
+                "name": "Inpatient bed days average"
+            }
+        }
+    ],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": true,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "favorites": [],
+    "programDimensions": [
+        {
+            "incidentDateLabel": "Date of Discharge",
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "eBAyeGv0exc"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "eventDate",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["LAST_12_MONTHS"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "lastUpdated",
+            "values": []
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_12_MONTHS"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "eventDate"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "oZg33kd9taw",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "filter": "GE:18",
+            "dimension": "qrur9Dvnyt5",
+            "valueType": "INTEGER"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "vV9UWAZohSf",
+            "valueType": "INTEGER_POSITIVE"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "fWIAEtYVEGk",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "iDFPKpFTiVw",
+                "name": "Mode of discharge"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "HS8QXAJtuKV"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [],
+            "dimension": "lastUpdated"
+        }
+    ],
+    "rows": [],
+    "displayName": "E2E: Event line list, event program",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://e2e.im.dhis2.org/idv-playground/api/eventVisualizations/t6SxiQdVPVs",
+    "subscribed": false,
+    "favorite": false,
+    "metaData": {
+        "oZg33kd9taw": {
+            "uid": "oZg33kd9taw",
+            "code": "DE_3000004",
+            "name": "Gender"
+        },
+        "fWIAEtYVEGk": {
+            "uid": "fWIAEtYVEGk",
+            "code": "DE_3000009",
+            "name": "Mode of Discharge"
+        },
+        "vV9UWAZohSf": {
+            "uid": "vV9UWAZohSf",
+            "code": "DE_240795",
+            "name": "Weight in kg"
+        },
+        "qrur9Dvnyt5": {
+            "uid": "qrur9Dvnyt5",
+            "code": "DE_3000003",
+            "name": "Age in years"
+        }
+    },
+    "displayFormName": "E2E: Event line list, event program",
+    "id": "t6SxiQdVPVs",
+    "attributeValues": [],
+    "legend": {
+        "showKey": true,
+        "style": "FILL",
+        "strategy": "BY_DATA_ITEM"
+    },
+    "sorting": [],
+    "repetitions": []
+}

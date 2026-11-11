@@ -2,12 +2,13 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type {
-    AnalyticsResponseMetadataItems,
-    LineListAnalyticsData,
-    LineListAnalyticsDataHeader,
-    LineListLegendSet,
-    LineListRowContext,
+import {
+    getDataItemLegendSetId,
+    type AnalyticsResponseMetadataItems,
+    type LineListAnalyticsData,
+    type LineListAnalyticsDataHeader,
+    type LineListLegendSet,
+    type LineListRowContext,
 } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
@@ -67,10 +68,9 @@ type TransformedLineListHeader = Omit<
 }
 
 type ResolveLegendSetArgs = {
-    dimensionId: string
-    valueType: ValueType
+    header: LineListAnalyticsDataHeader
     legend: CurrentVisualization['legend']
-    metadataStore: UseMetadataStoreReturnValue
+    metaDataItems: AnalyticsResponseMetadataItems
     legendSets: LineListLegendSet[]
 }
 
@@ -167,24 +167,20 @@ export const getHeaderDisplayText = (
 }
 
 const resolveLegendSet = ({
-    dimensionId,
-    valueType,
+    header,
     legend,
-    metadataStore,
+    metaDataItems,
     legendSets,
 }: ResolveLegendSetArgs): LineListLegendSet | undefined => {
-    if (!legendSets.length || !isValueTypeNumeric(valueType)) {
+    if (!legendSets.length || !isValueTypeNumeric(header.valueType)) {
         return undefined
     }
     if (legend?.strategy === 'FIXED') {
         return legendSets[0]
     }
     if (legend?.strategy === 'BY_DATA_ITEM') {
-        const item = metadataStore.getDimensionMetadataItem(dimensionId)
-        if (!item?.legendSetId) {
-            return undefined
-        }
-        return legendSets.find((legendSet) => legendSet.id === item.legendSetId)
+        const legendSetId = getDataItemLegendSetId(header, metaDataItems)
+        return legendSets.find((legendSet) => legendSet.id === legendSetId)
     }
     return undefined
 }
@@ -214,10 +210,9 @@ export const transformHeaders = ({
     return analyticsData.headers.map((header): TransformedLineListHeader => ({
         ...header,
         legendSet: resolveLegendSet({
-            dimensionId: header.dimensionId,
-            valueType: header.valueType,
+            header,
             legend: visualization.legend,
-            metadataStore,
+            metaDataItems: analyticsData.metaDataItems,
             legendSets: analyticsData.legendSets,
         }),
         column: metadata[header.dimensionId]?.name ?? header.dimensionId,

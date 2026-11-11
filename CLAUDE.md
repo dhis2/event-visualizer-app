@@ -551,6 +551,12 @@ IDs, named via `metaData.items`.
 - **Filtering**: grouping and filtering share the conditions entry, so
   `setVisUiConfigGroupingByDimension` drops the filter whenever the grouping changes. A grouped
   dimension filters by legend (`IN:legendId;legendId`) through a transfer instead of by raw value.
+- **Legacy**: a saved `legendSet` without a filter is grouping. The Line Listing app saved it when
+  a user picked a legend set but no legends, and showed the legend names.
+- **Colouring**: a line list with the "By data item" legend strategy colours each numeric column
+  with the legend set assigned to its data item, read from `metaData.items[<header name>].legendSet`
+  in the analytics response, not from the layout. A grouped column is not coloured: its header
+  carries the grouping `legendSet` and its values are legend IDs.
 
 ## Testing & Linting Workflow for AI Agents
 

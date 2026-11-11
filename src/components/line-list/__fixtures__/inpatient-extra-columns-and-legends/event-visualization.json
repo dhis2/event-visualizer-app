@@ -1,7 +1,7 @@
 {
     "name": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
-    "created": "2026-09-11T11:55:07.577",
-    "lastUpdated": "2026-09-11T11:55:07.577",
+    "created": "2026-11-10T14:56:25.782",
+    "lastUpdated": "2026-11-10T14:56:25.782",
     "translations": [],
     "createdBy": {
         "id": "xE7jOejl9FI",
@@ -42,86 +42,100 @@
     "dataElementDimensions": [
         {
             "dataElement": {
-                "name": "Weight in kg",
-                "id": "vV9UWAZohSf"
+                "valueType": "INTEGER_POSITIVE",
+                "aggregationType": "AVERAGE",
+                "id": "vV9UWAZohSf",
+                "name": "Weight in kg"
             },
             "legendSet": {
-                "name": "Weight in kg",
-                "id": "OrkEzxZEH4X"
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
             }
         },
         {
             "dataElement": {
-                "name": "Admission Date",
-                "id": "eMyVanycQSC"
+                "valueType": "DATE",
+                "aggregationType": "AVERAGE",
+                "id": "eMyVanycQSC",
+                "name": "Admission Date"
             }
         },
         {
             "dataElement": {
-                "name": "Age in years",
-                "id": "qrur9Dvnyt5"
+                "valueType": "INTEGER",
+                "aggregationType": "AVERAGE",
+                "id": "qrur9Dvnyt5",
+                "name": "Age in years"
             }
         },
         {
             "dataElement": {
-                "name": "Diagnosis (ICD-10)",
-                "id": "K6uUAvq500H"
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "K6uUAvq500H",
+                "name": "Diagnosis (ICD-10)"
             }
         },
         {
             "dataElement": {
-                "name": "Discharge Date",
-                "id": "msodh3rEMJa"
+                "valueType": "DATE",
+                "aggregationType": "AVERAGE",
+                "id": "msodh3rEMJa",
+                "name": "Discharge Date"
             }
         },
         {
             "dataElement": {
-                "name": "Gender",
-                "id": "oZg33kd9taw"
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "oZg33kd9taw",
+                "name": "Gender"
             }
         },
         {
             "dataElement": {
-                "name": "Mode of Discharge",
-                "id": "fWIAEtYVEGk"
+                "valueType": "TEXT",
+                "aggregationType": "AVERAGE",
+                "id": "fWIAEtYVEGk",
+                "name": "Mode of Discharge"
             }
         }
     ],
     "programIndicatorDimensions": [
         {
             "programIndicator": {
-                "name": "BMI",
-                "id": "x7PaHGvgWY2"
+                "id": "x7PaHGvgWY2",
+                "name": "BMI"
             }
         },
         {
             "programIndicator": {
-                "name": "BMI female under 5 y",
-                "id": "hlPt8H4bUOQ"
+                "id": "hlPt8H4bUOQ",
+                "name": "BMI female under 5 y"
             }
         },
         {
             "programIndicator": {
-                "name": "Inpatient bed days",
-                "id": "b8hd33dWjR6"
+                "id": "b8hd33dWjR6",
+                "name": "Inpatient bed days"
             }
         },
         {
             "programIndicator": {
-                "name": "Inpatient cases under 5 y",
-                "id": "vDdRoZYybP2"
+                "id": "vDdRoZYybP2",
+                "name": "Inpatient cases under 5 y"
             }
         },
         {
             "programIndicator": {
-                "name": "Average height of girls at 5 years old",
-                "id": "gWxh7DiRmG7"
+                "id": "gWxh7DiRmG7",
+                "name": "Average height of girls at 5 years old"
             }
         },
         {
             "programIndicator": {
-                "name": "Average weight of women",
-                "id": "ReQEl5V3z6p"
+                "id": "ReQEl5V3z6p",
+                "name": "Average weight of women"
             }
         }
     ],
@@ -315,7 +329,7 @@
         "update": true,
         "delete": true
     },
-    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/Rq4ppYwc4r8",
+    "href": "https://e2e.im.dhis2.org/idv-playground/api/eventVisualizations/Rq4ppYwc4r8",
     "subscribed": false,
     "favorite": false,
     "metaData": {

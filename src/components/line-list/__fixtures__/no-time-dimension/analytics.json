@@ -24,26 +24,6 @@
             "isLastPage": true
         },
         "items": {
-            "202509": {
-                "uid": "202509",
-                "code": "202509",
-                "name": "September 2025",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2025-09-01T00:00:00.000",
-                "endDate": "2025-09-30T00:00:00.000"
-            },
-            "202510": {
-                "uid": "202510",
-                "code": "202510",
-                "name": "October 2025",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2025-10-01T00:00:00.000",
-                "endDate": "2025-10-31T00:00:00.000"
-            },
             "202511": {
                 "uid": "202511",
                 "code": "202511",
@@ -143,6 +123,26 @@
                 "totalAggregationType": "SUM",
                 "startDate": "2026-08-01T00:00:00.000",
                 "endDate": "2026-08-31T00:00:00.000"
+            },
+            "202609": {
+                "uid": "202609",
+                "code": "202609",
+                "name": "September 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-09-01T00:00:00.000",
+                "endDate": "2026-09-30T00:00:00.000"
+            },
+            "202610": {
+                "uid": "202610",
+                "code": "202610",
+                "name": "October 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-10-01T00:00:00.000",
+                "endDate": "2026-10-31T00:00:00.000"
             },
             "USER_ORGUNIT": {
                 "organisationUnits": ["ImspTQPwCqd"]

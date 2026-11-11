@@ -160,7 +160,7 @@
         "update": true,
         "delete": true
     },
-    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/AFjkDs7acBh",
+    "href": "https://e2e.im.dhis2.org/idv-playground/api/eventVisualizations/AFjkDs7acBh",
     "subscribed": false,
     "favorite": false,
     "metaData": {},

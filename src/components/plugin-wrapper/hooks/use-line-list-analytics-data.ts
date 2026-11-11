@@ -1,7 +1,3 @@
-import {
-    useMetadataStore,
-    type UseMetadataStoreReturnValue,
-} from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LineListPager, RequestedPage } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
@@ -11,6 +7,7 @@ import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-reques
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
+import { isValueTypeNumeric } from '@modules/value-type'
 import { isVisualizationWithTimeDimension } from '@modules/visualization/guards'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type {
@@ -229,26 +226,36 @@ const fetchLegendSets = async ({
     return legendSets
 }
 
+/* Analytics only sets a header's legendSet when the column is grouped by it */
+const isGroupedByLegend = (header: GridHeader) => Boolean(header.legendSet)
+
+export const getDataItemLegendSetId = (
+    header: GridHeader,
+    metaDataItems: AnalyticsResponseMetadataItems
+): string | undefined => {
+    if (isGroupedByLegend(header) || !isValueTypeNumeric(header.valueType)) {
+        return undefined
+    }
+    const legendSetId = metaDataItems[header.name ?? '']?.legendSet
+    return typeof legendSetId === 'string' ? legendSetId : undefined
+}
+
 export const collectLegendSetIdsToFetch = (
-    headers: Array<LineListAnalyticsDataHeader>,
-    visualization: CurrentVisualization,
-    metadataStore: UseMetadataStoreReturnValue
+    {
+        headers,
+        metaDataItems,
+    }: Pick<LineListAnalyticsData, 'headers' | 'metaDataItems'>,
+    visualization: CurrentVisualization
 ): string[] => {
     const { legend } = visualization
     if (legend?.strategy === 'FIXED') {
         return legend.set?.id ? [legend.set.id] : []
     }
     if (legend?.strategy === 'BY_DATA_ITEM') {
-        const ids: string[] = []
-        for (const header of headers) {
-            const item = metadataStore.getDimensionMetadataItem(
-                header.dimensionId
-            )
-            if (item?.legendSetId) {
-                ids.push(item.legendSetId)
-            }
-        }
-        return ids
+        const ids = headers
+            .map((header) => getDataItemLegendSetId(header, metaDataItems))
+            .filter((id): id is string => Boolean(id))
+        return [...new Set(ids)]
     }
     return []
 }
@@ -278,7 +285,6 @@ export const toLineListAnalyticsData = ({
 
 export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
-    const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
     const { showBoundary } = useErrorBoundary()
 
@@ -387,9 +393,8 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 })
 
                 const legendSetIds = collectLegendSetIdsToFetch(
-                    dataWithoutLegendSets.headers,
-                    visualization,
-                    metadataStore
+                    dataWithoutLegendSets,
+                    visualization
                 )
                 const legendSets = await fetchLegendSets({
                     legendSetIds,
@@ -435,7 +440,6 @@ export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         [
             analyticsEngine,
             dataEngine,
-            metadataStore,
             reserve,
             release,
             showBoundary,

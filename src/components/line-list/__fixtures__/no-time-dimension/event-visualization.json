@@ -1,7 +1,7 @@
 {
     "name": "No time dimension",
-    "created": "2026-09-11T11:55:15.633",
-    "lastUpdated": "2026-09-11T11:55:15.633",
+    "created": "2026-11-10T14:56:25.791",
+    "lastUpdated": "2026-11-10T14:56:25.791",
     "translations": [],
     "createdBy": {
         "id": "xE7jOejl9FI",
@@ -40,8 +40,10 @@
     "dataElementDimensions": [
         {
             "dataElement": {
-                "name": "WHOMCH Smoking",
-                "id": "sWoqcoByYmD"
+                "valueType": "BOOLEAN",
+                "aggregationType": "SUM",
+                "id": "sWoqcoByYmD",
+                "name": "WHOMCH Smoking"
             }
         }
     ],
@@ -138,7 +140,7 @@
         "update": true,
         "delete": true
     },
-    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/ETJXkMmCGsK",
+    "href": "https://e2e.im.dhis2.org/idv-playground/api/eventVisualizations/ETJXkMmCGsK",
     "subscribed": false,
     "favorite": false,
     "metaData": {
