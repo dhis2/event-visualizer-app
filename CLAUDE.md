@@ -543,8 +543,12 @@ API as a `-<legendSetId>` suffix on the dimension (`stageId.dimId-legendSetId`),
 IDs, named via `metaData.items`.
 
 - **Availability**: the sidebar's `analytics/*/query/dimensions` endpoint does not return
-  `legendSets`, so they are fetched per data item from `dataElements`/`trackedEntityAttributes`/
-  `programIndicators` (`@api/legend-sets-api`) and cached in the metadata store as `legendSetIds`.
+  `legendSets`, so they are fetched per data item from `dataElements`/`trackedEntityAttributes`
+  (`@api/legend-sets-api`) and cached in the metadata store as `legendSetIds`.
+- **Not for program indicators**: analytics ignores a program indicator's legend set when grouping
+  and rejects a legend filter on it (E7234), so the app offers neither. On load,
+  `normalizeApiSavedVisualization` drops a program indicator's legend set together with its legend
+  filter.
 - **Defaults**: pivot tables default to the first legend set, line lists to no grouping (the absence
   of state). Seeded by the listener in `@store/seed-default-grouping` when a dimension is added to
   the layout or its modal is opened, keyed off presence so an explicit choice is never overwritten.

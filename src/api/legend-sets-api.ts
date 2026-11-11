@@ -16,7 +16,6 @@ type GetLegendSetsByDimensionQueryArgs = {
 const resourceByDimensionType: Partial<Record<DimensionType, string>> = {
     DATA_ELEMENT: 'dataElements',
     PROGRAM_ATTRIBUTE: 'trackedEntityAttributes',
-    PROGRAM_INDICATOR: 'programIndicators',
 }
 
 /* Legends are contiguous value ranges, but come back in arbitrary order. They
