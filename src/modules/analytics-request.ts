@@ -44,6 +44,9 @@ export const getHeadersMap = (
     return map
 }
 
+/* The registration org unit header of an EVENT or ENROLLMENT line list. */
+const REGISTRATION_OU_LINE_LIST_HEADER = 'registrationouname'
+
 /* Static reverse of headersMap. The ENR `enrollmentOu → ouname` override
  * is not reversed here — bare `ouname` is ambiguous (stage event OU vs
  * enrollment OU) and is disambiguated by prefix presence + outputType. */
@@ -104,6 +107,10 @@ export const analyticsHeaderToCanonicalDimensionId = (
             return `${tetId}.ou`
         }
         return appLocalDim
+    }
+
+    if (tetId && wireDim === REGISTRATION_OU_LINE_LIST_HEADER) {
+        return `${tetId}.ou`
     }
 
     const programId = visualization.programDimensions?.[0]?.id
@@ -235,7 +242,7 @@ export const getAnalyticsRequestHeaderName = ({
     ) {
         return visualization.type === 'PIVOT_TABLE'
             ? 'registrationou'
-            : 'registrationouname'
+            : REGISTRATION_OU_LINE_LIST_HEADER
     }
 
     if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {

@@ -393,7 +393,7 @@ therefore sets it only for TRACKED_ENTITY_INSTANCE.
   `programId`. The backend calls it bare `ou` for TRACKED_ENTITY_INSTANCE and has its own name
   for it in EVENT and ENROLLMENT: `registrationOu` (with a program qualifier) in
   eventVisualizations, `REGISTRATION_OU` in the analytics request and `registrationou` as the
-  response header. A line list only offers it with TRACKED_ENTITY_INSTANCE output.
+  response header (`registrationouname` in a line list).
 
 **Org unit POST translation by outputType/visType/scope**: `toEventVisualizationDimensionId`
 maps the app-local org unit IDs to the eventVisualizations POST dimension on save. The event org
@@ -404,8 +404,8 @@ EVENT/TEI LINE_LIST mode; otherwise it must be sent as bare `ou`:
 
 | outputType                | visType       | Enrollment OU  | Registration OU  |
 | ------------------------- | ------------- | -------------- | ---------------- |
-| `EVENT`                   | `LINE_LIST`   | `enrollmentOu` | n/a              |
-| `ENROLLMENT`              | `LINE_LIST`   | `ou`           | n/a              |
+| `EVENT`                   | `LINE_LIST`   | `enrollmentOu` | `registrationOu` |
+| `ENROLLMENT`              | `LINE_LIST`   | `ou`           | `registrationOu` |
 | `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | `enrollmentOu` | `ou`             |
 | `EVENT`                   | `PIVOT_TABLE` | `ou`           | `registrationOu` |
 | `ENROLLMENT`              | `PIVOT_TABLE` | `ou`           | `registrationOu` |

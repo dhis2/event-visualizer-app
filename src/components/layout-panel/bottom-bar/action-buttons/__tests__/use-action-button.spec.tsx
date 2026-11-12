@@ -359,9 +359,7 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content: 'Not valid with registration org. unit',
-        })
+        expect(output.tooltipConfig).toBeUndefined()
     })
 
     it('returns correct result for: LL, multiple programs', async () => {
@@ -618,9 +616,7 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.tooltipConfig).toEqual({
-            content: 'Not valid with registration org. unit',
-        })
+        expect(output.tooltipConfig).toBeUndefined()
     })
 
     it('returns correct result for: LL, multiple programs', async () => {
@@ -854,6 +850,31 @@ describe('useActionButton for Tracked entity instance button', () => {
 
         expect(output.action).toEqual('switch')
         expect(output.tooltipConfig).toEqual(undefined)
+    })
+
+    it('returns correct result for: LL, registration org. unit in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.ou'].id,
+                        ],
+                    },
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toBeUndefined()
     })
 
     it('returns correct result for: LL, currentVis with outputType === TRACKED_ENTITY_INSTANCE', async () => {

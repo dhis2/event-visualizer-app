@@ -1,11 +1,7 @@
 import { type TooltipConfig } from '@components/layout-panel/bottom-bar/tooltip-config'
 import i18n from '@dhis2/d2-i18n'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
-import {
-    isDimensionInLayout,
-    resolveCellValueContext,
-    resolveLayoutContext,
-} from '@modules/layout'
+import { resolveCellValueContext, resolveLayoutContext } from '@modules/layout'
 import {
     selectLayoutAllDimensionIds,
     type VisUiConfigState,
@@ -20,10 +16,6 @@ export const getAvailableOutputTypes = (
     visualizationType === 'PIVOT_TABLE'
         ? ['ENROLLMENT', 'EVENT']
         : ['TRACKED_ENTITY_INSTANCE', 'ENROLLMENT', 'EVENT']
-
-const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
-    content: i18n.t('Not valid with registration org. unit'),
-})
 
 type CategoryLayoutState = {
     hasCategoryInLayout: boolean
@@ -55,7 +47,6 @@ type EventTooltipConfigParams = {
     hasMultipleProgramsSelected: boolean
     hasMultipleProgramStagesSelected: boolean
     hasTrackedEntityDimensionWithEventProgram: boolean
-    isRegistrationOuInLineList: boolean
     visualizationType: string
 }
 
@@ -64,7 +55,6 @@ const getEventTooltipConfig = ({
     hasMultipleProgramsSelected,
     hasMultipleProgramStagesSelected,
     hasTrackedEntityDimensionWithEventProgram,
-    isRegistrationOuInLineList,
     visualizationType,
 }: EventTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
@@ -77,10 +67,6 @@ const getEventTooltipConfig = ({
             visualizationType === 'PIVOT_TABLE')
     ) {
         return { content: i18n.t('Not valid with multiple programs') }
-    }
-
-    if (isRegistrationOuInLineList) {
-        return getRegistrationOuTooltipConfig()
     }
 
     if (hasTrackedEntityDimensionWithEventProgram) {
@@ -104,7 +90,6 @@ type EnrollmentTooltipConfigParams = {
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsSelected: boolean
     hasNoProgramInLayout: boolean
-    isRegistrationOuInLineList: boolean
     visualizationType: string
 }
 
@@ -114,7 +99,6 @@ const getEnrollmentTooltipConfig = ({
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
     hasMultipleProgramsSelected,
-    isRegistrationOuInLineList,
     visualizationType,
 }: EnrollmentTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
@@ -131,10 +115,6 @@ const getEnrollmentTooltipConfig = ({
 
     if (hasEventProgramSelected) {
         return { content: i18n.t('Not valid with event programs') }
-    }
-
-    if (isRegistrationOuInLineList) {
-        return getRegistrationOuTooltipConfig()
     }
 
     return getCategoryTooltipConfig({
@@ -215,7 +195,7 @@ export const getOutputTypeTooltipConfig = ({
     visUiConfig: VisUiConfigState
     metadataStore: MetadataStore
 }): TooltipConfig => {
-    const { layout, visualizationType } = visUiConfig
+    const { visualizationType } = visUiConfig
     const layoutDimensionIds = selectLayoutAllDimensionIds(visUiConfig)
 
     if (!layoutDimensionIds.length) {
@@ -284,13 +264,6 @@ export const getOutputTypeTooltipConfig = ({
             metadataStore.getProgramMetadataItem(programId)
         )
     )
-    /* A line list shows the registration org unit only with tracked entity
-     * output. */
-    const isRegistrationOuInLineList =
-        visualizationType === 'LINE_LIST' && tetId
-            ? isDimensionInLayout(layout, `${tetId}.ou`)
-            : false
-
     switch (outputType) {
         case 'EVENT':
             return getEventTooltipConfig({
@@ -307,7 +280,6 @@ export const getOutputTypeTooltipConfig = ({
                 hasTrackedEntityDimensionWithEventProgram:
                     hasEventProgramSelected &&
                     Boolean(tetId || cellValueContext.tetId),
-                isRegistrationOuInLineList,
                 visualizationType,
             })
         case 'ENROLLMENT':
@@ -317,7 +289,6 @@ export const getOutputTypeTooltipConfig = ({
                 hasCategoryOptionGroupSetInLayout,
                 hasNoProgramInLayout,
                 hasMultipleProgramsSelected,
-                isRegistrationOuInLineList,
                 visualizationType,
             })
         case 'TRACKED_ENTITY_INSTANCE':

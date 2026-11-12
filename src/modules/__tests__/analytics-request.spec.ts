@@ -114,6 +114,27 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         expect(analyticsHeaderToCanonicalDimensionId(UID, vis)).toBe(UID)
     })
 
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        "maps `registrationouname` to the tracker program's `tetId.ou` in a %s line list",
+        (outputType) => {
+            const vis = buildVis({
+                outputType,
+                programDimensions: [
+                    {
+                        id: PID,
+                        name: 'Child Programme',
+                        programType: 'WITH_REGISTRATION',
+                        programStages: [],
+                        trackedEntityType: { id: TET, name: 'Person' },
+                    },
+                ],
+            })
+            expect(
+                analyticsHeaderToCanonicalDimensionId('registrationouname', vis)
+            ).toBe(`${TET}.ou`)
+        }
+    )
+
     it('injects programId for bare `ou` in ENR', () => {
         expect(
             analyticsHeaderToCanonicalDimensionId(
@@ -385,6 +406,18 @@ describe('getAnalyticsRequestHeaderName', () => {
                     }),
                 })
             ).toBe('registrationou')
+        }
+    )
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'emits `registrationouname` for the registration org unit in a %s line list',
+        (outputType) => {
+            expect(
+                getAnalyticsRequestHeaderName({
+                    dimensionId: 'ou',
+                    visualization: buildVis({ outputType }),
+                })
+            ).toBe('registrationouname')
         }
     )
 
