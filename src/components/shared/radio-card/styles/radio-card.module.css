@@ -57,11 +57,15 @@
     cursor: not-allowed;
 }
 
+/* The radio is top-aligned so help text flows down from the title. The dense
+ * radio icon is 20px tall and the title line 16px, so the title is pushed down
+ * by half the difference to centre it on the icon. */
 .cardLabelContent {
     display: flex;
     min-inline-size: 0;
     flex-direction: column;
     inline-size: 100%;
+    padding-block-start: 2px;
 }
 
 .cardHelp {
