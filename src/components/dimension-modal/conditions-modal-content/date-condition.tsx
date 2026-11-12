@@ -8,6 +8,7 @@ import {
 } from '@modules/conditions'
 import { type ComponentProps, type FC } from 'react'
 import { ConditionRemoveButton } from './condition-remove-button'
+import { OPERATOR_SELECT_MENU_WIDTH } from './operator-select-menu-width'
 import classes from './styles/condition.module.css'
 import { useValueInputFocus } from './use-value-input-focus'
 
@@ -60,6 +61,7 @@ const BaseCondition: FC<
                 placeholder={i18n.t('Choose a filter type')}
                 dense
                 onChange={({ selected }) => setOperator(selected)}
+                {...OPERATOR_SELECT_MENU_WIDTH}
                 className={classes.operatorSelect}
             >
                 {Object.entries(getDateOperators()).map(([key, value]) => (

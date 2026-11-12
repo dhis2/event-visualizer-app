@@ -1,4 +1,5 @@
 import { ConditionRemoveButton } from '@components/dimension-modal/conditions-modal-content/condition-remove-button'
+import { OPERATOR_SELECT_MENU_WIDTH } from '@components/dimension-modal/conditions-modal-content/operator-select-menu-width'
 import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
 import { useValueInputFocus } from '@components/dimension-modal/conditions-modal-content/use-value-input-focus'
 import i18n from '@dhis2/d2-i18n'
@@ -76,6 +77,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 placeholder={i18n.t('Choose a filter type')}
                 dense
                 onChange={({ selected }) => setOperator(selected)}
+                {...OPERATOR_SELECT_MENU_WIDTH}
                 className={classes.operatorSelect}
             >
                 {Object.entries(getNumericOperators()).map(([key, value]) => (
