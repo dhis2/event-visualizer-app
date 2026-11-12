@@ -280,9 +280,6 @@ msgstr "Switch to {{- trackedEntityTypeName}} list"
 msgid "Update {{- trackedEntityTypeName}} list"
 msgstr "Update {{- trackedEntityTypeName}} list"
 
-msgid "Not valid with registration org. unit"
-msgstr "Not valid with registration org. unit"
-
 msgid "Not valid with categories or category option group sets"
 msgstr "Not valid with categories or category option group sets"
 
