@@ -18,6 +18,7 @@ import {
 } from '@modules/conditions'
 import { useCallback, useMemo, type FC } from 'react'
 import { ConditionRemoveButton } from './condition-remove-button'
+import { OPERATOR_SELECT_MENU_WIDTH } from './operator-select-menu-width'
 import classes from './styles/condition.module.css'
 import { useValueInputFocus } from './use-value-input-focus'
 
@@ -93,6 +94,7 @@ const BaseCondition: FC<
                 onChange={({ selected }) =>
                     setOperator(selected as QueryOperator)
                 }
+                {...OPERATOR_SELECT_MENU_WIDTH}
                 className={classes.operatorSelect}
             >
                 {Object.entries(getAlphaNumericOperators()).map(
