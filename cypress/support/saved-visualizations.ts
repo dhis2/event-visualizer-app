@@ -10,7 +10,6 @@ type SavedVisualization = ExpectedRendering & {
     covers: string
     id: string
     name: string
-    skip?: boolean
 }
 
 const createInterpretation = (visualizationId: string, text: string) =>
@@ -31,10 +30,9 @@ export const describeSavedVisualizations = (
 ) =>
     describe(`saved visualizations: ${title}`, () => {
         visualizations.forEach((visualization) => {
-            const { covers, id, name, skip } = visualization
-            const describeVisualization = skip ? describe.skip : describe
+            const { covers, id, name } = visualization
 
-            describeVisualization(`${covers}: ${name}`, () => {
+            describe(`${covers}: ${name}`, () => {
                 const interpretationTexts: string[] = []
 
                 /* afterEach, because a retry starts the test again and posts
