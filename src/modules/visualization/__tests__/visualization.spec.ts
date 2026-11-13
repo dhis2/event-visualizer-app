@@ -944,6 +944,21 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.columns?.[0].legendSet).toBeUndefined()
     })
 
+    it('drops the legend set and legend filter of a program indicator', () => {
+        const result = normalizeApiSavedVisualization(
+            buildGroupedVis({
+                dimensionType: 'PROGRAM_INDICATOR',
+                valueType: undefined,
+                programStage: undefined,
+                filter: 'IN:legend1;legend2',
+            })
+        )
+
+        expect(result.columns?.[0].legendSet).toBeUndefined()
+        expect(result.columns?.[0].filter).toBeUndefined()
+        expect(result.legacy).toBeUndefined()
+    })
+
     const buildCellValueVis = (
         overrides: Partial<ApiSavedVisualization> = {}
     ) =>

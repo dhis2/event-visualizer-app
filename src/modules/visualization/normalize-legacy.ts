@@ -211,7 +211,9 @@ const normalizeLegacyValue = (
  *   as" is allowed. Overwriting would silently persist in the canonical
  *   format, breaking older apps that still read the legacy shape.
  * - Drop a dimension's `legendSet` when it cannot apply, ie. the dimension is not
- *   numeric, or it carries a filter that is not a legend `IN:` filter. Grouping
+ *   numeric or is a program indicator, or it carries a filter that is not a
+ *   legend `IN:` filter. A program indicator's legend `IN:` filter goes with
+ *   its legend set, since it picks legends that no longer apply. Grouping
  *   makes analytics return legend IDs, so a raw-value filter beside it matches
  *   nothing; the filter wins because it is always an explicit user choice, while
  *   a legend set may be a seeded default. Unlike the conversions above this does

@@ -209,6 +209,51 @@ describe('detecting unapplied changes in a freshly loaded visualization', () => 
         ).toBe(false)
     })
 
+    const loadThroughNormalization = (vis: CurrentVisualization) =>
+        toCurrentVis(
+            normalizeApiSavedVisualization(
+                vis as unknown as ApiSavedVisualization
+            )
+        )
+
+    it('reports no change for a dimension whose legend set is dropped on load', () => {
+        const loadedVis = loadThroughNormalization(
+            createLoadedVis(
+                createLoadedColumn({ legendSet: { id: LEGEND_SET_ID } })
+            )
+        )
+
+        expect(
+            hasUnappliedChanges(loadedVis, {}, createLoadedMetadataStore())
+        ).toBe(false)
+    })
+
+    it('reports no change for a program indicator whose legend filter is dropped on load', () => {
+        const programIndicatorStore = createMetadataStoreStub({
+            dimensions: {
+                pi1: {
+                    id: 'pi1',
+                    name: 'Program indicator 1',
+                    dimensionId: 'pi1',
+                    dimensionType: 'PROGRAM_INDICATOR',
+                } as DimensionMetadataItem,
+            },
+        })
+        const loadedVis = loadThroughNormalization(
+            createLoadedVis({
+                dimension: 'pi1',
+                dimensionType: 'PROGRAM_INDICATOR',
+                items: [],
+                legendSet: { id: LEGEND_SET_ID },
+                filter: 'IN:legend1;legend2',
+            })
+        )
+
+        expect(hasUnappliedChanges(loadedVis, {}, programIndicatorStore)).toBe(
+            false
+        )
+    })
+
     const createLoadedRepetitionColumn = (): DimensionRecord =>
         createLoadedColumn({
             repetition: {
